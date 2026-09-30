@@ -3,22 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="description" content="Sistema de gestión para laboratorio dental">
+  <link rel="manifest" href="./manifest.json">
 
   <title>LAB innovadent</title>
-
-  <meta name="theme-color" content="#0f766e">
-  <meta name="description" content="Sistema de gestión para LAB innovadent">
-
-  <link rel="manifest" href="manifest.json">
 
   <style>
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
     }
 
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
       background: #f1f5f9;
       color: #1e293b;
@@ -32,173 +29,159 @@
     }
 
     header h1 {
+      margin: 0;
       font-size: 28px;
     }
 
     header p {
-      margin-top: 6px;
+      margin: 6px 0 0;
     }
 
     nav {
-      background: white;
-      padding: 12px;
       display: flex;
-      justify-content: center;
-      gap: 8px;
       flex-wrap: wrap;
-      box-shadow: 0 2px 6px rgba(0,0,0,.1);
+      gap: 8px;
+      justify-content: center;
+      padding: 12px;
+      background: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,.1);
     }
 
     nav button {
       border: none;
-      background: #e2e8f0;
-      padding: 11px 15px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    nav button.active {
       background: #0f766e;
       color: white;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    nav button:hover {
+      opacity: .9;
     }
 
     main {
-      max-width: 1200px;
+      max-width: 1100px;
       margin: auto;
       padding: 20px;
     }
 
-    .section {
+    .seccion {
       display: none;
     }
 
-    .section.active {
+    .seccion.activa {
       display: block;
     }
 
-    .cards {
+    .tarjetas {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 15px;
-      margin-bottom: 20px;
+      margin: 20px 0;
     }
 
-    .card {
+    .tarjeta {
       background: white;
       padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      box-shadow: 0 2px 7px rgba(0,0,0,.08);
+      text-align: center;
     }
 
-    .card h3 {
-      color: #64748b;
-      font-size: 14px;
-    }
-
-    .card strong {
-      display: block;
-      margin-top: 8px;
+    .tarjeta h3 {
+      margin: 0;
       font-size: 30px;
       color: #0f766e;
     }
 
-    .box {
+    .formulario {
       background: white;
       padding: 20px;
-      margin-bottom: 20px;
       border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      box-shadow: 0 2px 7px rgba(0,0,0,.08);
+      margin-bottom: 20px;
     }
 
-    .box h2 {
+    .campo {
       margin-bottom: 15px;
     }
 
-    form {
-      display: grid;
-      gap: 12px;
-    }
-
     label {
+      display: block;
       font-weight: bold;
-      font-size: 14px;
+      margin-bottom: 6px;
     }
 
     input,
     select,
     textarea {
       width: 100%;
-      padding: 12px;
+      padding: 11px;
       border: 1px solid #cbd5e1;
       border-radius: 8px;
-      font-size: 15px;
-    }
-
-    textarea {
-      min-height: 80px;
-    }
-
-    .primary {
-      border: none;
-      background: #0f766e;
-      color: white;
-      padding: 12px;
-      border-radius: 8px;
-      cursor: pointer;
       font-size: 16px;
     }
 
-    .whatsapp {
-      border: none;
-      background: #16a34a;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 7px;
-      cursor: pointer;
+    textarea {
+      min-height: 90px;
+      resize: vertical;
     }
 
-    .danger {
+    .boton {
       border: none;
+      padding: 11px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .verde {
+      background: #0f766e;
+      color: white;
+    }
+
+    .azul {
+      background: #2563eb;
+      color: white;
+    }
+
+    .rojo {
       background: #dc2626;
       color: white;
-      padding: 8px 12px;
-      border-radius: 7px;
-      cursor: pointer;
     }
 
-    .search {
-      margin-bottom: 15px;
+    .whatsapp {
+      background: #25d366;
+      color: white;
     }
 
-    .table-container {
-      overflow-x: auto;
+    .lista {
+      display: grid;
+      gap: 15px;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 850px;
+    .item {
+      background: white;
+      padding: 18px;
+      border-radius: 12px;
+      box-shadow: 0 2px 7px rgba(0,0,0,.08);
     }
 
-    th,
-    td {
-      padding: 11px;
-      border-bottom: 1px solid #e2e8f0;
-      text-align: left;
-      vertical-align: middle;
-    }
-
-    th {
-      background: #f8fafc;
+    .item h3 {
+      margin-top: 0;
+      color: #0f766e;
     }
 
     .estado {
       display: inline-block;
-      padding: 5px 9px;
+      padding: 6px 10px;
       border-radius: 20px;
       font-size: 13px;
       font-weight: bold;
+      margin: 5px 0;
     }
 
     .recibido {
@@ -217,28 +200,8 @@
     }
 
     .entregado {
-      background: #e2e8f0;
-      color: #475569;
-    }
-
-    .pendiente {
-      background: #fef3c7;
-      color: #92400e;
-    }
-
-    .confirmada {
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .cancelada {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    .atendida {
-      background: #dbeafe;
-      color: #1d4ed8;
+      background: #e0e7ff;
+      color: #3730a3;
     }
 
     .aviso {
@@ -246,29 +209,19 @@
       border-left: 5px solid #f97316;
       padding: 15px;
       border-radius: 8px;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
 
-    .aviso strong {
-      color: #c2410c;
-    }
-
-    .empty {
+    .vacio {
       text-align: center;
-      padding: 25px;
       color: #64748b;
+      padding: 20px;
     }
 
-    footer {
-      text-align: center;
-      padding: 25px;
-      color: #64748b;
-    }
-
-    .acciones {
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
+    .dos-columnas {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
     }
 
     @media (max-width: 600px) {
@@ -286,1323 +239,935 @@
 <body>
 
 <header>
-  <h1>🦷 LAB innovadent</h1>
-  <p>Gestión de laboratorio dental</p>
+  <h1>LAB innovadent</h1>
+  <p>Gestión del laboratorio dental</p>
 </header>
 
 <nav>
-
-  <button class="active"
-          onclick="mostrarSeccion('inicio', this)">
-    Inicio
-  </button>
-
-  <button onclick="mostrarSeccion('clientes', this)">
-    Clientes
-  </button>
-
-  <button onclick="mostrarSeccion('trabajos', this)">
-    Trabajos
-  </button>
-
-  <button onclick="mostrarSeccion('citas', this)">
-    Citas
-  </button>
-
-  <button onclick="mostrarSeccion('nuevoTrabajo', this)">
-    Nuevo trabajo
-  </button>
-
-  <button onclick="mostrarSeccion('nuevaCita', this)">
-    Nueva cita
-  </button>
-
+  <button onclick="mostrarSeccion('inicio')">Inicio</button>
+  <button onclick="mostrarSeccion('clientes')">Clientes</button>
+  <button onclick="mostrarSeccion('trabajos')">Trabajos</button>
+  <button onclick="mostrarSeccion('citas')">Citas</button>
+  <button onclick="mostrarSeccion('nuevoTrabajo')">Nuevo trabajo</button>
+  <button onclick="mostrarSeccion('nuevaCita')">Nueva cita</button>
 </nav>
 
 <main>
 
-<!-- ================= INICIO ================= -->
+  <!-- INICIO -->
+  <section id="inicio" class="seccion activa">
 
-<section id="inicio" class="section active">
+    <h2>Panel principal</h2>
 
-  <div id="avisosCitas"></div>
+    <div class="tarjetas">
+      <div class="tarjeta">
+        <h3 id="totalClientes">0</h3>
+        <p>Clientes</p>
+      </div>
 
-  <div class="cards">
+      <div class="tarjeta">
+        <h3 id="totalTrabajos">0</h3>
+        <p>Trabajos</p>
+      </div>
 
-    <div class="card">
-      <h3>Clientes</h3>
-      <strong id="totalClientes">0</strong>
+      <div class="tarjeta">
+        <h3 id="trabajosProceso">0</h3>
+        <p>En proceso</p>
+      </div>
+
+      <div class="tarjeta">
+        <h3 id="totalCitas">0</h3>
+        <p>Citas</p>
+      </div>
     </div>
 
-    <div class="card">
-      <h3>Trabajos recibidos</h3>
-      <strong id="totalRecibidos">0</strong>
-    </div>
+    <h2>📅 Citas de mañana</h2>
+    <div id="avisosCitas"></div>
 
-    <div class="card">
-      <h3>En proceso</h3>
-      <strong id="totalProceso">0</strong>
-    </div>
-
-    <div class="card">
-      <h3>Terminados</h3>
-      <strong id="totalTerminados">0</strong>
-    </div>
-
-    <div class="card">
-      <h3>Citas pendientes</h3>
-      <strong id="totalCitas">0</strong>
-    </div>
-
-  </div>
-
-  <div class="box">
-
-    <h2>Bienvenido a LAB innovadent</h2>
-
-    <p>
-      Aquí puedes administrar clínicas, doctores,
-      pacientes, trabajos del laboratorio y citas.
-    </p>
-
-  </div>
-
-</section>
+  </section>
 
 
-<!-- ================= CLIENTES ================= -->
+  <!-- CLIENTES -->
+  <section id="clientes" class="seccion">
 
-<section id="clientes" class="section">
+    <h2>Clientes</h2>
 
-  <div class="box">
+    <div class="formulario">
+      <div class="dos-columnas">
 
-    <h2>Clientes / Clínicas</h2>
+        <div class="campo">
+          <label>Clínica</label>
+          <input id="clienteClinica" type="text">
+        </div>
 
-    <input
-      id="buscarCliente"
-      class="search"
-      type="text"
-      placeholder="Buscar clínica, Dr./Dra. o paciente..."
-      oninput="mostrarClientes()"
-    >
+        <div class="campo">
+          <label>Dr. / Dra.</label>
+          <input id="clienteDoctor" type="text">
+        </div>
 
-    <div class="table-container">
+        <div class="campo">
+          <label>Paciente</label>
+          <input id="clientePaciente" type="text">
+        </div>
 
-      <table>
+        <div class="campo">
+          <label>Teléfono</label>
+          <input id="clienteTelefono" type="tel">
+        </div>
 
-        <thead>
-          <tr>
-            <th>Clínica</th>
-            <th>Dr. / Dra.</th>
-            <th>Paciente</th>
-            <th>Teléfono</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
+        <div class="campo">
+          <label>Correo</label>
+          <input id="clienteCorreo" type="email">
+        </div>
 
-        <tbody id="listaClientes"></tbody>
+      </div>
 
-      </table>
-
-    </div>
-
-  </div>
-
-
-  <div class="box">
-
-    <h2>Agregar paciente</h2>
-
-    <form onsubmit="agregarCliente(event)">
-
-      <label>Clínica</label>
-
-      <input
-        id="clienteClinica"
-        type="text"
-        placeholder="Nombre de la clínica"
-        required
-      >
-
-      <label>Dr. / Dra.</label>
-
-      <input
-        id="clienteDoctor"
-        type="text"
-        placeholder="Nombre del Dr. o Dra."
-        required
-      >
-
-      <label>Paciente</label>
-
-      <input
-        id="clientePaciente"
-        type="text"
-        placeholder="Nombre del paciente"
-        required
-      >
-
-      <label>Teléfono / WhatsApp</label>
-
-      <input
-        id="clienteTelefono"
-        type="tel"
-        placeholder="Ejemplo: 50760000000"
-      >
-
-      <label>Correo electrónico</label>
-
-      <input
-        id="clienteCorreo"
-        type="email"
-        placeholder="Correo"
-      >
-
-      <button class="primary" type="submit">
-        Guardar paciente
+      <button class="boton verde" onclick="guardarCliente()">
+        Guardar cliente
       </button>
-
-    </form>
-
-  </div>
-
-</section>
-
-
-<!-- ================= TRABAJOS ================= -->
-
-<section id="trabajos" class="section">
-
-  <div class="box">
-
-    <h2>Trabajos del laboratorio</h2>
-
-    <input
-      id="buscarTrabajo"
-      class="search"
-      type="text"
-      placeholder="Buscar clínica, Dr./Dra. o paciente..."
-      oninput="mostrarTrabajos()"
-    >
-
-    <div class="table-container">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Clínica</th>
-            <th>Dr. / Dra.</th>
-            <th>Paciente</th>
-            <th>Trabajo</th>
-            <th>Llegada</th>
-            <th>Entrega</th>
-            <th>Estado</th>
-            <th>Monto</th>
-            <th>Acciones</th>
-          </tr>
-
-        </thead>
-
-        <tbody id="listaTrabajos"></tbody>
-
-      </table>
-
     </div>
 
-  </div>
+    <div id="listaClientes" class="lista"></div>
 
-</section>
+  </section>
 
 
-<!-- ================= NUEVO TRABAJO ================= -->
+  <!-- TRABAJOS -->
+  <section id="trabajos" class="seccion">
 
-<section id="nuevoTrabajo" class="section">
+    <h2>Trabajos</h2>
 
-  <div class="box">
+    <div id="listaTrabajos" class="lista"></div>
 
-    <h2>Registrar nuevo trabajo</h2>
+  </section>
 
-    <form onsubmit="agregarTrabajo(event)">
 
-      <label>Clínica</label>
+  <!-- NUEVO TRABAJO -->
+  <section id="nuevoTrabajo" class="seccion">
 
-      <input
-        id="trabajoClinica"
-        type="text"
-        placeholder="Nombre de la clínica"
-        required
-      >
+    <h2>Nuevo trabajo</h2>
 
-      <label>Dr. / Dra.</label>
+    <div class="formulario">
 
-      <input
-        id="trabajoDoctor"
-        type="text"
-        placeholder="Nombre del Dr. o Dra."
-        required
-      >
+      <div class="dos-columnas">
 
-      <label>Paciente</label>
+        <div class="campo">
+          <label>Clínica</label>
+          <input id="trabajoClinica" type="text">
+        </div>
 
-      <input
-        id="trabajoPaciente"
-        type="text"
-        placeholder="Nombre del paciente"
-        required
-      >
+        <div class="campo">
+          <label>Dr. / Dra.</label>
+          <input id="trabajoDoctor" type="text">
+        </div>
 
-      <label>Tipo de trabajo dental</label>
+        <div class="campo">
+          <label>Paciente</label>
+          <input id="trabajoPaciente" type="text">
+        </div>
 
-      <input
-        id="trabajoTipo"
-        type="text"
-        placeholder="Ejemplo: Prótesis, corona, reparación..."
-        required
-      >
+        <div class="campo">
+          <label>Tipo de trabajo</label>
+          <input id="trabajoTipo" type="text"
+                 placeholder="Ejemplo: prótesis, corona, reparación">
+        </div>
 
-      <label>Fecha de llegada</label>
+        <div class="campo">
+          <label>Fecha de llegada</label>
+          <input id="fechaLlegada" type="date">
+        </div>
 
-      <input
-        id="fechaLlegada"
-        type="date"
-        required
-      >
+        <div class="campo">
+          <label>Fecha de entrega</label>
+          <input id="fechaEntrega" type="date">
+        </div>
 
-      <label>Fecha de entrega</label>
+        <div class="campo">
+          <label>Estado</label>
+          <select id="estadoTrabajo">
+            <option value="Recibido">Recibido</option>
+            <option value="En proceso">En proceso</option>
+            <option value="Terminado">Terminado</option>
+            <option value="Entregado">Entregado</option>
+          </select>
+        </div>
 
-      <input
-        id="fechaEntrega"
-        type="date"
-      >
+        <div class="campo">
+          <label>Monto</label>
+          <input id="trabajoMonto" type="number" step="0.01">
+        </div>
 
-      <label>Estado</label>
+      </div>
 
-      <select id="estadoTrabajo">
+      <div class="campo">
+        <label>Observaciones</label>
+        <textarea id="trabajoObservaciones"></textarea>
+      </div>
 
-        <option value="Recibido">
-          Recibido
-        </option>
-
-        <option value="En proceso">
-          En proceso
-        </option>
-
-        <option value="Terminado">
-          Terminado
-        </option>
-
-        <option value="Entregado">
-          Entregado
-        </option>
-
-      </select>
-
-      <label>Monto</label>
-
-      <input
-        id="trabajoMonto"
-        type="number"
-        step="0.01"
-        min="0"
-        placeholder="0.00"
-      >
-
-      <label>Observaciones</label>
-
-      <textarea
-        id="trabajoObservaciones"
-        placeholder="Observaciones del trabajo..."
-      ></textarea>
-
-      <button class="primary" type="submit">
+      <button class="boton verde" onclick="guardarTrabajo()">
         Guardar trabajo
       </button>
 
-    </form>
-
-  </div>
-
-</section>
-
-
-<!-- ================= CITAS ================= -->
-
-<section id="citas" class="section">
-
-  <div class="box">
-
-    <h2>📅 Citas</h2>
-
-    <input
-      id="buscarCita"
-      class="search"
-      type="text"
-      placeholder="Buscar clínica, Dr./Dra. o paciente..."
-      oninput="mostrarCitas()"
-    >
-
-    <div class="table-container">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Clínica</th>
-            <th>Dr. / Dra.</th>
-            <th>Paciente</th>
-            <th>Fecha</th>
-            <th>Hora</th>
-            <th>Motivo</th>
-            <th>Estado</th>
-            <th>WhatsApp</th>
-            <th>Acciones</th>
-          </tr>
-
-        </thead>
-
-        <tbody id="listaCitas"></tbody>
-
-      </table>
-
     </div>
 
-  </div>
-
-</section>
+  </section>
 
 
-<!-- ================= NUEVA CITA ================= -->
+  <!-- CITAS -->
+  <section id="citas" class="seccion">
 
-<section id="nuevaCita" class="section">
+    <h2>📅 Citas de pacientes</h2>
 
-  <div class="box">
+    <p>
+      Las citas son directamente con el mecánico dental
+      <strong>Javier Quiroz</strong>.
+    </p>
 
-    <h2>📅 Registrar nueva cita</h2>
+    <div id="listaCitas" class="lista"></div>
 
-    <form onsubmit="agregarCita(event)">
+  </section>
 
-      <label>Clínica</label>
 
-      <input
-        id="citaClinica"
-        type="text"
-        placeholder="Nombre de la clínica"
-        required
-      >
+  <!-- NUEVA CITA -->
+  <section id="nuevaCita" class="seccion">
 
-      <label>Dr. / Dra.</label>
+    <h2>➕ Nueva cita</h2>
 
-      <input
-        id="citaDoctor"
-        type="text"
-        placeholder="Nombre del Dr. o Dra."
-        required
-      >
+    <div class="formulario">
 
-      <label>Paciente</label>
+      <div class="campo">
+        <label>Nombre del paciente</label>
+        <input id="citaPaciente" type="text"
+               placeholder="Nombre completo">
+      </div>
 
-      <input
-        id="citaPaciente"
-        type="text"
-        placeholder="Nombre del paciente"
-        required
-      >
+      <div class="campo">
+        <label>Número de teléfono</label>
+        <input id="citaTelefono" type="tel"
+               placeholder="Ejemplo: 50761234567">
+      </div>
 
-      <label>Teléfono / WhatsApp</label>
+      <div class="campo">
+        <label>Fecha de la cita</label>
+        <input id="citaFecha" type="date">
+      </div>
 
-      <input
-        id="citaTelefono"
-        type="tel"
-        placeholder="Ejemplo: 50760000000"
-        required
-      >
+      <div class="campo">
+        <label>Hora de la cita</label>
+        <input id="citaHora" type="time">
+      </div>
 
-      <label>Fecha de cita</label>
-
-      <input
-        id="citaFecha"
-        type="date"
-        required
-      >
-
-      <label>Hora</label>
-
-      <input
-        id="citaHora"
-        type="time"
-        required
-      >
-
-      <label>Motivo de la cita</label>
-
-      <input
-        id="citaMotivo"
-        type="text"
-        placeholder="Ejemplo: Prueba de prótesis"
-      >
-
-      <label>Estado</label>
-
-      <select id="citaEstado">
-
-        <option value="Pendiente">
-          Pendiente
-        </option>
-
-        <option value="Confirmada">
-          Confirmada
-        </option>
-
-        <option value="Atendida">
-          Atendida
-        </option>
-
-        <option value="Cancelada">
-          Cancelada
-        </option>
-
-      </select>
-
-      <button class="primary" type="submit">
+      <button class="boton verde" onclick="guardarCita()">
         Guardar cita
       </button>
 
-    </form>
+    </div>
 
-  </div>
-
-</section>
+  </section>
 
 </main>
-
-<footer>
-  LAB innovadent © 2026
-</footer>
 
 
 <script>
 
-/* =====================================================
-   DATOS
-===================================================== */
+  // =========================
+  // DATOS
+  // =========================
 
-let clientes =
-  JSON.parse(localStorage.getItem("lab_clientes")) || [];
-
-let trabajos =
-  JSON.parse(localStorage.getItem("lab_trabajos")) || [];
-
-let citas =
-  JSON.parse(localStorage.getItem("lab_citas")) || [];
-
-
-/* =====================================================
-   GUARDAR
-===================================================== */
-
-function guardarDatos() {
-
-  localStorage.setItem(
-    "lab_clientes",
-    JSON.stringify(clientes)
+  let clientes = JSON.parse(
+    localStorage.getItem("lab_clientes") || "[]"
   );
 
-  localStorage.setItem(
-    "lab_trabajos",
-    JSON.stringify(trabajos)
+  let trabajos = JSON.parse(
+    localStorage.getItem("lab_trabajos") || "[]"
   );
 
-  localStorage.setItem(
-    "lab_citas",
-    JSON.stringify(citas)
+  let citas = JSON.parse(
+    localStorage.getItem("lab_citas") || "[]"
   );
 
-}
 
+  // =========================
+  // NAVEGACIÓN
+  // =========================
 
-/* =====================================================
-   CAMBIAR SECCIÓN
-===================================================== */
+  function mostrarSeccion(id) {
 
-function mostrarSeccion(nombre, boton) {
-
-  document
-    .querySelectorAll(".section")
-    .forEach(seccion =>
-      seccion.classList.remove("active")
-    );
-
-  document
-    .getElementById(nombre)
-    .classList.add("active");
-
-  document
-    .querySelectorAll("nav button")
-    .forEach(btn =>
-      btn.classList.remove("active")
-    );
-
-  boton.classList.add("active");
-
-  actualizarTodo();
-
-}
-
-
-/* =====================================================
-   CLIENTES
-===================================================== */
-
-function agregarCliente(event) {
-
-  event.preventDefault();
-
-  const cliente = {
-
-    id: Date.now(),
-
-    clinica:
-      document.getElementById("clienteClinica").value,
-
-    doctor:
-      document.getElementById("clienteDoctor").value,
-
-    paciente:
-      document.getElementById("clientePaciente").value,
-
-    telefono:
-      document.getElementById("clienteTelefono").value,
-
-    correo:
-      document.getElementById("clienteCorreo").value
-
-  };
-
-  clientes.push(cliente);
-
-  guardarDatos();
-
-  event.target.reset();
-
-  actualizarTodo();
-
-  alert("Paciente guardado correctamente.");
-
-}
-
-
-function eliminarCliente(id) {
-
-  if (!confirm("¿Eliminar este paciente?")) {
-    return;
-  }
-
-  clientes =
-    clientes.filter(c => c.id !== id);
-
-  guardarDatos();
-
-  actualizarTodo();
-
-}
-
-
-function mostrarClientes() {
-
-  const lista =
-    document.getElementById("listaClientes");
-
-  const busqueda =
-    document.getElementById("buscarCliente")
-      .value
-      .toLowerCase();
-
-  const filtrados =
-    clientes.filter(c =>
-
-      c.clinica.toLowerCase().includes(busqueda) ||
-
-      c.doctor.toLowerCase().includes(busqueda) ||
-
-      c.paciente.toLowerCase().includes(busqueda)
-
-    );
-
-
-  if (filtrados.length === 0) {
-
-    lista.innerHTML = `
-      <tr>
-        <td colspan="5" class="empty">
-          No hay pacientes registrados.
-        </td>
-      </tr>
-    `;
-
-    return;
-  }
-
-
-  lista.innerHTML =
-    filtrados.map(c => `
-
-      <tr>
-
-        <td>${c.clinica}</td>
-
-        <td>${c.doctor}</td>
-
-        <td>${c.paciente}</td>
-
-        <td>${c.telefono || "-"}</td>
-
-        <td>
-
-          <button
-            class="danger"
-            onclick="eliminarCliente(${c.id})">
-            Eliminar
-          </button>
-
-        </td>
-
-      </tr>
-
-    `).join("");
-
-}
-
-
-/* =====================================================
-   TRABAJOS
-===================================================== */
-
-function agregarTrabajo(event) {
-
-  event.preventDefault();
-
-  const trabajo = {
-
-    id: Date.now(),
-
-    clinica:
-      document.getElementById("trabajoClinica").value,
-
-    doctor:
-      document.getElementById("trabajoDoctor").value,
-
-    paciente:
-      document.getElementById("trabajoPaciente").value,
-
-    tipo:
-      document.getElementById("trabajoTipo").value,
-
-    fechaLlegada:
-      document.getElementById("fechaLlegada").value,
-
-    fechaEntrega:
-      document.getElementById("fechaEntrega").value,
-
-    estado:
-      document.getElementById("estadoTrabajo").value,
-
-    monto:
-      document.getElementById("trabajoMonto").value,
-
-    observaciones:
-      document.getElementById("trabajoObservaciones").value
-
-  };
-
-  trabajos.push(trabajo);
-
-  guardarDatos();
-
-  event.target.reset();
-
-  actualizarTodo();
-
-  alert("Trabajo guardado correctamente.");
-
-}
-
-
-function eliminarTrabajo(id) {
-
-  if (!confirm("¿Eliminar este trabajo?")) {
-    return;
-  }
-
-  trabajos =
-    trabajos.filter(t => t.id !== id);
-
-  guardarDatos();
-
-  actualizarTodo();
-
-}
-
-
-function claseEstadoTrabajo(estado) {
-
-  if (estado === "Recibido")
-    return "recibido";
-
-  if (estado === "En proceso")
-    return "proceso";
-
-  if (estado === "Terminado")
-    return "terminado";
-
-  if (estado === "Entregado")
-    return "entregado";
-
-  return "";
-
-}
-
-
-function mostrarTrabajos() {
-
-  const lista =
-    document.getElementById("listaTrabajos");
-
-  const busqueda =
-    document.getElementById("buscarTrabajo")
-      .value
-      .toLowerCase();
-
-  const filtrados =
-    trabajos.filter(t =>
-
-      t.clinica.toLowerCase().includes(busqueda) ||
-
-      t.doctor.toLowerCase().includes(busqueda) ||
-
-      t.paciente.toLowerCase().includes(busqueda) ||
-
-      t.tipo.toLowerCase().includes(busqueda)
-
-    );
-
-
-  if (filtrados.length === 0) {
-
-    lista.innerHTML = `
-      <tr>
-        <td colspan="9" class="empty">
-          No hay trabajos registrados.
-        </td>
-      </tr>
-    `;
-
-    return;
-
-  }
-
-
-  lista.innerHTML =
-    filtrados.map(t => `
-
-      <tr>
-
-        <td>${t.clinica}</td>
-
-        <td>${t.doctor}</td>
-
-        <td>${t.paciente}</td>
-
-        <td>${t.tipo}</td>
-
-        <td>${t.fechaLlegada}</td>
-
-        <td>${t.fechaEntrega || "-"}</td>
-
-        <td>
-
-          <span class="estado ${claseEstadoTrabajo(t.estado)}">
-
-            ${t.estado}
-
-          </span>
-
-        </td>
-
-        <td>
-          ${t.monto ? "$" + t.monto : "-"}
-        </td>
-
-        <td>
-
-          <button
-            class="danger"
-            onclick="eliminarTrabajo(${t.id})">
-            Eliminar
-          </button>
-
-        </td>
-
-      </tr>
-
-    `).join("");
-
-}
-
-
-/* =====================================================
-   CITAS
-===================================================== */
-
-function agregarCita(event) {
-
-  event.preventDefault();
-
-  const cita = {
-
-    id: Date.now(),
-
-    clinica:
-      document.getElementById("citaClinica").value,
-
-    doctor:
-      document.getElementById("citaDoctor").value,
-
-    paciente:
-      document.getElementById("citaPaciente").value,
-
-    telefono:
-      document.getElementById("citaTelefono").value,
-
-    fecha:
-      document.getElementById("citaFecha").value,
-
-    hora:
-      document.getElementById("citaHora").value,
-
-    motivo:
-      document.getElementById("citaMotivo").value,
-
-    estado:
-      document.getElementById("citaEstado").value
-
-  };
-
-  citas.push(cita);
-
-  guardarDatos();
-
-  event.target.reset();
-
-  actualizarTodo();
-
-  alert("Cita guardada correctamente.");
-
-}
-
-
-function eliminarCita(id) {
-
-  if (!confirm("¿Eliminar esta cita?")) {
-    return;
-  }
-
-  citas =
-    citas.filter(c => c.id !== id);
-
-  guardarDatos();
-
-  actualizarTodo();
-
-}
-
-
-/* =====================================================
-   ESTADO DE CITA
-===================================================== */
-
-function claseEstadoCita(estado) {
-
-  if (estado === "Pendiente")
-    return "pendiente";
-
-  if (estado === "Confirmada")
-    return "confirmada";
-
-  if (estado === "Atendida")
-    return "atendida";
-
-  if (estado === "Cancelada")
-    return "cancelada";
-
-  return "";
-
-}
-
-
-/* =====================================================
-   WHATSAPP
-===================================================== */
-
-function enviarWhatsApp(cita) {
-
-  let telefono =
-    cita.telefono.replace(/\D/g, "");
-
-  if (!telefono) {
-
-    alert("Esta cita no tiene teléfono.");
-
-    return;
-
-  }
-
-
-  const mensaje =
-`Hola ${cita.paciente}.
-
-Le recordamos que tiene una cita en LAB innovadent.
-
-Clínica: ${cita.clinica}
-Dr./Dra.: ${cita.doctor}
-Fecha: ${formatearFecha(cita.fecha)}
-Hora: ${cita.hora}
-
-Por favor, confirme su asistencia.
-
-Gracias.`;
-
-
-  const url =
-    "https://wa.me/" +
-    telefono +
-    "?text=" +
-    encodeURIComponent(mensaje);
-
-
-  window.open(url, "_blank");
-
-}
-
-
-/* =====================================================
-   MOSTRAR CITAS
-===================================================== */
-
-function mostrarCitas() {
-
-  const lista =
-    document.getElementById("listaCitas");
-
-  const busqueda =
-    document.getElementById("buscarCita")
-      .value
-      .toLowerCase();
-
-  const filtradas =
-    citas.filter(c =>
-
-      c.clinica.toLowerCase().includes(busqueda) ||
-
-      c.doctor.toLowerCase().includes(busqueda) ||
-
-      c.paciente.toLowerCase().includes(busqueda)
-
-    );
-
-
-  if (filtradas.length === 0) {
-
-    lista.innerHTML = `
-      <tr>
-        <td colspan="9" class="empty">
-          No hay citas registradas.
-        </td>
-      </tr>
-    `;
-
-    return;
-
-  }
-
-
-  lista.innerHTML =
-    filtradas
-      .sort((a,b) =>
-        (a.fecha + a.hora)
-          .localeCompare(b.fecha + b.hora)
-      )
-      .map(c => `
-
-        <tr>
-
-          <td>${c.clinica}</td>
-
-          <td>${c.doctor}</td>
-
-          <td>${c.paciente}</td>
-
-          <td>${formatearFecha(c.fecha)}</td>
-
-          <td>${c.hora}</td>
-
-          <td>${c.motivo || "-"}</td>
-
-          <td>
-
-            <span class="estado ${claseEstadoCita(c.estado)}">
-
-              ${c.estado}
-
-            </span>
-
-          </td>
-
-          <td>
-
-            <button
-              class="whatsapp"
-              onclick='enviarWhatsApp(${JSON.stringify(c)})'>
-
-              WhatsApp
-
-            </button>
-
-          </td>
-
-          <td>
-
-            <button
-              class="danger"
-              onclick="eliminarCita(${c.id})">
-
-              Eliminar
-
-            </button>
-
-          </td>
-
-        </tr>
-
-      `).join("");
-
-}
-
-
-/* =====================================================
-   FORMATEAR FECHA
-===================================================== */
-
-function formatearFecha(fecha) {
-
-  if (!fecha) return "-";
-
-  const partes = fecha.split("-");
-
-  if (partes.length !== 3)
-    return fecha;
-
-  return partes[2] + "/" +
-         partes[1] + "/" +
-         partes[0];
-
-}
-
-
-/* =====================================================
-   CITAS DE MAÑANA
-===================================================== */
-
-function obtenerFechaManana() {
-
-  const fecha = new Date();
-
-  fecha.setDate(
-    fecha.getDate() + 1
-  );
-
-  const año =
-    fecha.getFullYear();
-
-  const mes =
-    String(fecha.getMonth() + 1)
-      .padStart(2, "0");
-
-  const dia =
-    String(fecha.getDate())
-      .padStart(2, "0");
-
-  return año + "-" + mes + "-" + dia;
-
-}
-
-
-function mostrarAvisosCitas() {
-
-  const contenedor =
-    document.getElementById("avisosCitas");
-
-  const mañana =
-    obtenerFechaManana();
-
-  const citasManana =
-    citas.filter(c =>
-      c.fecha === mañana &&
-      c.estado !== "Cancelada"
-    );
-
-
-  if (citasManana.length === 0) {
-
-    contenedor.innerHTML = "";
-
-    return;
-
-  }
-
-
-  contenedor.innerHTML = `
-
-    <div class="aviso">
-
-      <strong>
-        📅 Tienes ${citasManana.length}
-        cita(s) para mañana.
-      </strong>
-
-      <br><br>
-
-      ${citasManana.map(c => `
-
-        <div style="margin-bottom:10px">
-
-          <strong>${c.hora}</strong>
-          -
-          ${c.paciente}
-
-          <br>
-
-          ${c.clinica}
-          -
-          ${c.doctor}
-
-          <br>
-
-          <button
-            class="whatsapp"
-            onclick='enviarWhatsApp(${JSON.stringify(c)})'>
-
-            Enviar confirmación por WhatsApp
-
-          </button>
-
-        </div>
-
-      `).join("")}
-
-    </div>
-
-  `;
-
-}
-
-
-/* =====================================================
-   DASHBOARD
-===================================================== */
-
-function actualizarDashboard() {
-
-  document.getElementById("totalClientes")
-    .textContent = clientes.length;
-
-
-  document.getElementById("totalRecibidos")
-    .textContent =
-      trabajos.filter(t =>
-        t.estado === "Recibido"
-      ).length;
-
-
-  document.getElementById("totalProceso")
-    .textContent =
-      trabajos.filter(t =>
-        t.estado === "En proceso"
-      ).length;
-
-
-  document.getElementById("totalTerminados")
-    .textContent =
-      trabajos.filter(t =>
-        t.estado === "Terminado"
-      ).length;
-
-
-  document.getElementById("totalCitas")
-    .textContent =
-      citas.filter(c =>
-        c.estado === "Pendiente" ||
-        c.estado === "Confirmada"
-      ).length;
-
-}
-
-
-/* =====================================================
-   ACTUALIZAR TODO
-===================================================== */
-
-function actualizarTodo() {
-
-  actualizarDashboard();
-
-  mostrarClientes();
-
-  mostrarTrabajos();
-
-  mostrarCitas();
-
-  mostrarAvisosCitas();
-
-}
-
-
-actualizarTodo();
-
-
-/* =====================================================
-   SERVICE WORKER
-===================================================== */
-
-if ("serviceWorker" in navigator) {
-
-  window.addEventListener("load", () => {
-
-    navigator.serviceWorker
-      .register("./sw.js")
-
-      .then(() => {
-
-        console.log(
-          "LAB innovadent: Service Worker registrado."
-        );
-
-      })
-
-      .catch(error => {
-
-        console.error(
-          "Error registrando Service Worker:",
-          error
-        );
-
+    document.querySelectorAll(".seccion")
+      .forEach(seccion => {
+        seccion.classList.remove("activa");
       });
 
-  });
+    document.getElementById(id)
+      .classList.add("activa");
 
-}
+    actualizarTodo();
+  }
+
+
+  // =========================
+  // CLIENTES
+  // =========================
+
+  function guardarCliente() {
+
+    const cliente = {
+      id: Date.now(),
+      clinica: document.getElementById("clienteClinica").value,
+      doctor: document.getElementById("clienteDoctor").value,
+      paciente: document.getElementById("clientePaciente").value,
+      telefono: document.getElementById("clienteTelefono").value,
+      correo: document.getElementById("clienteCorreo").value
+    };
+
+    if (!cliente.paciente) {
+      alert("Escribe el nombre del paciente.");
+      return;
+    }
+
+    clientes.push(cliente);
+
+    localStorage.setItem(
+      "lab_clientes",
+      JSON.stringify(clientes)
+    );
+
+    alert("Cliente guardado.");
+
+    document.getElementById("clienteClinica").value = "";
+    document.getElementById("clienteDoctor").value = "";
+    document.getElementById("clientePaciente").value = "";
+    document.getElementById("clienteTelefono").value = "";
+    document.getElementById("clienteCorreo").value = "";
+
+    actualizarTodo();
+  }
+
+
+  function mostrarClientes() {
+
+    const contenedor =
+      document.getElementById("listaClientes");
+
+    if (clientes.length === 0) {
+      contenedor.innerHTML =
+        '<div class="vacio">No hay clientes registrados.</div>';
+      return;
+    }
+
+    contenedor.innerHTML = clientes.map(cliente => `
+
+      <div class="item">
+
+        <h3>${escapar(cliente.paciente)}</h3>
+
+        <p><strong>Clínica:</strong>
+        ${escapar(cliente.clinica || "-")}</p>
+
+        <p><strong>Dr./Dra.:</strong>
+        ${escapar(cliente.doctor || "-")}</p>
+
+        <p><strong>Teléfono:</strong>
+        ${escapar(cliente.telefono || "-")}</p>
+
+        <p><strong>Correo:</strong>
+        ${escapar(cliente.correo || "-")}</p>
+
+        <button class="boton rojo"
+          onclick="eliminarCliente(${cliente.id})">
+          Eliminar
+        </button>
+
+      </div>
+
+    `).join("");
+  }
+
+
+  function eliminarCliente(id) {
+
+    if (!confirm("¿Eliminar este cliente?")) return;
+
+    clientes = clientes.filter(c => c.id !== id);
+
+    localStorage.setItem(
+      "lab_clientes",
+      JSON.stringify(clientes)
+    );
+
+    actualizarTodo();
+  }
+
+
+  // =========================
+  // TRABAJOS
+  // =========================
+
+  function guardarTrabajo() {
+
+    const trabajo = {
+
+      id: Date.now(),
+
+      clinica:
+        document.getElementById("trabajoClinica").value,
+
+      doctor:
+        document.getElementById("trabajoDoctor").value,
+
+      paciente:
+        document.getElementById("trabajoPaciente").value,
+
+      tipo:
+        document.getElementById("trabajoTipo").value,
+
+      fechaLlegada:
+        document.getElementById("fechaLlegada").value,
+
+      fechaEntrega:
+        document.getElementById("fechaEntrega").value,
+
+      estado:
+        document.getElementById("estadoTrabajo").value,
+
+      monto:
+        document.getElementById("trabajoMonto").value,
+
+      observaciones:
+        document.getElementById("trabajoObservaciones").value
+    };
+
+
+    if (!trabajo.paciente || !trabajo.tipo) {
+
+      alert(
+        "Escribe al menos el paciente y el tipo de trabajo."
+      );
+
+      return;
+    }
+
+
+    trabajos.push(trabajo);
+
+    localStorage.setItem(
+      "lab_trabajos",
+      JSON.stringify(trabajos)
+    );
+
+
+    alert("Trabajo guardado correctamente.");
+
+    document.getElementById("trabajoClinica").value = "";
+    document.getElementById("trabajoDoctor").value = "";
+    document.getElementById("trabajoPaciente").value = "";
+    document.getElementById("trabajoTipo").value = "";
+    document.getElementById("fechaLlegada").value = "";
+    document.getElementById("fechaEntrega").value = "";
+    document.getElementById("estadoTrabajo").value = "Recibido";
+    document.getElementById("trabajoMonto").value = "";
+    document.getElementById("trabajoObservaciones").value = "";
+
+    actualizarTodo();
+  }
+
+
+  function claseEstado(estado) {
+
+    if (estado === "Recibido") return "recibido";
+    if (estado === "En proceso") return "proceso";
+    if (estado === "Terminado") return "terminado";
+    if (estado === "Entregado") return "entregado";
+
+    return "recibido";
+  }
+
+
+  function mostrarTrabajos() {
+
+    const contenedor =
+      document.getElementById("listaTrabajos");
+
+
+    if (trabajos.length === 0) {
+
+      contenedor.innerHTML =
+        '<div class="vacio">No hay trabajos registrados.</div>';
+
+      return;
+    }
+
+
+    contenedor.innerHTML = trabajos.map(trabajo => `
+
+      <div class="item">
+
+        <h3>${escapar(trabajo.paciente)}</h3>
+
+        <p>
+          <strong>Trabajo:</strong>
+          ${escapar(trabajo.tipo)}
+        </p>
+
+        <p>
+          <strong>Clínica:</strong>
+          ${escapar(trabajo.clinica || "-")}
+        </p>
+
+        <p>
+          <strong>Dr./Dra.:</strong>
+          ${escapar(trabajo.doctor || "-")}
+        </p>
+
+        <p>
+          <strong>Llegó:</strong>
+          ${trabajo.fechaLlegada || "-"}
+        </p>
+
+        <p>
+          <strong>Entrega:</strong>
+          ${trabajo.fechaEntrega || "-"}
+        </p>
+
+        <span class="estado ${claseEstado(trabajo.estado)}">
+          ${trabajo.estado}
+        </span>
+
+        <p>
+          <strong>Monto:</strong>
+          $${trabajo.monto || "0.00"}
+        </p>
+
+        <p>
+          <strong>Observaciones:</strong>
+          ${escapar(trabajo.observaciones || "-")}
+        </p>
+
+        <button class="boton rojo"
+          onclick="eliminarTrabajo(${trabajo.id})">
+          Eliminar
+        </button>
+
+      </div>
+
+    `).join("");
+  }
+
+
+  function eliminarTrabajo(id) {
+
+    if (!confirm("¿Eliminar este trabajo?")) return;
+
+    trabajos =
+      trabajos.filter(t => t.id !== id);
+
+    localStorage.setItem(
+      "lab_trabajos",
+      JSON.stringify(trabajos)
+    );
+
+    actualizarTodo();
+  }
+
+
+  // =========================
+  // CITAS
+  // =========================
+
+  function guardarCita() {
+
+    const paciente =
+      document.getElementById("citaPaciente").value.trim();
+
+    const telefono =
+      document.getElementById("citaTelefono").value.trim();
+
+    const fecha =
+      document.getElementById("citaFecha").value;
+
+    const hora =
+      document.getElementById("citaHora").value;
+
+
+    if (!paciente || !telefono || !fecha) {
+
+      alert(
+        "Necesitas escribir el nombre, teléfono y fecha."
+      );
+
+      return;
+    }
+
+
+    const cita = {
+
+      id: Date.now(),
+
+      paciente: paciente,
+
+      telefono: telefono,
+
+      fecha: fecha,
+
+      hora: hora || ""
+
+    };
+
+
+    citas.push(cita);
+
+    localStorage.setItem(
+      "lab_citas",
+      JSON.stringify(citas)
+    );
+
+
+    alert("Cita guardada correctamente.");
+
+    document.getElementById("citaPaciente").value = "";
+    document.getElementById("citaTelefono").value = "";
+    document.getElementById("citaFecha").value = "";
+    document.getElementById("citaHora").value = "";
+
+
+    actualizarTodo();
+  }
+
+
+  function mostrarCitas() {
+
+    const contenedor =
+      document.getElementById("listaCitas");
+
+
+    if (citas.length === 0) {
+
+      contenedor.innerHTML =
+        '<div class="vacio">No hay citas registradas.</div>';
+
+      return;
+    }
+
+
+    const ordenadas = [...citas].sort(
+      (a, b) =>
+        new Date(a.fecha + "T" + (a.hora || "00:00")) -
+        new Date(b.fecha + "T" + (b.hora || "00:00"))
+    );
+
+
+    contenedor.innerHTML =
+      ordenadas.map(cita => `
+
+      <div class="item">
+
+        <h3>👤 ${escapar(cita.paciente)}</h3>
+
+        <p>
+          <strong>Teléfono:</strong>
+          ${escapar(cita.telefono)}
+        </p>
+
+        <p>
+          <strong>Fecha:</strong>
+          ${formatearFecha(cita.fecha)}
+        </p>
+
+        <p>
+          <strong>Hora:</strong>
+          ${cita.hora || "No indicada"}
+        </p>
+
+        <button
+          class="boton whatsapp"
+          onclick="abrirWhatsApp('${escaparJS(cita.telefono)}','${escaparJS(cita.paciente)}','${cita.fecha}','${cita.hora}')">
+
+          💬 Recordar por WhatsApp
+
+        </button>
+
+        <button
+          class="boton rojo"
+          onclick="eliminarCita(${cita.id})">
+
+          Eliminar
+
+        </button>
+
+      </div>
+
+    `).join("");
+  }
+
+
+  function eliminarCita(id) {
+
+    if (!confirm("¿Eliminar esta cita?")) return;
+
+    citas = citas.filter(c => c.id !== id);
+
+    localStorage.setItem(
+      "lab_citas",
+      JSON.stringify(citas)
+    );
+
+    actualizarTodo();
+  }
+
+
+  // =========================
+  // WHATSAPP
+  // =========================
+
+  function abrirWhatsApp(
+    telefono,
+    paciente,
+    fecha,
+    hora
+  ) {
+
+    let numero =
+      telefono.replace(/\D/g, "");
+
+
+    if (!numero) {
+
+      alert("El número de teléfono no es válido.");
+
+      return;
+    }
+
+
+    const fechaBonita =
+      formatearFecha(fecha);
+
+
+    let mensaje =
+      "Hola " + paciente + ".%0A%0A" +
+
+      "Le recordamos que tiene una cita " +
+      "en LAB innovadent con Javier Quiroz " +
+
+      "el día " + fechaBonita;
+
+
+    if (hora) {
+
+      mensaje +=
+        " a las " + hora;
+
+    }
+
+
+    mensaje +=
+      ".%0A%0APor favor confirme su asistencia.%0A%0A" +
+      "Gracias.";
+
+
+    const url =
+      "https://wa.me/" +
+      numero +
+      "?text=" +
+      mensaje;
+
+
+    window.open(url, "_blank");
+  }
+
+
+  // =========================
+  // AVISOS DE MAÑANA
+  // =========================
+
+  function obtenerFechaManana() {
+
+    const fecha =
+      new Date();
+
+    fecha.setDate(
+      fecha.getDate() + 1
+    );
+
+    const año =
+      fecha.getFullYear();
+
+    const mes =
+      String(fecha.getMonth() + 1).padStart(2, "0");
+
+    const dia =
+      String(fecha.getDate()).padStart(2, "0");
+
+
+    return año + "-" + mes + "-" + dia;
+  }
+
+
+  function mostrarAvisosCitas() {
+
+    const contenedor =
+      document.getElementById("avisosCitas");
+
+
+    const manana =
+      obtenerFechaManana();
+
+
+    const citasManana =
+      citas.filter(c => c.fecha === manana);
+
+
+    if (citasManana.length === 0) {
+
+      contenedor.innerHTML =
+        '<div class="vacio">No hay citas para mañana.</div>';
+
+      return;
+    }
+
+
+    contenedor.innerHTML =
+      citasManana.map(cita => `
+
+      <div class="aviso">
+
+        <strong>
+          📅 ${escapar(cita.paciente)}
+        </strong>
+
+        <br>
+
+        Mañana tiene cita
+        ${cita.hora
+          ? " a las " + cita.hora
+          : ""}.
+
+        <br>
+
+        <button
+          class="boton whatsapp"
+          onclick="abrirWhatsApp('${escaparJS(cita.telefono)}','${escaparJS(cita.paciente)}','${cita.fecha}','${cita.hora}')">
+
+          💬 Enviar recordatorio
+
+        </button>
+
+      </div>
+
+    `).join("");
+  }
+
+
+  // =========================
+  // DASHBOARD
+  // =========================
+
+  function actualizarDashboard() {
+
+    document.getElementById("totalClientes")
+      .textContent = clientes.length;
+
+    document.getElementById("totalTrabajos")
+      .textContent = trabajos.length;
+
+    document.getElementById("trabajosProceso")
+      .textContent =
+        trabajos.filter(
+          t => t.estado === "En proceso"
+        ).length;
+
+    document.getElementById("totalCitas")
+      .textContent = citas.length;
+
+    mostrarAvisosCitas();
+  }
+
+
+  function actualizarTodo() {
+
+    mostrarClientes();
+    mostrarTrabajos();
+    mostrarCitas();
+    actualizarDashboard();
+  }
+
+
+  // =========================
+  // FUNCIONES AUXILIARES
+  // =========================
+
+  function formatearFecha(fecha) {
+
+    if (!fecha) return "-";
+
+    const partes =
+      fecha.split("-");
+
+    if (partes.length !== 3)
+      return fecha;
+
+    return partes[2] + "/" +
+           partes[1] + "/" +
+           partes[0];
+  }
+
+
+  function escapar(texto) {
+
+    return String(texto || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+
+  function escaparJS(texto) {
+
+    return String(texto || "")
+      .replace(/\\/g, "\\\\")
+      .replace(/'/g, "\\'");
+  }
+
+
+  // =========================
+  // INICIO
+  // =========================
+
+  actualizarTodo();
+
+
+  // =========================
+  // SERVICE WORKER
+  // =========================
+
+  if ("serviceWorker" in navigator) {
+
+    window.addEventListener("load", () => {
+
+      navigator.serviceWorker
+        .register("./sw.js")
+
+        .then(() => {
+
+          console.log(
+            "LAB innovadent: Service Worker registrado."
+          );
+
+        })
+
+        .catch(error => {
+
+          console.error(
+            "Error registrando Service Worker:",
+            error
+          );
+
+        });
+
+    });
+
+  }
 
 </script>
 
