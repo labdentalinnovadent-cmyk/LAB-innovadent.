@@ -47,18 +47,18 @@
       box-shadow: 0 2px 5px rgba(0,0,0,.1);
     }
 
-    nav button {
+    nav button,
+    .boton {
       border: none;
-      background: #0f766e;
-      color: white;
       padding: 10px 14px;
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
     }
 
-    nav button:hover {
-      opacity: .9;
+    nav button {
+      background: #0f766e;
+      color: white;
     }
 
     main {
@@ -82,11 +82,16 @@
       margin: 20px 0;
     }
 
-    .tarjeta {
+    .tarjeta,
+    .formulario,
+    .item {
       background: white;
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 2px 7px rgba(0,0,0,.08);
+    }
+
+    .tarjeta {
       text-align: center;
     }
 
@@ -94,14 +99,6 @@
       margin: 0;
       font-size: 30px;
       color: #0f766e;
-    }
-
-    .formulario {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 7px rgba(0,0,0,.08);
-      margin-bottom: 20px;
     }
 
     .campo {
@@ -126,16 +123,6 @@
 
     textarea {
       min-height: 90px;
-      resize: vertical;
-    }
-
-    .boton {
-      border: none;
-      padding: 11px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-top: 5px;
     }
 
     .verde {
@@ -158,16 +145,14 @@
       color: white;
     }
 
+    .gris {
+      background: #475569;
+      color: white;
+    }
+
     .lista {
       display: grid;
       gap: 15px;
-    }
-
-    .item {
-      background: white;
-      padding: 18px;
-      border-radius: 12px;
-      box-shadow: 0 2px 7px rgba(0,0,0,.08);
     }
 
     .item h3 {
@@ -181,7 +166,6 @@
       border-radius: 20px;
       font-size: 13px;
       font-weight: bold;
-      margin: 5px 0;
     }
 
     .recibido {
@@ -216,12 +200,36 @@
       text-align: center;
       color: #64748b;
       padding: 20px;
+      background: white;
+      border-radius: 10px;
     }
 
     .dos-columnas {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 15px;
+    }
+
+    .respaldo {
+      background: #ecfeff;
+      border: 1px solid #99f6e4;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    .respaldo h3 {
+      margin-top: 0;
+    }
+
+    #mensaje {
+      display: none;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      background: #dcfce7;
+      color: #166534;
+      font-weight: bold;
     }
 
     @media (max-width: 600px) {
@@ -254,12 +262,15 @@
 
 <main>
 
+  <div id="mensaje"></div>
+
   <!-- INICIO -->
   <section id="inicio" class="seccion activa">
 
     <h2>Panel principal</h2>
 
     <div class="tarjetas">
+
       <div class="tarjeta">
         <h3 id="totalClientes">0</h3>
         <p>Clientes</p>
@@ -279,9 +290,49 @@
         <h3 id="totalCitas">0</h3>
         <p>Citas</p>
       </div>
+
+    </div>
+
+    <!-- RESPALDO -->
+    <div class="respaldo">
+
+      <h3>💾 Seguridad de tus datos</h3>
+
+      <p>
+        Los clientes, trabajos y citas se guardan
+        en la base de datos local de esta tableta.
+      </p>
+
+      <button
+        class="boton azul"
+        onclick="crearRespaldo()">
+        💾 Crear respaldo
+      </button>
+
+      <button
+        class="boton gris"
+        onclick="document.getElementById('archivoRespaldo').click()">
+        📥 Restaurar respaldo
+      </button>
+
+      <input
+        id="archivoRespaldo"
+        type="file"
+        accept=".json,application/json"
+        style="display:none"
+        onchange="restaurarRespaldo(event)">
+
+      <p>
+        <small>
+          Recomendación: crea un respaldo periódicamente
+          y guárdalo en un lugar seguro.
+        </small>
+      </p>
+
     </div>
 
     <h2>📅 Citas de mañana</h2>
+
     <div id="avisosCitas"></div>
 
   </section>
@@ -293,21 +344,22 @@
     <h2>Clientes</h2>
 
     <div class="formulario">
+
       <div class="dos-columnas">
 
         <div class="campo">
           <label>Clínica</label>
-          <input id="clienteClinica" type="text">
+          <input id="clienteClinica">
         </div>
 
         <div class="campo">
           <label>Dr. / Dra.</label>
-          <input id="clienteDoctor" type="text">
+          <input id="clienteDoctor">
         </div>
 
         <div class="campo">
           <label>Paciente</label>
-          <input id="clientePaciente" type="text">
+          <input id="clientePaciente">
         </div>
 
         <div class="campo">
@@ -322,9 +374,12 @@
 
       </div>
 
-      <button class="boton verde" onclick="guardarCliente()">
+      <button
+        class="boton verde"
+        onclick="guardarCliente()">
         Guardar cliente
       </button>
+
     </div>
 
     <div id="listaClientes" class="lista"></div>
@@ -353,22 +408,22 @@
 
         <div class="campo">
           <label>Clínica</label>
-          <input id="trabajoClinica" type="text">
+          <input id="trabajoClinica">
         </div>
 
         <div class="campo">
           <label>Dr. / Dra.</label>
-          <input id="trabajoDoctor" type="text">
+          <input id="trabajoDoctor">
         </div>
 
         <div class="campo">
           <label>Paciente</label>
-          <input id="trabajoPaciente" type="text">
+          <input id="trabajoPaciente">
         </div>
 
         <div class="campo">
           <label>Tipo de trabajo</label>
-          <input id="trabajoTipo" type="text"
+          <input id="trabajoTipo"
                  placeholder="Ejemplo: prótesis, corona, reparación">
         </div>
 
@@ -385,10 +440,10 @@
         <div class="campo">
           <label>Estado</label>
           <select id="estadoTrabajo">
-            <option value="Recibido">Recibido</option>
-            <option value="En proceso">En proceso</option>
-            <option value="Terminado">Terminado</option>
-            <option value="Entregado">Entregado</option>
+            <option>Recibido</option>
+            <option>En proceso</option>
+            <option>Terminado</option>
+            <option>Entregado</option>
           </select>
         </div>
 
@@ -404,7 +459,9 @@
         <textarea id="trabajoObservaciones"></textarea>
       </div>
 
-      <button class="boton verde" onclick="guardarTrabajo()">
+      <button
+        class="boton verde"
+        onclick="guardarTrabajo()">
         Guardar trabajo
       </button>
 
@@ -437,13 +494,14 @@
 
       <div class="campo">
         <label>Nombre del paciente</label>
-        <input id="citaPaciente" type="text"
+        <input id="citaPaciente"
                placeholder="Nombre completo">
       </div>
 
       <div class="campo">
         <label>Número de teléfono</label>
-        <input id="citaTelefono" type="tel"
+        <input id="citaTelefono"
+               type="tel"
                placeholder="Ejemplo: 50761234567">
       </div>
 
@@ -457,7 +515,9 @@
         <input id="citaHora" type="time">
       </div>
 
-      <button class="boton verde" onclick="guardarCita()">
+      <button
+        class="boton verde"
+        onclick="guardarCita()">
         Guardar cita
       </button>
 
@@ -470,110 +530,434 @@
 
 <script>
 
-  // =========================
-  // DATOS
-  // =========================
+/* =====================================================
+   BASE DE DATOS LOCAL
+   ===================================================== */
 
-  let clientes = JSON.parse(
-    localStorage.getItem("lab_clientes") || "[]"
-  );
+const NOMBRE_BD = "LAB_innovadent_BD";
+const VERSION_BD = 1;
 
-  let trabajos = JSON.parse(
-    localStorage.getItem("lab_trabajos") || "[]"
-  );
-
-  let citas = JSON.parse(
-    localStorage.getItem("lab_citas") || "[]"
-  );
+let db;
 
 
-  // =========================
-  // NAVEGACIÓN
-  // =========================
+/* Abrir base de datos */
 
-  function mostrarSeccion(id) {
+function abrirBaseDatos() {
 
-    document.querySelectorAll(".seccion")
-      .forEach(seccion => {
-        seccion.classList.remove("activa");
-      });
+  return new Promise((resolve, reject) => {
 
-    document.getElementById(id)
-      .classList.add("activa");
+    const solicitud =
+      indexedDB.open(NOMBRE_BD, VERSION_BD);
 
-    actualizarTodo();
-  }
+    solicitud.onupgradeneeded = function(event) {
 
+      const base = event.target.result;
 
-  // =========================
-  // CLIENTES
-  // =========================
+      if (!base.objectStoreNames.contains("clientes")) {
 
-  function guardarCliente() {
+        base.createObjectStore(
+          "clientes",
+          { keyPath: "id" }
+        );
 
-    const cliente = {
-      id: Date.now(),
-      clinica: document.getElementById("clienteClinica").value,
-      doctor: document.getElementById("clienteDoctor").value,
-      paciente: document.getElementById("clientePaciente").value,
-      telefono: document.getElementById("clienteTelefono").value,
-      correo: document.getElementById("clienteCorreo").value
+      }
+
+      if (!base.objectStoreNames.contains("trabajos")) {
+
+        base.createObjectStore(
+          "trabajos",
+          { keyPath: "id" }
+        );
+
+      }
+
+      if (!base.objectStoreNames.contains("citas")) {
+
+        base.createObjectStore(
+          "citas",
+          { keyPath: "id" }
+        );
+
+      }
+
     };
 
-    if (!cliente.paciente) {
-      alert("Escribe el nombre del paciente.");
-      return;
-    }
 
-    clientes.push(cliente);
+    solicitud.onsuccess = function(event) {
 
-    localStorage.setItem(
-      "lab_clientes",
-      JSON.stringify(clientes)
-    );
+      db = event.target.result;
 
-    alert("Cliente guardado.");
+      resolve(db);
 
-    document.getElementById("clienteClinica").value = "";
-    document.getElementById("clienteDoctor").value = "";
-    document.getElementById("clientePaciente").value = "";
-    document.getElementById("clienteTelefono").value = "";
-    document.getElementById("clienteCorreo").value = "";
+    };
+
+
+    solicitud.onerror = function() {
+
+      reject(
+        solicitud.error
+      );
+
+    };
+
+  });
+
+}
+
+
+/* =====================================================
+   FUNCIONES DE BASE DE DATOS
+   ===================================================== */
+
+function agregarRegistro(tienda, dato) {
+
+  return new Promise((resolve, reject) => {
+
+    const transaccion =
+      db.transaction(tienda, "readwrite");
+
+    const almacen =
+      transaccion.objectStore(tienda);
+
+    const solicitud =
+      almacen.put(dato);
+
+    solicitud.onsuccess = () => resolve();
+
+    solicitud.onerror = () =>
+      reject(solicitud.error);
+
+  });
+
+}
+
+
+function obtenerTodos(tienda) {
+
+  return new Promise((resolve, reject) => {
+
+    const transaccion =
+      db.transaction(tienda, "readonly");
+
+    const almacen =
+      transaccion.objectStore(tienda);
+
+    const solicitud =
+      almacen.getAll();
+
+    solicitud.onsuccess = () =>
+      resolve(solicitud.result || []);
+
+    solicitud.onerror = () =>
+      reject(solicitud.error);
+
+  });
+
+}
+
+
+function eliminarRegistro(tienda, id) {
+
+  return new Promise((resolve, reject) => {
+
+    const transaccion =
+      db.transaction(tienda, "readwrite");
+
+    const almacen =
+      transaccion.objectStore(tienda);
+
+    const solicitud =
+      almacen.delete(id);
+
+    solicitud.onsuccess = () => resolve();
+
+    solicitud.onerror = () =>
+      reject(solicitud.error);
+
+  });
+
+}
+
+
+/* =====================================================
+   VARIABLES
+   ===================================================== */
+
+let clientes = [];
+let trabajos = [];
+let citas = [];
+
+
+/* =====================================================
+   INICIO
+   ===================================================== */
+
+async function iniciarAplicacion() {
+
+  try {
+
+    await abrirBaseDatos();
+
+    /*
+      Intentamos importar los datos antiguos
+      que estaban guardados con localStorage.
+    */
+
+    await migrarDatosAntiguos();
+
+    await cargarDatos();
 
     actualizarTodo();
+
+  } catch (error) {
+
+    console.error(error);
+
+    mostrarMensaje(
+      "No se pudo abrir la base de datos local."
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   MIGRACIÓN DE DATOS ANTIGUOS
+   ===================================================== */
+
+async function migrarDatosAntiguos() {
+
+  const yaMigrado =
+    localStorage.getItem(
+      "LAB_innovadent_migrado"
+    );
+
+  if (yaMigrado === "si") {
+    return;
   }
 
 
-  function mostrarClientes() {
+  try {
 
-    const contenedor =
-      document.getElementById("listaClientes");
+    const clientesAntiguos =
+      JSON.parse(
+        localStorage.getItem("lab_clientes") || "[]"
+      );
 
-    if (clientes.length === 0) {
-      contenedor.innerHTML =
-        '<div class="vacio">No hay clientes registrados.</div>';
-      return;
+    const trabajosAntiguos =
+      JSON.parse(
+        localStorage.getItem("lab_trabajos") || "[]"
+      );
+
+    const citasAntiguas =
+      JSON.parse(
+        localStorage.getItem("lab_citas") || "[]"
+      );
+
+
+    for (const dato of clientesAntiguos) {
+
+      await agregarRegistro(
+        "clientes",
+        dato
+      );
+
     }
 
-    contenedor.innerHTML = clientes.map(cliente => `
+
+    for (const dato of trabajosAntiguos) {
+
+      await agregarRegistro(
+        "trabajos",
+        dato
+      );
+
+    }
+
+
+    for (const dato of citasAntiguas) {
+
+      await agregarRegistro(
+        "citas",
+        dato
+      );
+
+    }
+
+
+    localStorage.setItem(
+      "LAB_innovadent_migrado",
+      "si"
+    );
+
+
+  } catch (error) {
+
+    console.log(
+      "No había datos antiguos para migrar."
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   CARGAR DATOS
+   ===================================================== */
+
+async function cargarDatos() {
+
+  clientes =
+    await obtenerTodos("clientes");
+
+  trabajos =
+    await obtenerTodos("trabajos");
+
+  citas =
+    await obtenerTodos("citas");
+
+}
+
+
+/* =====================================================
+   NAVEGACIÓN
+   ===================================================== */
+
+function mostrarSeccion(id) {
+
+  document
+    .querySelectorAll(".seccion")
+    .forEach(seccion => {
+
+      seccion.classList.remove("activa");
+
+    });
+
+
+  document
+    .getElementById(id)
+    .classList.add("activa");
+
+
+  actualizarTodo();
+
+}
+
+
+/* =====================================================
+   CLIENTES
+   ===================================================== */
+
+async function guardarCliente() {
+
+  const cliente = {
+
+    id: Date.now(),
+
+    clinica:
+      document.getElementById("clienteClinica").value,
+
+    doctor:
+      document.getElementById("clienteDoctor").value,
+
+    paciente:
+      document.getElementById("clientePaciente").value,
+
+    telefono:
+      document.getElementById("clienteTelefono").value,
+
+    correo:
+      document.getElementById("clienteCorreo").value
+
+  };
+
+
+  if (!cliente.paciente.trim()) {
+
+    alert("Escribe el nombre del paciente.");
+
+    return;
+
+  }
+
+
+  await agregarRegistro(
+    "clientes",
+    cliente
+  );
+
+
+  await cargarDatos();
+
+  limpiarCliente();
+
+  mostrarMensaje(
+    "Cliente guardado correctamente."
+  );
+
+  actualizarTodo();
+
+}
+
+
+function limpiarCliente() {
+
+  document.getElementById("clienteClinica").value = "";
+  document.getElementById("clienteDoctor").value = "";
+  document.getElementById("clientePaciente").value = "";
+  document.getElementById("clienteTelefono").value = "";
+  document.getElementById("clienteCorreo").value = "";
+
+}
+
+
+function mostrarClientes() {
+
+  const contenedor =
+    document.getElementById("listaClientes");
+
+
+  if (clientes.length === 0) {
+
+    contenedor.innerHTML =
+      '<div class="vacio">No hay clientes registrados.</div>';
+
+    return;
+
+  }
+
+
+  contenedor.innerHTML =
+    clientes.map(cliente => `
 
       <div class="item">
 
         <h3>${escapar(cliente.paciente)}</h3>
 
-        <p><strong>Clínica:</strong>
-        ${escapar(cliente.clinica || "-")}</p>
+        <p>
+          <strong>Clínica:</strong>
+          ${escapar(cliente.clinica || "-")}
+        </p>
 
-        <p><strong>Dr./Dra.:</strong>
-        ${escapar(cliente.doctor || "-")}</p>
+        <p>
+          <strong>Dr./Dra.:</strong>
+          ${escapar(cliente.doctor || "-")}
+        </p>
 
-        <p><strong>Teléfono:</strong>
-        ${escapar(cliente.telefono || "-")}</p>
+        <p>
+          <strong>Teléfono:</strong>
+          ${escapar(cliente.telefono || "-")}
+        </p>
 
-        <p><strong>Correo:</strong>
-        ${escapar(cliente.correo || "-")}</p>
+        <p>
+          <strong>Correo:</strong>
+          ${escapar(cliente.correo || "-")}
+        </p>
 
-        <button class="boton rojo"
+        <button
+          class="boton rojo"
           onclick="eliminarCliente(${cliente.id})">
           Eliminar
         </button>
@@ -581,124 +965,151 @@
       </div>
 
     `).join("");
-  }
+
+}
 
 
-  function eliminarCliente(id) {
+async function eliminarCliente(id) {
 
-    if (!confirm("¿Eliminar este cliente?")) return;
+  if (!confirm("¿Eliminar este cliente?")) return;
 
-    clientes = clientes.filter(c => c.id !== id);
+  await eliminarRegistro(
+    "clientes",
+    id
+  );
 
-    localStorage.setItem(
-      "lab_clientes",
-      JSON.stringify(clientes)
+  await cargarDatos();
+
+  actualizarTodo();
+
+}
+
+
+/* =====================================================
+   TRABAJOS
+   ===================================================== */
+
+async function guardarTrabajo() {
+
+  const trabajo = {
+
+    id: Date.now(),
+
+    clinica:
+      document.getElementById("trabajoClinica").value,
+
+    doctor:
+      document.getElementById("trabajoDoctor").value,
+
+    paciente:
+      document.getElementById("trabajoPaciente").value,
+
+    tipo:
+      document.getElementById("trabajoTipo").value,
+
+    fechaLlegada:
+      document.getElementById("fechaLlegada").value,
+
+    fechaEntrega:
+      document.getElementById("fechaEntrega").value,
+
+    estado:
+      document.getElementById("estadoTrabajo").value,
+
+    monto:
+      document.getElementById("trabajoMonto").value,
+
+    observaciones:
+      document.getElementById("trabajoObservaciones").value
+
+  };
+
+
+  if (
+    !trabajo.paciente.trim() ||
+    !trabajo.tipo.trim()
+  ) {
+
+    alert(
+      "Escribe al menos el paciente y el tipo de trabajo."
     );
 
-    actualizarTodo();
+    return;
+
   }
 
 
-  // =========================
-  // TRABAJOS
-  // =========================
-
-  function guardarTrabajo() {
-
-    const trabajo = {
-
-      id: Date.now(),
-
-      clinica:
-        document.getElementById("trabajoClinica").value,
-
-      doctor:
-        document.getElementById("trabajoDoctor").value,
-
-      paciente:
-        document.getElementById("trabajoPaciente").value,
-
-      tipo:
-        document.getElementById("trabajoTipo").value,
-
-      fechaLlegada:
-        document.getElementById("fechaLlegada").value,
-
-      fechaEntrega:
-        document.getElementById("fechaEntrega").value,
-
-      estado:
-        document.getElementById("estadoTrabajo").value,
-
-      monto:
-        document.getElementById("trabajoMonto").value,
-
-      observaciones:
-        document.getElementById("trabajoObservaciones").value
-    };
+  await agregarRegistro(
+    "trabajos",
+    trabajo
+  );
 
 
-    if (!trabajo.paciente || !trabajo.tipo) {
+  await cargarDatos();
 
-      alert(
-        "Escribe al menos el paciente y el tipo de trabajo."
-      );
+  limpiarTrabajo();
 
-      return;
-    }
+  mostrarMensaje(
+    "Trabajo guardado correctamente."
+  );
 
+  actualizarTodo();
 
-    trabajos.push(trabajo);
-
-    localStorage.setItem(
-      "lab_trabajos",
-      JSON.stringify(trabajos)
-    );
+}
 
 
-    alert("Trabajo guardado correctamente.");
+function limpiarTrabajo() {
 
-    document.getElementById("trabajoClinica").value = "";
-    document.getElementById("trabajoDoctor").value = "";
-    document.getElementById("trabajoPaciente").value = "";
-    document.getElementById("trabajoTipo").value = "";
-    document.getElementById("fechaLlegada").value = "";
-    document.getElementById("fechaEntrega").value = "";
-    document.getElementById("estadoTrabajo").value = "Recibido";
-    document.getElementById("trabajoMonto").value = "";
-    document.getElementById("trabajoObservaciones").value = "";
+  document.getElementById("trabajoClinica").value = "";
+  document.getElementById("trabajoDoctor").value = "";
+  document.getElementById("trabajoPaciente").value = "";
+  document.getElementById("trabajoTipo").value = "";
+  document.getElementById("fechaLlegada").value = "";
+  document.getElementById("fechaEntrega").value = "";
+  document.getElementById("estadoTrabajo").value = "Recibido";
+  document.getElementById("trabajoMonto").value = "";
+  document.getElementById("trabajoObservaciones").value = "";
 
-    actualizarTodo();
-  }
+}
 
 
-  function claseEstado(estado) {
+function claseEstado(estado) {
 
-    if (estado === "Recibido") return "recibido";
-    if (estado === "En proceso") return "proceso";
-    if (estado === "Terminado") return "terminado";
-    if (estado === "Entregado") return "entregado";
-
+  if (estado === "Recibido")
     return "recibido";
+
+  if (estado === "En proceso")
+    return "proceso";
+
+  if (estado === "Terminado")
+    return "terminado";
+
+  if (estado === "Entregado")
+    return "entregado";
+
+  return "recibido";
+
+}
+
+
+function mostrarTrabajos() {
+
+  const contenedor =
+    document.getElementById("listaTrabajos");
+
+
+  if (trabajos.length === 0) {
+
+    contenedor.innerHTML =
+      '<div class="vacio">No hay trabajos registrados.</div>';
+
+    return;
+
   }
 
 
-  function mostrarTrabajos() {
-
-    const contenedor =
-      document.getElementById("listaTrabajos");
-
-
-    if (trabajos.length === 0) {
-
-      contenedor.innerHTML =
-        '<div class="vacio">No hay trabajos registrados.</div>';
-
-      return;
-    }
-
-
-    contenedor.innerHTML = trabajos.map(trabajo => `
+  contenedor.innerHTML =
+    trabajos.map(trabajo => `
 
       <div class="item">
 
@@ -743,7 +1154,8 @@
           ${escapar(trabajo.observaciones || "-")}
         </p>
 
-        <button class="boton rojo"
+        <button
+          class="boton rojo"
           onclick="eliminarTrabajo(${trabajo.id})">
           Eliminar
         </button>
@@ -751,117 +1163,146 @@
       </div>
 
     `).join("");
+
+}
+
+
+async function eliminarTrabajo(id) {
+
+  if (!confirm("¿Eliminar este trabajo?")) return;
+
+  await eliminarRegistro(
+    "trabajos",
+    id
+  );
+
+  await cargarDatos();
+
+  actualizarTodo();
+
+}
+
+
+/* =====================================================
+   CITAS
+   ===================================================== */
+
+async function guardarCita() {
+
+  const paciente =
+    document
+      .getElementById("citaPaciente")
+      .value
+      .trim();
+
+
+  const telefono =
+    document
+      .getElementById("citaTelefono")
+      .value
+      .trim();
+
+
+  const fecha =
+    document.getElementById("citaFecha").value;
+
+
+  const hora =
+    document.getElementById("citaHora").value;
+
+
+  if (!paciente || !telefono || !fecha) {
+
+    alert(
+      "Necesitas escribir nombre, teléfono y fecha."
+    );
+
+    return;
+
   }
 
 
-  function eliminarTrabajo(id) {
+  const cita = {
 
-    if (!confirm("¿Eliminar este trabajo?")) return;
+    id: Date.now(),
 
-    trabajos =
-      trabajos.filter(t => t.id !== id);
+    paciente: paciente,
 
-    localStorage.setItem(
-      "lab_trabajos",
-      JSON.stringify(trabajos)
-    );
+    telefono: telefono,
 
-    actualizarTodo();
-  }
+    fecha: fecha,
 
+    hora: hora || ""
 
-  // =========================
-  // CITAS
-  // =========================
-
-  function guardarCita() {
-
-    const paciente =
-      document.getElementById("citaPaciente").value.trim();
-
-    const telefono =
-      document.getElementById("citaTelefono").value.trim();
-
-    const fecha =
-      document.getElementById("citaFecha").value;
-
-    const hora =
-      document.getElementById("citaHora").value;
+  };
 
 
-    if (!paciente || !telefono || !fecha) {
-
-      alert(
-        "Necesitas escribir el nombre, teléfono y fecha."
-      );
-
-      return;
-    }
+  await agregarRegistro(
+    "citas",
+    cita
+  );
 
 
-    const cita = {
+  await cargarDatos();
 
-      id: Date.now(),
+  limpiarCita();
 
-      paciente: paciente,
+  mostrarMensaje(
+    "Cita guardada correctamente."
+  );
 
-      telefono: telefono,
+  actualizarTodo();
 
-      fecha: fecha,
-
-      hora: hora || ""
-
-    };
+}
 
 
-    citas.push(cita);
+function limpiarCita() {
 
-    localStorage.setItem(
-      "lab_citas",
-      JSON.stringify(citas)
-    );
+  document.getElementById("citaPaciente").value = "";
+  document.getElementById("citaTelefono").value = "";
+  document.getElementById("citaFecha").value = "";
+  document.getElementById("citaHora").value = "";
 
-
-    alert("Cita guardada correctamente.");
-
-    document.getElementById("citaPaciente").value = "";
-    document.getElementById("citaTelefono").value = "";
-    document.getElementById("citaFecha").value = "";
-    document.getElementById("citaHora").value = "";
+}
 
 
-    actualizarTodo();
-  }
+function mostrarCitas() {
+
+  const contenedor =
+    document.getElementById("listaCitas");
 
 
-  function mostrarCitas() {
-
-    const contenedor =
-      document.getElementById("listaCitas");
-
-
-    if (citas.length === 0) {
-
-      contenedor.innerHTML =
-        '<div class="vacio">No hay citas registradas.</div>';
-
-      return;
-    }
-
-
-    const ordenadas = [...citas].sort(
-      (a, b) =>
-        new Date(a.fecha + "T" + (a.hora || "00:00")) -
-        new Date(b.fecha + "T" + (b.hora || "00:00"))
-    );
-
+  if (citas.length === 0) {
 
     contenedor.innerHTML =
-      ordenadas.map(cita => `
+      '<div class="vacio">No hay citas registradas.</div>';
+
+    return;
+
+  }
+
+
+  const ordenadas =
+    [...citas].sort((a, b) => {
+
+      return new Date(
+        a.fecha + "T" + (a.hora || "00:00")
+      ) -
+      new Date(
+        b.fecha + "T" + (b.hora || "00:00")
+      );
+
+    });
+
+
+  contenedor.innerHTML =
+    ordenadas.map(cita => `
 
       <div class="item">
 
-        <h3>👤 ${escapar(cita.paciente)}</h3>
+        <h3>
+          👤 ${escapar(cita.paciente)}
+        </h3>
 
         <p>
           <strong>Teléfono:</strong>
@@ -880,7 +1321,12 @@
 
         <button
           class="boton whatsapp"
-          onclick="abrirWhatsApp('${escaparJS(cita.telefono)}','${escaparJS(cita.paciente)}','${cita.fecha}','${cita.hora}')">
+          onclick="abrirWhatsApp(
+            '${escaparJS(cita.telefono)}',
+            '${escaparJS(cita.paciente)}',
+            '${cita.fecha}',
+            '${cita.hora}'
+          )">
 
           💬 Recordar por WhatsApp
 
@@ -897,136 +1343,156 @@
       </div>
 
     `).join("");
+
+}
+
+
+async function eliminarCita(id) {
+
+  if (!confirm("¿Eliminar esta cita?")) return;
+
+  await eliminarRegistro(
+    "citas",
+    id
+  );
+
+  await cargarDatos();
+
+  actualizarTodo();
+
+}
+
+
+/* =====================================================
+   WHATSAPP
+   ===================================================== */
+
+function abrirWhatsApp(
+  telefono,
+  paciente,
+  fecha,
+  hora
+) {
+
+  const numero =
+    telefono.replace(/\D/g, "");
+
+
+  if (!numero) {
+
+    alert("El número de teléfono no es válido.");
+
+    return;
+
   }
 
 
-  function eliminarCita(id) {
+  let mensaje =
+    "Hola " +
+    paciente +
+    ".%0A%0A" +
 
-    if (!confirm("¿Eliminar esta cita?")) return;
+    "Le recordamos que tiene una cita " +
+    "en LAB innovadent con Javier Quiroz " +
 
-    citas = citas.filter(c => c.id !== id);
-
-    localStorage.setItem(
-      "lab_citas",
-      JSON.stringify(citas)
-    );
-
-    actualizarTodo();
-  }
+    "el día " +
+    formatearFecha(fecha);
 
 
-  // =========================
-  // WHATSAPP
-  // =========================
-
-  function abrirWhatsApp(
-    telefono,
-    paciente,
-    fecha,
-    hora
-  ) {
-
-    let numero =
-      telefono.replace(/\D/g, "");
-
-
-    if (!numero) {
-
-      alert("El número de teléfono no es válido.");
-
-      return;
-    }
-
-
-    const fechaBonita =
-      formatearFecha(fecha);
-
-
-    let mensaje =
-      "Hola " + paciente + ".%0A%0A" +
-
-      "Le recordamos que tiene una cita " +
-      "en LAB innovadent con Javier Quiroz " +
-
-      "el día " + fechaBonita;
-
-
-    if (hora) {
-
-      mensaje +=
-        " a las " + hora;
-
-    }
-
+  if (hora) {
 
     mensaje +=
-      ".%0A%0APor favor confirme su asistencia.%0A%0A" +
-      "Gracias.";
+      " a las " + hora;
 
-
-    const url =
-      "https://wa.me/" +
-      numero +
-      "?text=" +
-      mensaje;
-
-
-    window.open(url, "_blank");
   }
 
 
-  // =========================
-  // AVISOS DE MAÑANA
-  // =========================
+  mensaje +=
+    ".%0A%0A" +
+    "Por favor confirme su asistencia.%0A%0A" +
+    "Gracias.";
 
-  function obtenerFechaManana() {
 
-    const fecha =
-      new Date();
+  const url =
+    "https://wa.me/" +
+    numero +
+    "?text=" +
+    mensaje;
 
-    fecha.setDate(
-      fecha.getDate() + 1
+
+  window.open(
+    url,
+    "_blank"
+  );
+
+}
+
+
+/* =====================================================
+   AVISOS DE MAÑANA
+   ===================================================== */
+
+function obtenerFechaManana() {
+
+  const fecha =
+    new Date();
+
+  fecha.setDate(
+    fecha.getDate() + 1
+  );
+
+
+  const año =
+    fecha.getFullYear();
+
+  const mes =
+    String(
+      fecha.getMonth() + 1
+    ).padStart(2, "0");
+
+  const dia =
+    String(
+      fecha.getDate()
+    ).padStart(2, "0");
+
+
+  return año +
+    "-" +
+    mes +
+    "-" +
+    dia;
+
+}
+
+
+function mostrarAvisosCitas() {
+
+  const contenedor =
+    document.getElementById("avisosCitas");
+
+
+  const manana =
+    obtenerFechaManana();
+
+
+  const citasManana =
+    citas.filter(
+      cita => cita.fecha === manana
     );
 
-    const año =
-      fecha.getFullYear();
 
-    const mes =
-      String(fecha.getMonth() + 1).padStart(2, "0");
+  if (citasManana.length === 0) {
 
-    const dia =
-      String(fecha.getDate()).padStart(2, "0");
+    contenedor.innerHTML =
+      '<div class="vacio">No hay citas para mañana.</div>';
 
+    return;
 
-    return año + "-" + mes + "-" + dia;
   }
 
 
-  function mostrarAvisosCitas() {
-
-    const contenedor =
-      document.getElementById("avisosCitas");
-
-
-    const manana =
-      obtenerFechaManana();
-
-
-    const citasManana =
-      citas.filter(c => c.fecha === manana);
-
-
-    if (citasManana.length === 0) {
-
-      contenedor.innerHTML =
-        '<div class="vacio">No hay citas para mañana.</div>';
-
-      return;
-    }
-
-
-    contenedor.innerHTML =
-      citasManana.map(cita => `
+  contenedor.innerHTML =
+    citasManana.map(cita => `
 
       <div class="aviso">
 
@@ -1045,7 +1511,12 @@
 
         <button
           class="boton whatsapp"
-          onclick="abrirWhatsApp('${escaparJS(cita.telefono)}','${escaparJS(cita.paciente)}','${cita.fecha}','${cita.hora}')">
+          onclick="abrirWhatsApp(
+            '${escaparJS(cita.telefono)}',
+            '${escaparJS(cita.paciente)}',
+            '${cita.fecha}',
+            '${cita.hora}'
+          )">
 
           💬 Enviar recordatorio
 
@@ -1054,100 +1525,424 @@
       </div>
 
     `).join("");
+
+}
+
+
+/* =====================================================
+   RESPALDO
+   ===================================================== */
+
+async function crearRespaldo() {
+
+  try {
+
+    await cargarDatos();
+
+
+    const respaldo = {
+
+      aplicacion:
+        "LAB innovadent",
+
+      version:
+        1,
+
+      fecha:
+        new Date().toISOString(),
+
+      clientes:
+        clientes,
+
+      trabajos:
+        trabajos,
+
+      citas:
+        citas
+
+    };
+
+
+    const contenido =
+      JSON.stringify(
+        respaldo,
+        null,
+        2
+      );
+
+
+    const archivo =
+      new Blob(
+        [contenido],
+        { type: "application/json" }
+      );
+
+
+    const url =
+      URL.createObjectURL(archivo);
+
+
+    const enlace =
+      document.createElement("a");
+
+
+    const fecha =
+      new Date()
+        .toISOString()
+        .slice(0, 10);
+
+
+    enlace.href = url;
+
+    enlace.download =
+      "LAB-innovadent-respaldo-" +
+      fecha +
+      ".json";
+
+
+    document.body.appendChild(enlace);
+
+    enlace.click();
+
+    document.body.removeChild(enlace);
+
+    URL.revokeObjectURL(url);
+
+
+    mostrarMensaje(
+      "Respaldo creado correctamente."
+    );
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "No se pudo crear el respaldo."
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   RESTAURAR RESPALDO
+   ===================================================== */
+
+async function restaurarRespaldo(event) {
+
+  const archivo =
+    event.target.files[0];
+
+
+  if (!archivo) return;
+
+
+  try {
+
+    const texto =
+      await archivo.text();
+
+
+    const respaldo =
+      JSON.parse(texto);
+
+
+    if (
+      respaldo.aplicacion !==
+      "LAB innovadent"
+    ) {
+
+      alert(
+        "Este archivo no pertenece a LAB innovadent."
+      );
+
+      return;
+
+    }
+
+
+    const confirmar =
+      confirm(
+        "ATENCIÓN:\n\n" +
+        "Al restaurar este respaldo, " +
+        "los datos actuales serán reemplazados " +
+        "por los datos del archivo.\n\n" +
+        "¿Deseas continuar?"
+      );
+
+
+    if (!confirmar) {
+
+      event.target.value = "";
+
+      return;
+
+    }
+
+
+    await borrarTodosLosDatos();
+
+
+    for (
+      const cliente of
+      (respaldo.clientes || [])
+    ) {
+
+      await agregarRegistro(
+        "clientes",
+        cliente
+      );
+
+    }
+
+
+    for (
+      const trabajo of
+      (respaldo.trabajos || [])
+    ) {
+
+      await agregarRegistro(
+        "trabajos",
+        trabajo
+      );
+
+    }
+
+
+    for (
+      const cita of
+      (respaldo.citas || [])
+    ) {
+
+      await agregarRegistro(
+        "citas",
+        cita
+      );
+
+    }
+
+
+    await cargarDatos();
+
+    actualizarTodo();
+
+
+    mostrarMensaje(
+      "Respaldo restaurado correctamente."
+    );
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "No se pudo restaurar el respaldo. " +
+      "Comprueba que sea un archivo de LAB innovadent."
+    );
+
   }
 
 
-  // =========================
-  // DASHBOARD
-  // =========================
+  event.target.value = "";
 
-  function actualizarDashboard() {
+}
 
-    document.getElementById("totalClientes")
-      .textContent = clientes.length;
 
-    document.getElementById("totalTrabajos")
-      .textContent = trabajos.length;
+/* =====================================================
+   BORRAR DATOS PARA RESTAURACIÓN
+   ===================================================== */
 
-    document.getElementById("trabajosProceso")
-      .textContent =
-        trabajos.filter(
-          t => t.estado === "En proceso"
-        ).length;
+async function borrarTodosLosDatos() {
 
-    document.getElementById("totalCitas")
-      .textContent = citas.length;
+  const tiendas = [
+    "clientes",
+    "trabajos",
+    "citas"
+  ];
 
-    mostrarAvisosCitas();
+
+  for (const tienda of tiendas) {
+
+    await new Promise(
+      (resolve, reject) => {
+
+        const transaccion =
+          db.transaction(
+            tienda,
+            "readwrite"
+          );
+
+        const almacen =
+          transaccion.objectStore(tienda);
+
+        const solicitud =
+          almacen.clear();
+
+        solicitud.onsuccess =
+          () => resolve();
+
+        solicitud.onerror =
+          () => reject(
+            solicitud.error
+          );
+
+      }
+    );
+
   }
 
-
-  function actualizarTodo() {
-
-    mostrarClientes();
-    mostrarTrabajos();
-    mostrarCitas();
-    actualizarDashboard();
-  }
+}
 
 
-  // =========================
-  // FUNCIONES AUXILIARES
-  // =========================
+/* =====================================================
+   DASHBOARD
+   ===================================================== */
 
-  function formatearFecha(fecha) {
+function actualizarDashboard() {
 
-    if (!fecha) return "-";
-
-    const partes =
-      fecha.split("-");
-
-    if (partes.length !== 3)
-      return fecha;
-
-    return partes[2] + "/" +
-           partes[1] + "/" +
-           partes[0];
-  }
+  document.getElementById(
+    "totalClientes"
+  ).textContent =
+    clientes.length;
 
 
-  function escapar(texto) {
-
-    return String(texto || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
+  document.getElementById(
+    "totalTrabajos"
+  ).textContent =
+    trabajos.length;
 
 
-  function escaparJS(texto) {
+  document.getElementById(
+    "trabajosProceso"
+  ).textContent =
 
-    return String(texto || "")
-      .replace(/\\/g, "\\\\")
-      .replace(/'/g, "\\'");
-  }
-
-
-  // =========================
-  // INICIO
-  // =========================
-
-  actualizarTodo();
+    trabajos.filter(
+      trabajo =>
+        trabajo.estado === "En proceso"
+    ).length;
 
 
-  // =========================
-  // SERVICE WORKER
-  // =========================
+  document.getElementById(
+    "totalCitas"
+  ).textContent =
+    citas.length;
 
-  if ("serviceWorker" in navigator) {
 
-    window.addEventListener("load", () => {
+  mostrarAvisosCitas();
+
+}
+
+
+/* =====================================================
+   ACTUALIZAR TODO
+   ===================================================== */
+
+function actualizarTodo() {
+
+  mostrarClientes();
+
+  mostrarTrabajos();
+
+  mostrarCitas();
+
+  actualizarDashboard();
+
+}
+
+
+/* =====================================================
+   MENSAJES
+   ===================================================== */
+
+function mostrarMensaje(texto) {
+
+  const elemento =
+    document.getElementById("mensaje");
+
+
+  elemento.textContent =
+    texto;
+
+
+  elemento.style.display =
+    "block";
+
+
+  setTimeout(() => {
+
+    elemento.style.display =
+      "none";
+
+  }, 3000);
+
+}
+
+
+/* =====================================================
+   FUNCIONES AUXILIARES
+   ===================================================== */
+
+function formatearFecha(fecha) {
+
+  if (!fecha) return "-";
+
+
+  const partes =
+    fecha.split("-");
+
+
+  if (partes.length !== 3)
+    return fecha;
+
+
+  return (
+    partes[2] +
+    "/" +
+    partes[1] +
+    "/" +
+    partes[0]
+  );
+
+}
+
+
+function escapar(texto) {
+
+  return String(texto || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+}
+
+
+function escaparJS(texto) {
+
+  return String(texto || "")
+    .replace(/\\/g, "\\\\")
+    .replace(/'/g, "\\'");
+
+}
+
+
+/* =====================================================
+   SERVICE WORKER
+   ===================================================== */
+
+if ("serviceWorker" in navigator) {
+
+  window.addEventListener(
+    "load",
+    () => {
 
       navigator.serviceWorker
         .register("./sw.js")
-
         .then(() => {
 
           console.log(
@@ -1155,7 +1950,6 @@
           );
 
         })
-
         .catch(error => {
 
           console.error(
@@ -1165,9 +1959,17 @@
 
         });
 
-    });
+    }
+  );
 
-  }
+}
+
+
+/* =====================================================
+   ARRANCAR
+   ===================================================== */
+
+iniciarAplicacion();
 
 </script>
 
