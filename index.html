@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1769aa">
+<link rel="manifest" href="manifest.json">
+<title>LAB innovadent</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f3f6fa;
+  color:#172033;
+}
+header{
+  background:#1769aa;
+  color:white;
+  padding:18px;
+}
+header h1{margin:0}
+nav{
+  margin-top:12px;
+}
+nav button,button{
+  border:0;
+  border-radius:8px;
+  padding:10px 14px;
+  margin:3px;
+  background:#1769aa;
+  color:white;
+  cursor:pointer;
+}
+nav button{background:white;color:#1769aa}
+
+main{
+  max-width:1200px;
+  margin:auto;
+  padding:15px;
+}
+.seccion{display:none}
+.activa{display:block}
+
+.tarjetas{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:12px;
+}
+.tarjeta{
+  background:white;
+  padding:18px;
+  border-radius:12px;
+  box-shadow:0 2px 8px #0002;
+}
+.tarjeta b{font-size:30px}
+
+form{
+  background:white;
+  padding:18px;
+  border-radius:12px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:12px;
+}
+label{
+  font-weight:bold;
+  font-size:14px;
+}
+input,select{
+  width:100%;
+  padding:10px;
+  margin-top:5px;
+  border:1px solid #ccc;
+  border-radius:7px;
+  box-sizing:border-box;
+}
+.completo{grid-column:1/-1}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+}
+th,td{
+  padding:9px;
+  border-bottom:1px solid #ddd;
+  text-align:left;
+}
+th{background:#eaf0f6}
+
+.estado{
+  padding:5px 8px;
+  border-radius:20px;
+  color:white;
+  font-size:12px;
+}
+.recibido{background:#1976d2}
+.proceso{background:#f9a825}
+.prueba{background:#ef6c00}
+.terminado{background:#2e7d32}
+.entregado{background:#7b1fa2}
+
+.whatsapp{background:#168a45}
+.eliminar{background:#b3261e}
+
+@media(max-width:700px){
+ table{
+  display:block;
+  overflow:auto;
+  white-space:nowrap;
+ }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>LAB innovadent</h1>
+<div>Gestión de laboratorio dental</div>
+
+<nav>
+<button onclick="mostrar('inicio')">Inicio</button>
+<button onclick="mostrar('trabajos')">Trabajos</button>
+<button onclick="mostrar('nuevo')">Nuevo trabajo</button>
+</nav>
+</header>
+
+<main>
+
+<section id="inicio" class="seccion activa">
+<h2>Resumen</h2>
+<div id="resumen" class="tarjetas"></div>
+<p>Los trabajos se guardan en este dispositivo.</p>
+</section>
+
+<section id="trabajos" class="seccion">
+<h2>Trabajos</h2>
+
+<input id="buscar"
+placeholder="Buscar paciente, odontólogo o trabajo..."
+oninput="dibujar()">
+
+<div id="lista"></div>
+</section>
+
+<section id="nuevo" class="seccion">
+
+<h2>Registrar nuevo trabajo</h2>
+
+<form id="formulario">
+
+<div>
+<label>Odontólogo / Cliente</label>
+<input name="cliente" required>
+</div>
+
+<div>
+<label>Paciente</label>
+<input name="paciente" required>
+</div>
+
+<div>
+<label>Trabajo / Prótesis</label>
+<input name="trabajo" required>
+</div>
+
+<div>
+<label>Fecha de entrada</label>
+<input type="date" name="entrada" required>
+</div>
+
+<div>
+<label>Fecha de entrega</label>
+<input type="date" name="entrega">
+</div>
+
+<div>
+<label>Estado</label>
+<select name="estado">
+<option>Recibido</option>
+<option>En proceso</option>
+<option>Prueba</option>
+<option>Terminado</option>
+<option>Entregado</option>
+</select>
+</div>
+
+<div>
+<label>Facturar a</label>
+<input name="facturar">
+</div>
+
+<div>
+<label>Total</label>
+<input type="number" step="0.01" name="total" value="0">
+</div>
+
+<div>
+<label>Abono</label>
+<input type="number" step="0.01" name="abono" value="0">
+</div>
+
+<div>
+<label>Enviar a</label>
+<input name="enviar" placeholder="Persona que recibe">
+</div>
+
+<div>
+<label>WhatsApp</label>
+<input name="whatsapp" placeholder="50760000000">
+</div>
+
+<div class="completo">
+<label>Nota</label>
+<input name="nota">
+</div>
+
+<div class="completo">
+<button>Guardar trabajo</button>
+</div>
+
+</form>
+</section>
+
+</main>
+
+<script>
+
+let trabajos=JSON.parse(localStorage.getItem("labInnovadent")||"[]");
+
+function guardar(){
+ localStorage.setItem("labInnovadent",JSON.stringify(trabajos));
+ dibujar();
+}
+
+function mostrar(id){
+
+ document.querySelectorAll(".seccion").forEach(
+  s=>s.classList.remove("activa")
+ );
+
+ document.getElementById(id).classList.add("activa");
+
+ dibujar();
+}
+
+function dinero(n){
+ return "B/. "+Number(n||0).toFixed(2);
+}
+
+function estado(s){
+
+ let clase="recibido";
+
+ if(s==="En proceso") clase="proceso";
+ if(s==="Prueba") clase="prueba";
+ if(s==="Terminado") clase="terminado";
+ if(s==="Entregado") clase="entregado";
+
+ return '<span class="estado '+clase+'">'+s+'</span>';
+}
+
+function dibujar(){
+
+ let estados={
+  "Recibido":0,
+  "En proceso":0,
+  "Prueba":0,
+  "Terminado":0,
+  "Entregado":0
+ };
+
+ trabajos.forEach(t=>{
+  estados[t.estado]=(estados[t.estado]||0)+1;
+ });
+
+ document.getElementById("resumen").innerHTML=
+ Object.keys(estados).map(e=>
+ '<div class="tarjeta">'+
+ estado(e)+
+ '<br><b>'+estados[e]+'</b>'+
+ '<br>trabajos</div>'
+ ).join("");
+
+ let buscar=(document.getElementById("buscar")?.value||"").toLowerCase();
+
+ let lista=trabajos.filter(t=>
+ !buscar ||
+ (
+ t.paciente+" "+
+ t.cliente+" "+
+ t.trabajo+" "+
+ t.facturar
+ ).toLowerCase().includes(buscar)
+ );
+
+ if(!lista.length){
+  document.getElementById("lista").innerHTML=
+  "<p>No hay trabajos registrados.</p>";
+  return;
+ }
+
+ let html=
+ '<table>'+
+ '<tr>'+
+ '<th>Paciente</th>'+
+ '<th>Trabajo</th>'+
+ '<th>Entrega</th>'+
+ '<th>Estado</th>'+
+ '<th>Facturar a</th>'+
+ '<th>Total</th>'+
+ '<th>Saldo</th>'+
+ '<th>WhatsApp</th>'+
+ '<th>Acciones</th>'+
+ '</tr>';
+
+ lista.forEach(t=>{
+
+  let saldo=Number(t.total||0)-Number(t.abono||0);
+
+  html+=
+  '<tr>'+
+  '<td>'+t.paciente+'<br><small>'+t.cliente+'</small></td>'+
+  '<td>'+t.trabajo+'</td>'+
+  '<td>'+t.entrega+'</td>'+
+  '<td>'+estado(t.estado)+'</td>'+
+  '<td>'+t.facturar+'</td>'+
+  '<td>'+dinero(t.total)+'</td>'+
+  '<td>'+dinero(saldo)+'</td>'+
+  '<td>'+
+  (t.whatsapp?
+  '<button class="whatsapp" onclick="enviarWhatsApp(\''+t.id+'\')">📲 Enviar</button>'
+  :'')+
+  '</td>'+
+  '<td>'+
+  '<button onclick="cambiarEstado(\''+t.id+'\')">Estado</button>'+
+  '<button class="eliminar" onclick="eliminar(\''+t.id+'\')">Eliminar</button>'+
+  '</td>'+
+  '</tr>';
+ });
+
+ html+='</table>';
+
+ document.getElementById("lista").innerHTML=html;
+}
+
+document.getElementById("formulario").addEventListener("submit",function(e){
+
+ e.preventDefault();
+
+ let datos=Object.fromEntries(new FormData(this));
+
+ datos.id=Date.now().toString();
+
+ trabajos.unshift(datos);
+
+ guardar();
+
+ this.reset();
+
+ mostrar("trabajos");
+});
+
+function cambiarEstado(id){
+
+ let t=trabajos.find(x=>x.id===id);
+
+ let estados=[
+  "Recibido",
+  "En proceso",
+  "Prueba",
+  "Terminado",
+  "Entregado"
+ ];
+
+ let posicion=estados.indexOf(t.estado);
+
+ t.estado=estados[(posicion+1)%estados.length];
+
+ guardar();
+}
+
+function eliminar(id){
+
+ if(confirm("¿Quieres eliminar este trabajo?")){
+
+  trabajos=trabajos.filter(x=>x.id!==id);
+
+  guardar();
+ }
+}
+
+function enviarWhatsApp(id){
+
+ let t=trabajos.find(x=>x.id===id);
+
+ let numero=t.whatsapp.replace(/\D/g,"");
+
+ let mensaje=
+ "LAB innovadent\n\n"+
+ "Trabajo: "+t.trabajo+"\n"+
+ "Paciente: "+t.paciente+"\n"+
+ "Fecha de entrega: "+(t.entrega||"Pendiente")+"\n"+
+ "Estado: "+t.estado;
+
+ window.location.href=
+ "https://wa.me/"+numero+
+ "?text="+encodeURIComponent(mensaje);
+}
+
+document.querySelector('[name="entrada"]').value=
+new Date().toISOString().slice(0,10);
+
+dibujar();
+
+</script>
+
+</body>
+</html>
