@@ -1,2228 +1,2313 @@
+<!DOCTYPE html>
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta name="theme-color" content="#2563eb">
-  <meta name="description" content="Sistema de gestión para laboratorio dental">
+<meta charset="UTF-8">
 
-  <link rel="manifest" href="./manifest.json">
-  <link rel="icon" type="image/png" sizes="192x192" href="./lab-innovadent-icon-192.png">
-  <link rel="apple-touch-icon" href="./lab-innovadent-icon-192.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>LAB innovadent</title>
+<title>Laboratorio Dental Innovadent</title>
 
-  <style>
-  * {
-    box-sizing: border-box;
-  }
+<meta name="description"
+content="Sistema de gestión para Laboratorio Dental Innovadent">
 
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f1f5f9;
-    color: #1e293b;
-  }
+<meta name="theme-color" content="#2563eb">
 
-  header {
-    background: #2563eb;
-    color: white;
-    padding: 20px;
-    text-align: center;
+<link rel="manifest" href="./manifest.json">
+
+<link
+rel="icon"
+type="image/png"
+sizes="192x192"
+href="./lab-innovadent-icon-192.png">
+
+<link
+rel="apple-touch-icon"
+href="./lab-innovadent-icon-192.png">
+
+
+<style>
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+
+/* ENCABEZADO */
+
+header {
+  background: #2563eb;
+  color: white;
+  text-align: center;
+  padding: 25px 15px 28px;
+}
+
+.logo-principal {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 12px;
+  background: white;
+  border-radius: 20px;
+  padding: 5px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 30px;
+}
+
+header p {
+  margin: 8px 0 0;
+  font-size: 18px;
+}
+
+
+/* MENU */
+
+nav {
+  background: white;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.12);
+}
+
+nav button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 9px;
+  padding: 11px 16px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+nav button:hover {
+  opacity: .9;
+}
+
+
+/* CONTENIDO */
+
+main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 25px;
+}
+
+.seccion {
+  display: none;
+}
+
+.seccion.activa {
+  display: block;
+}
+
+
+/* TARJETAS */
+
+.tarjetas {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(180px, 1fr)
+  );
+  gap: 18px;
+  margin: 20px 0;
+}
+
+.tarjeta {
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+.tarjeta h3 {
+  margin: 0;
+  font-size: 32px;
+  color: #2563eb;
+}
+
+
+/* FORMULARIOS */
+
+.formulario {
+  background: white;
+  padding: 22px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+.dos-columnas {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.campo {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+textarea {
+  min-height: 90px;
+}
+
+
+/* BOTONES */
+
+.boton {
+  border: none;
+  border-radius: 8px;
+  padding: 11px 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 3px;
+}
+
+.azul {
+  background: #2563eb;
+  color: white;
+}
+
+.verde {
+  background: #16a34a;
+  color: white;
+}
+
+.rojo {
+  background: #dc2626;
+  color: white;
+}
+
+.gris {
+  background: #475569;
+  color: white;
+}
+
+.whatsapp {
+  background: #25d366;
+  color: white;
+}
+
+
+/* LISTAS */
+
+.lista {
+  display: grid;
+  gap: 15px;
+}
+
+.item {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+
+.item h3 {
+  color: #2563eb;
+  margin-top: 0;
+}
+
+
+/* ESTADOS */
+
+.estado {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.recibido {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.proceso {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.terminado {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.entregado {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+
+/* RESPALDO */
+
+.respaldo {
+  background: #eff6ff;
+  border: 1px solid #93c5fd;
+  padding: 20px;
+  border-radius: 14px;
+  margin: 25px 0;
+}
+
+
+/* AVISOS */
+
+.aviso {
+  background: #fff7ed;
+  border-left: 5px solid #f97316;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.vacio {
+  text-align: center;
+  color: #64748b;
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+}
+
+
+/* MENSAJES */
+
+#mensaje {
+  display: none;
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  background: #dcfce7;
+  color: #166534;
+  font-weight: bold;
+}
+
+
+/* MÓVIL / TABLETA */
+
+@media (max-width: 600px) {
+
+  main {
+    padding: 14px;
   }
 
   header h1 {
-    margin: 0;
-    font-size: 28px;
+    font-size: 24px;
   }
 
   header p {
-    margin: 6px 0 0;
-  }
-
-  nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    padding: 12px;
-    background: white;
-    box-shadow: 0 2px 5px rgba(0,0,0,.1);
-  }
-
-  nav button,
-  .boton {
-    border: none;
-    padding: 10px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-
-  nav button {
-    background: #2563eb;
-    color: white;
-  }
-
-  main {
-    max-width: 1100px;
-    margin: auto;
-    padding: 20px;
-  }
-
-  .seccion {
-    display: none;
-  }
-
-  .seccion.activa {
-    display: block;
-  }
-
-  .tarjetas {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 15px;
-    margin: 20px 0;
-  }
-
-  .tarjeta,
-  .formulario,
-  .item {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 2px 7px rgba(0,0,0,.08);
-  }
-
-  .tarjeta {
-    text-align: center;
-  }
-
-  .tarjeta h3 {
-    margin: 0;
-    font-size: 30px;
-    color: #2563eb;
-  }
-
-  .campo {
-    margin-bottom: 15px;
-  }
-
-  label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 6px;
-  }
-
-  input,
-  select,
-  textarea {
-    width: 100%;
-    padding: 11px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
     font-size: 16px;
   }
 
-  textarea {
-    min-height: 90px;
+  .logo-principal {
+    width: 110px;
+    height: 110px;
   }
 
-  .verde {
-    background: #2563eb;
-    color: white;
+  nav button {
+    font-size: 14px;
+    padding: 10px 12px;
   }
 
-  .azul {
-    background: #2563eb;
-    color: white;
-  }
+}
 
-  .rojo {
-    background: #dc2626;
-    color: white;
-  }
-
-  .whatsapp {
-    background: #25d366;
-    color: white;
-  }
-
-  .gris {
-    background: #475569;
-    color: white;
-  }
-
-  .lista {
-    display: grid;
-    gap: 15px;
-  }
-
-  .item h3 {
-    margin-top: 0;
-    color: #2563eb;
-  }
-
-  .estado {
-    display: inline-block;
-    padding: 6px 10px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: bold;
-  }
-
-  .recibido {
-    background: #dbeafe;
-    color: #1d4ed8;
-  }
-
-  .proceso {
-    background: #fef3c7;
-    color: #92400e;
-  }
-
-  .terminado {
-    background: #dcfce7;
-    color: #166534;
-  }
-
-  .entregado {
-    background: #e0e7ff;
-    color: #3730a3;
-  }
-
-  .aviso {
-    background: #fff7ed;
-    border-left: 5px solid #f97316;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-  }
-
-  .vacio {
-    text-align: center;
-    color: #64748b;
-    padding: 20px;
-    background: white;
-    border-radius: 10px;
-  }
-
-  .dos-columnas {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
-  }
-
-  .respaldo {
-    background: #ecfeff;
-    border: 1px solid #99f6e4;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-  }
-
-  .respaldo h3 {
-    margin-top: 0;
-  }
-
-  #mensaje {
-    display: none;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 8px;
-    background: #dcfce7;
-    color: #166534;
-    font-weight: bold;
-  }
-
-  @media (max-width: 600px) {
-    main {
-      padding: 12px;
-    }
-
-    header h1 {
-      font-size: 23px;
-    }
-  }
 </style>
-  <h1 style="margin:0;">
-    Laboratorio Dental Innovadent
-  </h1>
 
-  <p style="margin:8px 0 0; font-size:20px;">
-    by Javier Quiroz, Mecánico Dental
-  </p>
-
-</div>
-</div>
-      <div style="text-align:center; padding:20px;">
-  <img
-    src="./lab-innovadent-icon-192.png"
-    alt="LAB innovadent"
-    style="width:120px;height:120px;object-fit:contain;"
-  >
-  <h1>LAB innovadent</h1>
-</div>
-      <div style="text-align:center; padding:20px 10px 10px;">
-  <img src="./lab-innovadent-icon-192.png"
-       alt="LAB innovadent"
-       style="width:100px; height:100px; object-fit:contain;">
-  <h1 style="margin:8px 0 0;">LAB innovadent</h1>
-</div>
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f1f5f9;
-      color: #1e293b;
-    }
-
-    header {
-      background: #2563eb
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 28px;
-    }
-
-    header p {
-      margin: 6px 0 0;
-    }
-
-    nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: center;
-      padding: 12px;
-      background: white;
-      box-shadow: 0 2px 5px rgba(0,0,0,.1);
-    }
-
-    nav button,
-    .boton {
-      border: none;
-      padding: 10px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    nav button {
-      background: #0f766e;
-      color: white;
-    }
-
-    main {
-      max-width: 1100px;
-      margin: auto;
-      padding: 20px;
-    }
-
-    .seccion {
-      display: none;
-    }
-
-    .seccion.activa {
-      display: block;
-    }
-
-    .tarjetas {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 15px;
-      margin: 20px 0;
-    }
-
-    .tarjeta,
-    .formulario,
-    .item {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 7px rgba(0,0,0,.08);
-    }
-
-    .tarjeta {
-      text-align: center;
-    }
-
-    .tarjeta h3 {
-      margin: 0;
-      font-size: 30px;
-      color: #0f766e;
-    }
-
-    .campo {
-      margin-bottom: 15px;
-    }
-
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 11px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-
-    textarea {
-      min-height: 90px;
-    }
-
-    .verde {
-      background: #0f766e;
-      color: white;
-    }
-
-    .azul {
-      background: #2563eb;
-      color: white;
-    }
-
-    .rojo {
-      background: #dc2626;
-      color: white;
-    }
-
-    .whatsapp {
-      background: #25d366;
-      color: white;
-    }
-
-    .gris {
-      background: #475569;
-      color: white;
-    }
-
-    .lista {
-      display: grid;
-      gap: 15px;
-    }
-
-    .item h3 {
-      margin-top: 0;
-      color: #0f766e;
-    }
-
-    .estado {
-      display: inline-block;
-      padding: 6px 10px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: bold;
-    }
-
-    .recibido {
-      background: #dbeafe;
-      color: #1d4ed8;
-    }
-
-    .proceso {
-      background: #fef3c7;
-      color: #92400e;
-    }
-
-    .terminado {
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .entregado {
-      background: #e0e7ff;
-      color: #3730a3;
-    }
-
-    .aviso {
-      background: #fff7ed;
-      border-left: 5px solid #f97316;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-
-    .vacio {
-      text-align: center;
-      color: #64748b;
-      padding: 20px;
-      background: white;
-      border-radius: 10px;
-    }
-
-    .dos-columnas {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 15px;
-    }
-
-    .respaldo {
-      background: #ecfeff;
-      border: 1px solid #99f6e4;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-    }
-
-    .respaldo h3 {
-      margin-top: 0;
-    }
-
-    #mensaje {
-      display: none;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 8px;
-      background: #dcfce7;
-      color: #166534;
-      font-weight: bold;
-    }
-
-    @media (max-width: 600px) {
-      main {
-        padding: 12px;
-      }
-
-      header h1 {
-        font-size: 23px;
-      }
-    }
-  </style>
 </head>
+
 
 <body>
 
+
 <header>
-  <h1>LAB innovadent</h1>
-  <p>Gestión del laboratorio dental</p>
+
+  <img
+    class="logo-principal"
+    src="./lab-innovadent-icon-192.png"
+    alt="Laboratorio Dental Innovadent"
+  >
+
+  <h1>
+    Laboratorio Dental Innovadent
+  </h1>
+
+  <p>
+    by Javier Quiroz, Mecánico Dental
+  </p>
+
 </header>
 
+
 <nav>
-  <button onclick="mostrarSeccion('inicio')">Inicio</button>
-  <button onclick="mostrarSeccion('clientes')">Clientes</button>
-  <button onclick="mostrarSeccion('trabajos')">Trabajos</button>
-  <button onclick="mostrarSeccion('citas')">Citas</button>
-  <button onclick="mostrarSeccion('nuevoTrabajo')">Nuevo trabajo</button>
-  <button onclick="mostrarSeccion('nuevaCita')">Nueva cita</button>
+
+  <button onclick="mostrarSeccion('inicio')">
+    Inicio
+  </button>
+
+  <button onclick="mostrarSeccion('clientes')">
+    Clientes
+  </button>
+
+  <button onclick="mostrarSeccion('trabajos')">
+    Trabajos
+  </button>
+
+  <button onclick="mostrarSeccion('citas')">
+    Citas
+  </button>
+
+  <button onclick="mostrarSeccion('nuevoTrabajo')">
+    Nuevo trabajo
+  </button>
+
+  <button onclick="mostrarSeccion('nuevaCita')">
+    Nueva cita
+  </button>
+
 </nav>
+
 
 <main>
 
-  <div id="mensaje"></div>
+<div id="mensaje"></div>
 
-  <!-- INICIO -->
-  <section id="inicio" class="seccion activa">
 
-    <h2>Panel principal</h2>
+<!-- ================= INICIO ================= -->
 
-    <div class="tarjetas">
+<section
+id="inicio"
+class="seccion activa"
+>
 
-      <div class="tarjeta">
-        <h3 id="totalClientes">0</h3>
-        <p>Clientes</p>
-      </div>
+<h2>Panel principal</h2>
 
-      <div class="tarjeta">
-        <h3 id="totalTrabajos">0</h3>
-        <p>Trabajos</p>
-      </div>
 
-      <div class="tarjeta">
-        <h3 id="trabajosProceso">0</h3>
-        <p>En proceso</p>
-      </div>
+<div class="tarjetas">
 
-      <div class="tarjeta">
-        <h3 id="totalCitas">0</h3>
-        <p>Citas</p>
-      </div>
+  <div class="tarjeta">
+    <h3 id="totalClientes">0</h3>
+    <p>Clientes</p>
+  </div>
 
-    </div>
+  <div class="tarjeta">
+    <h3 id="totalTrabajos">0</h3>
+    <p>Trabajos</p>
+  </div>
 
-    <!-- RESPALDO -->
-    <div class="respaldo">
+  <div class="tarjeta">
+    <h3 id="trabajosProceso">0</h3>
+    <p>En proceso</p>
+  </div>
 
-      <h3>💾 Seguridad de tus datos</h3>
+  <div class="tarjeta">
+    <h3 id="totalCitas">0</h3>
+    <p>Citas</p>
+  </div>
 
-      <p>
-        Los clientes, trabajos y citas se guardan
-        en la base de datos local de esta tableta.
-      </p>
+</div>
 
-      <button
-        class="boton azul"
-        onclick="crearRespaldo()">
-        💾 Crear respaldo
-      </button>
 
-      <button
-        class="boton gris"
-        onclick="document.getElementById('archivoRespaldo').click()">
-        📥 Restaurar respaldo
-      </button>
+<div class="respaldo">
 
-      <input
-        id="archivoRespaldo"
-        type="file"
-        accept=".json,application/json"
-        style="display:none"
-        onchange="restaurarRespaldo(event)">
+<h3>💾 Seguridad de tus datos</h3>
 
-      <p>
-        <small>
-          Recomendación: crea un respaldo periódicamente
-          y guárdalo en un lugar seguro.
-        </small>
-      </p>
+<p>
+Los clientes, trabajos y citas se guardan
+en la base de datos local de esta tableta.
+</p>
 
-    </div>
+<button
+class="boton azul"
+onclick="crearRespaldo()"
+>
+💾 Crear respaldo
+</button>
 
-    <h2>📅 Citas de mañana</h2>
+<button
+class="boton gris"
+onclick="document.getElementById('archivoRespaldo').click()"
+>
+📥 Restaurar respaldo
+</button>
 
-    <div id="avisosCitas"></div>
+<input
+id="archivoRespaldo"
+type="file"
+accept=".json,application/json"
+style="display:none"
+onchange="restaurarRespaldo(event)"
+>
 
-  </section>
+</div>
 
 
-  <!-- CLIENTES -->
-  <section id="clientes" class="seccion">
+<h2>📅 Citas de mañana</h2>
 
-    <h2>Clientes</h2>
+<div id="avisosCitas"></div>
 
-    <div class="formulario">
+</section>
 
-      <div class="dos-columnas">
 
-        <div class="campo">
-          <label>Clínica</label>
-          <input id="clienteClinica">
-        </div>
 
-        <div class="campo">
-          <label>Dr. / Dra.</label>
-          <input id="clienteDoctor">
-        </div>
+<!-- ================= CLIENTES ================= -->
 
-        <div class="campo">
-          <label>Paciente</label>
-          <input id="clientePaciente">
-        </div>
+<section
+id="clientes"
+class="seccion"
+>
 
-        <div class="campo">
-          <label>Teléfono</label>
-          <input id="clienteTelefono" type="tel">
-        </div>
+<h2>Clientes</h2>
 
-        <div class="campo">
-          <label>Correo</label>
-          <input id="clienteCorreo" type="email">
-        </div>
+<div class="formulario">
 
-      </div>
+<div class="dos-columnas">
 
-      <button
-        class="boton verde"
-        onclick="guardarCliente()">
-        Guardar cliente
-      </button>
+<div class="campo">
+<label>Clínica</label>
+<input id="clienteClinica">
+</div>
 
-    </div>
+<div class="campo">
+<label>Dr. / Dra.</label>
+<input id="clienteDoctor">
+</div>
 
-    <div id="listaClientes" class="lista"></div>
+<div class="campo">
+<label>Paciente</label>
+<input id="clientePaciente">
+</div>
 
-  </section>
+<div class="campo">
+<label>Teléfono</label>
+<input id="clienteTelefono" type="tel">
+</div>
 
+<div class="campo">
+<label>Correo</label>
+<input id="clienteCorreo" type="email">
+</div>
 
-  <!-- TRABAJOS -->
-  <section id="trabajos" class="seccion">
+</div>
 
-    <h2>Trabajos</h2>
+<button
+class="boton verde"
+onclick="guardarCliente()"
+>
+Guardar cliente
+</button>
 
-    <div id="listaTrabajos" class="lista"></div>
+</div>
 
-  </section>
+<br>
 
+<div id="listaClientes" class="lista"></div>
 
-  <!-- NUEVO TRABAJO -->
-  <section id="nuevoTrabajo" class="seccion">
+</section>
 
-    <h2>Nuevo trabajo</h2>
 
-    <div class="formulario">
 
-      <div class="dos-columnas">
+<!-- ================= TRABAJOS ================= -->
 
-        <div class="campo">
-          <label>Clínica</label>
-          <input id="trabajoClinica">
-        </div>
+<section
+id="trabajos"
+class="seccion"
+>
 
-        <div class="campo">
-          <label>Dr. / Dra.</label>
-          <input id="trabajoDoctor">
-        </div>
+<h2>Trabajos</h2>
 
-        <div class="campo">
-          <label>Paciente</label>
-          <input id="trabajoPaciente">
-        </div>
+<div id="listaTrabajos" class="lista"></div>
 
-        <div class="campo">
-          <label>Tipo de trabajo</label>
-          <input id="trabajoTipo"
-                 placeholder="Ejemplo: prótesis, corona, reparación">
-        </div>
+</section>
 
-        <div class="campo">
-          <label>Fecha de llegada</label>
-          <input id="fechaLlegada" type="date">
-        </div>
 
-        <div class="campo">
-          <label>Fecha de entrega</label>
-          <input id="fechaEntrega" type="date">
-        </div>
 
-        <div class="campo">
-          <label>Estado</label>
-          <select id="estadoTrabajo">
-            <option>Recibido</option>
-            <option>En proceso</option>
-            <option>Terminado</option>
-            <option>Entregado</option>
-          </select>
-        </div>
+<!-- ================= NUEVO TRABAJO ================= -->
 
-        <div class="campo">
-          <label>Monto</label>
-          <input id="trabajoMonto" type="number" step="0.01">
-        </div>
+<section
+id="nuevoTrabajo"
+class="seccion"
+>
 
-      </div>
+<h2>Nuevo trabajo</h2>
 
-      <div class="campo">
-        <label>Observaciones</label>
-        <textarea id="trabajoObservaciones"></textarea>
-      </div>
+<div class="formulario">
 
-      <button
-        class="boton verde"
-        onclick="guardarTrabajo()">
-        Guardar trabajo
-      </button>
+<div class="dos-columnas">
 
-    </div>
+<div class="campo">
+<label>Clínica</label>
+<input id="trabajoClinica">
+</div>
 
-  </section>
+<div class="campo">
+<label>Dr. / Dra.</label>
+<input id="trabajoDoctor">
+</div>
 
+<div class="campo">
+<label>Paciente</label>
+<input id="trabajoPaciente">
+</div>
 
-  <!-- CITAS -->
-  <section id="citas" class="seccion">
+<div class="campo">
+<label>Tipo de trabajo</label>
+<input
+id="trabajoTipo"
+placeholder="Ejemplo: prótesis, corona, reparación"
+>
+</div>
 
-    <h2>📅 Citas de pacientes</h2>
+<div class="campo">
+<label>Fecha de llegada</label>
+<input id="fechaLlegada" type="date">
+</div>
 
-    <p>
-      Las citas son directamente con el mecánico dental
-      <strong>Javier Quiroz</strong>.
-    </p>
+<div class="campo">
+<label>Fecha de entrega</label>
+<input id="fechaEntrega" type="date">
+</div>
 
-    <div id="listaCitas" class="lista"></div>
+<div class="campo">
 
-  </section>
+<label>Estado</label>
 
+<select id="estadoTrabajo">
 
-  <!-- NUEVA CITA -->
-  <section id="nuevaCita" class="seccion">
+<option>Recibido</option>
+<option>En proceso</option>
+<option>Terminado</option>
+<option>Entregado</option>
 
-    <h2>➕ Nueva cita</h2>
+</select>
 
-    <div class="formulario">
+</div>
 
-      <div class="campo">
-        <label>Nombre del paciente</label>
-        <input id="citaPaciente"
-               placeholder="Nombre completo">
-      </div>
+<div class="campo">
 
-      <div class="campo">
-        <label>Número de teléfono</label>
-        <input id="citaTelefono"
-               type="tel"
-               placeholder="Ejemplo: 50761234567">
-      </div>
+<label>Monto</label>
 
-      <div class="campo">
-        <label>Fecha de la cita</label>
-        <input id="citaFecha" type="date">
-      </div>
+<input
+id="trabajoMonto"
+type="number"
+step="0.01"
+>
 
-      <div class="campo">
-        <label>Hora de la cita</label>
-        <input id="citaHora" type="time">
-      </div>
+</div>
 
-      <button
-        class="boton verde"
-        onclick="guardarCita()">
-        Guardar cita
-      </button>
+</div>
 
-    </div>
 
-  </section>
+<div class="campo">
+
+<label>Observaciones</label>
+
+<textarea id="trabajoObservaciones"></textarea>
+
+</div>
+
+
+<button
+class="boton verde"
+onclick="guardarTrabajo()"
+>
+Guardar trabajo
+</button>
+
+</div>
+
+</section>
+
+
+
+<!-- ================= CITAS ================= -->
+
+<section
+id="citas"
+class="seccion"
+>
+
+<h2>📅 Citas de pacientes</h2>
+
+<p>
+Las citas son directamente con
+<strong>Javier Quiroz, Mecánico Dental</strong>.
+</p>
+
+<div id="listaCitas" class="lista"></div>
+
+</section>
+
+
+
+<!-- ================= NUEVA CITA ================= -->
+
+<section
+id="nuevaCita"
+class="seccion"
+>
+
+<h2>➕ Nueva cita</h2>
+
+<div class="formulario">
+
+<div class="campo">
+
+<label>Nombre del paciente</label>
+
+<input
+id="citaPaciente"
+placeholder="Nombre completo"
+>
+
+</div>
+
+
+<div class="campo">
+
+<label>Número de teléfono</label>
+
+<input
+id="citaTelefono"
+type="tel"
+placeholder="Ejemplo: 50761234567"
+>
+
+</div>
+
+
+<div class="campo">
+
+<label>Fecha de la cita</label>
+
+<input
+id="citaFecha"
+type="date"
+>
+
+</div>
+
+
+<div class="campo">
+
+<label>Hora de la cita</label>
+
+<input
+id="citaHora"
+type="time"
+>
+
+</div>
+
+
+<button
+class="boton verde"
+onclick="guardarCita()"
+>
+Guardar cita
+</button>
+
+</div>
+
+</section>
 
 </main>
 
 
+
 <script>
 
-/* =====================================================
-   BASE DE DATOS LOCAL
-   ===================================================== */
+/* =========================
+   BASE DE DATOS
+========================= */
 
-const NOMBRE_BD = "LAB_innovadent_BD";
+const NOMBRE_BD =
+"LAB_innovadent_BD";
+
 const VERSION_BD = 1;
 
 let db;
 
+let clientes = [];
 
-/* Abrir base de datos */
+let trabajos = [];
+
+let citas = [];
+
 
 function abrirBaseDatos() {
 
-  return new Promise((resolve, reject) => {
+return new Promise(
+(resolve, reject) => {
 
-    const solicitud =
-      indexedDB.open(NOMBRE_BD, VERSION_BD);
-
-    solicitud.onupgradeneeded = function(event) {
-
-      const base = event.target.result;
-
-      if (!base.objectStoreNames.contains("clientes")) {
-
-        base.createObjectStore(
-          "clientes",
-          { keyPath: "id" }
-        );
-
-      }
-
-      if (!base.objectStoreNames.contains("trabajos")) {
-
-        base.createObjectStore(
-          "trabajos",
-          { keyPath: "id" }
-        );
-
-      }
-
-      if (!base.objectStoreNames.contains("citas")) {
-
-        base.createObjectStore(
-          "citas",
-          { keyPath: "id" }
-        );
-
-      }
-
-    };
+const solicitud =
+indexedDB.open(
+NOMBRE_BD,
+VERSION_BD
+);
 
 
-    solicitud.onsuccess = function(event) {
+solicitud.onupgradeneeded =
+function(event) {
 
-      db = event.target.result;
-
-      resolve(db);
-
-    };
+const base =
+event.target.result;
 
 
-    solicitud.onerror = function() {
+if (
+!base.objectStoreNames.contains("clientes")
+) {
 
-      reject(
-        solicitud.error
-      );
-
-    };
-
-  });
+base.createObjectStore(
+"clientes",
+{keyPath:"id"}
+);
 
 }
 
 
-/* =====================================================
-   FUNCIONES DE BASE DE DATOS
-   ===================================================== */
+if (
+!base.objectStoreNames.contains("trabajos")
+) {
 
-function agregarRegistro(tienda, dato) {
-
-  return new Promise((resolve, reject) => {
-
-    const transaccion =
-      db.transaction(tienda, "readwrite");
-
-    const almacen =
-      transaccion.objectStore(tienda);
-
-    const solicitud =
-      almacen.put(dato);
-
-    solicitud.onsuccess = () => resolve();
-
-    solicitud.onerror = () =>
-      reject(solicitud.error);
-
-  });
+base.createObjectStore(
+"trabajos",
+{keyPath:"id"}
+);
 
 }
+
+
+if (
+!base.objectStoreNames.contains("citas")
+) {
+
+base.createObjectStore(
+"citas",
+{keyPath:"id"}
+);
+
+}
+
+};
+
+
+solicitud.onsuccess =
+function(event) {
+
+db =
+event.target.result;
+
+resolve(db);
+
+};
+
+
+solicitud.onerror =
+function() {
+
+reject(solicitud.error);
+
+};
+
+});
+
+}
+
+
+
+function guardarEnBD(tienda,dato) {
+
+return new Promise(
+(resolve,reject) => {
+
+const transaccion =
+db.transaction(
+tienda,
+"readwrite"
+);
+
+const almacen =
+transaccion.objectStore(
+tienda
+);
+
+const solicitud =
+almacen.put(dato);
+
+solicitud.onsuccess =
+() => resolve();
+
+solicitud.onerror =
+() => reject(
+solicitud.error
+);
+
+});
+
+}
+
 
 
 function obtenerTodos(tienda) {
 
-  return new Promise((resolve, reject) => {
+return new Promise(
+(resolve,reject) => {
 
-    const transaccion =
-      db.transaction(tienda, "readonly");
+const transaccion =
+db.transaction(
+tienda,
+"readonly"
+);
 
-    const almacen =
-      transaccion.objectStore(tienda);
+const almacen =
+transaccion.objectStore(
+tienda
+);
 
-    const solicitud =
-      almacen.getAll();
+const solicitud =
+almacen.getAll();
 
-    solicitud.onsuccess = () =>
-      resolve(solicitud.result || []);
+solicitud.onsuccess =
+() =>
+resolve(
+solicitud.result || []
+);
 
-    solicitud.onerror = () =>
-      reject(solicitud.error);
+solicitud.onerror =
+() =>
+reject(
+solicitud.error
+);
 
-  });
-
-}
-
-
-function eliminarRegistro(tienda, id) {
-
-  return new Promise((resolve, reject) => {
-
-    const transaccion =
-      db.transaction(tienda, "readwrite");
-
-    const almacen =
-      transaccion.objectStore(tienda);
-
-    const solicitud =
-      almacen.delete(id);
-
-    solicitud.onsuccess = () => resolve();
-
-    solicitud.onerror = () =>
-      reject(solicitud.error);
-
-  });
+});
 
 }
 
 
-/* =====================================================
-   VARIABLES
-   ===================================================== */
 
-let clientes = [];
-let trabajos = [];
-let citas = [];
+function eliminarDeBD(tienda,id) {
+
+return new Promise(
+(resolve,reject) => {
+
+const transaccion =
+db.transaction(
+tienda,
+"readwrite"
+);
+
+const almacen =
+transaccion.objectStore(
+tienda
+);
+
+const solicitud =
+almacen.delete(id);
+
+solicitud.onsuccess =
+() => resolve();
+
+solicitud.onerror =
+() => reject(
+solicitud.error
+);
+
+});
+
+}
 
 
-/* =====================================================
+
+/* =========================
    INICIO
-   ===================================================== */
+========================= */
 
-async function iniciarAplicacion() {
+async function iniciar() {
 
-  try {
+try {
 
-    await abrirBaseDatos();
+await abrirBaseDatos();
 
-    /*
-      Intentamos importar los datos antiguos
-      que estaban guardados con localStorage.
-    */
+await cargarDatos();
 
-    await migrarDatosAntiguos();
+actualizarTodo();
 
-    await cargarDatos();
+}
+catch(error) {
 
-    actualizarTodo();
+console.error(error);
 
-  } catch (error) {
-
-    console.error(error);
-
-    mostrarMensaje(
-      "No se pudo abrir la base de datos local."
-    );
-
-  }
+mostrarMensaje(
+"Error al abrir la base de datos."
+);
 
 }
 
-
-/* =====================================================
-   MIGRACIÓN DE DATOS ANTIGUOS
-   ===================================================== */
-
-async function migrarDatosAntiguos() {
-
-  const yaMigrado =
-    localStorage.getItem(
-      "LAB_innovadent_migrado"
-    );
-
-  if (yaMigrado === "si") {
-    return;
-  }
-
-
-  try {
-
-    const clientesAntiguos =
-      JSON.parse(
-        localStorage.getItem("lab_clientes") || "[]"
-      );
-
-    const trabajosAntiguos =
-      JSON.parse(
-        localStorage.getItem("lab_trabajos") || "[]"
-      );
-
-    const citasAntiguas =
-      JSON.parse(
-        localStorage.getItem("lab_citas") || "[]"
-      );
-
-
-    for (const dato of clientesAntiguos) {
-
-      await agregarRegistro(
-        "clientes",
-        dato
-      );
-
-    }
-
-
-    for (const dato of trabajosAntiguos) {
-
-      await agregarRegistro(
-        "trabajos",
-        dato
-      );
-
-    }
-
-
-    for (const dato of citasAntiguas) {
-
-      await agregarRegistro(
-        "citas",
-        dato
-      );
-
-    }
-
-
-    localStorage.setItem(
-      "LAB_innovadent_migrado",
-      "si"
-    );
-
-
-  } catch (error) {
-
-    console.log(
-      "No había datos antiguos para migrar."
-    );
-
-  }
-
 }
 
-
-/* =====================================================
-   CARGAR DATOS
-   ===================================================== */
 
 async function cargarDatos() {
 
-  clientes =
-    await obtenerTodos("clientes");
+clientes =
+await obtenerTodos("clientes");
 
-  trabajos =
-    await obtenerTodos("trabajos");
+trabajos =
+await obtenerTodos("trabajos");
 
-  citas =
-    await obtenerTodos("citas");
+citas =
+await obtenerTodos("citas");
 
 }
 
 
-/* =====================================================
+
+/* =========================
    NAVEGACIÓN
-   ===================================================== */
+========================= */
 
 function mostrarSeccion(id) {
 
-  document
-    .querySelectorAll(".seccion")
-    .forEach(seccion => {
+document
+.querySelectorAll(".seccion")
+.forEach(
+seccion =>
+seccion.classList.remove("activa")
+);
 
-      seccion.classList.remove("activa");
-
-    });
-
-
-  document
-    .getElementById(id)
-    .classList.add("activa");
-
-
-  actualizarTodo();
+document
+.getElementById(id)
+.classList.add("activa");
 
 }
 
 
-/* =====================================================
+
+/* =========================
    CLIENTES
-   ===================================================== */
+========================= */
 
 async function guardarCliente() {
 
-  const cliente = {
-
-    id: Date.now(),
-
-    clinica:
-      document.getElementById("clienteClinica").value,
-
-    doctor:
-      document.getElementById("clienteDoctor").value,
-
-    paciente:
-      document.getElementById("clientePaciente").value,
-
-    telefono:
-      document.getElementById("clienteTelefono").value,
-
-    correo:
-      document.getElementById("clienteCorreo").value
-
-  };
+const paciente =
+document.getElementById(
+"clientePaciente"
+).value.trim();
 
 
-  if (!cliente.paciente.trim()) {
+if (!paciente) {
 
-    alert("Escribe el nombre del paciente.");
+alert(
+"Escribe el nombre del paciente."
+);
 
-    return;
-
-  }
-
-
-  await agregarRegistro(
-    "clientes",
-    cliente
-  );
-
-
-  await cargarDatos();
-
-  limpiarCliente();
-
-  mostrarMensaje(
-    "Cliente guardado correctamente."
-  );
-
-  actualizarTodo();
+return;
 
 }
+
+
+const cliente = {
+
+id: Date.now(),
+
+clinica:
+document.getElementById(
+"clienteClinica"
+).value,
+
+doctor:
+document.getElementById(
+"clienteDoctor"
+).value,
+
+paciente:
+
+paciente,
+
+telefono:
+document.getElementById(
+"clienteTelefono"
+).value,
+
+correo:
+document.getElementById(
+"clienteCorreo"
+).value
+
+};
+
+
+await guardarEnBD(
+"clientes",
+cliente
+);
+
+await cargarDatos();
+
+limpiarCliente();
+
+actualizarTodo();
+
+mostrarMensaje(
+"Cliente guardado correctamente."
+);
+
+}
+
 
 
 function limpiarCliente() {
 
-  document.getElementById("clienteClinica").value = "";
-  document.getElementById("clienteDoctor").value = "";
-  document.getElementById("clientePaciente").value = "";
-  document.getElementById("clienteTelefono").value = "";
-  document.getElementById("clienteCorreo").value = "";
+document.getElementById(
+"clienteClinica"
+).value = "";
+
+document.getElementById(
+"clienteDoctor"
+).value = "";
+
+document.getElementById(
+"clientePaciente"
+).value = "";
+
+document.getElementById(
+"clienteTelefono"
+).value = "";
+
+document.getElementById(
+"clienteCorreo"
+).value = "";
 
 }
+
 
 
 function mostrarClientes() {
 
-  const contenedor =
-    document.getElementById("listaClientes");
+const contenedor =
+document.getElementById(
+"listaClientes"
+);
 
 
-  if (clientes.length === 0) {
+if (clientes.length === 0) {
 
-    contenedor.innerHTML =
-      '<div class="vacio">No hay clientes registrados.</div>';
+contenedor.innerHTML =
+'<div class="vacio">No hay clientes registrados.</div>';
 
-    return;
-
-  }
-
-
-  contenedor.innerHTML =
-    clientes.map(cliente => `
-
-      <div class="item">
-
-        <h3>${escapar(cliente.paciente)}</h3>
-
-        <p>
-          <strong>Clínica:</strong>
-          ${escapar(cliente.clinica || "-")}
-        </p>
-
-        <p>
-          <strong>Dr./Dra.:</strong>
-          ${escapar(cliente.doctor || "-")}
-        </p>
-
-        <p>
-          <strong>Teléfono:</strong>
-          ${escapar(cliente.telefono || "-")}
-        </p>
-
-        <p>
-          <strong>Correo:</strong>
-          ${escapar(cliente.correo || "-")}
-        </p>
-
-        <button
-          class="boton rojo"
-          onclick="eliminarCliente(${cliente.id})">
-          Eliminar
-        </button>
-
-      </div>
-
-    `).join("");
+return;
 
 }
+
+
+contenedor.innerHTML =
+clientes.map(
+cliente => `
+
+<div class="item">
+
+<h3>
+${escapar(cliente.paciente)}
+</h3>
+
+<p>
+<strong>Clínica:</strong>
+${escapar(cliente.clinica || "-")}
+</p>
+
+<p>
+<strong>Dr./Dra.:</strong>
+${escapar(cliente.doctor || "-")}
+</p>
+
+<p>
+<strong>Teléfono:</strong>
+${escapar(cliente.telefono || "-")}
+</p>
+
+<p>
+<strong>Correo:</strong>
+${escapar(cliente.correo || "-")}
+</p>
+
+<button
+class="boton rojo"
+onclick="eliminarCliente(${cliente.id})"
+>
+Eliminar
+</button>
+
+</div>
+
+`
+).join("");
+
+}
+
 
 
 async function eliminarCliente(id) {
 
-  if (!confirm("¿Eliminar este cliente?")) return;
+if (!confirm(
+"¿Eliminar este cliente?"
+)) return;
 
-  await eliminarRegistro(
-    "clientes",
-    id
-  );
+await eliminarDeBD(
+"clientes",
+id
+);
 
-  await cargarDatos();
+await cargarDatos();
 
-  actualizarTodo();
+actualizarTodo();
 
 }
 
 
-/* =====================================================
+
+/* =========================
    TRABAJOS
-   ===================================================== */
+========================= */
 
 async function guardarTrabajo() {
 
-  const trabajo = {
+const paciente =
+document.getElementById(
+"trabajoPaciente"
+).value.trim();
 
-    id: Date.now(),
-
-    clinica:
-      document.getElementById("trabajoClinica").value,
-
-    doctor:
-      document.getElementById("trabajoDoctor").value,
-
-    paciente:
-      document.getElementById("trabajoPaciente").value,
-
-    tipo:
-      document.getElementById("trabajoTipo").value,
-
-    fechaLlegada:
-      document.getElementById("fechaLlegada").value,
-
-    fechaEntrega:
-      document.getElementById("fechaEntrega").value,
-
-    estado:
-      document.getElementById("estadoTrabajo").value,
-
-    monto:
-      document.getElementById("trabajoMonto").value,
-
-    observaciones:
-      document.getElementById("trabajoObservaciones").value
-
-  };
+const tipo =
+document.getElementById(
+"trabajoTipo"
+).value.trim();
 
 
-  if (
-    !trabajo.paciente.trim() ||
-    !trabajo.tipo.trim()
-  ) {
+if (!paciente || !tipo) {
 
-    alert(
-      "Escribe al menos el paciente y el tipo de trabajo."
-    );
+alert(
+"Escribe el paciente y el tipo de trabajo."
+);
 
-    return;
-
-  }
-
-
-  await agregarRegistro(
-    "trabajos",
-    trabajo
-  );
-
-
-  await cargarDatos();
-
-  limpiarTrabajo();
-
-  mostrarMensaje(
-    "Trabajo guardado correctamente."
-  );
-
-  actualizarTodo();
+return;
 
 }
+
+
+const trabajo = {
+
+id: Date.now(),
+
+clinica:
+document.getElementById(
+"trabajoClinica"
+).value,
+
+doctor:
+document.getElementById(
+"trabajoDoctor"
+).value,
+
+paciente:
+
+paciente,
+
+tipo:
+
+tipo,
+
+fechaLlegada:
+document.getElementById(
+"fechaLlegada"
+).value,
+
+fechaEntrega:
+document.getElementById(
+"fechaEntrega"
+).value,
+
+estado:
+document.getElementById(
+"estadoTrabajo"
+).value,
+
+monto:
+document.getElementById(
+"trabajoMonto"
+).value,
+
+observaciones:
+document.getElementById(
+"trabajoObservaciones"
+).value
+
+};
+
+
+await guardarEnBD(
+"trabajos",
+trabajo
+);
+
+await cargarDatos();
+
+limpiarTrabajo();
+
+actualizarTodo();
+
+mostrarMensaje(
+"Trabajo guardado correctamente."
+);
+
+}
+
 
 
 function limpiarTrabajo() {
 
-  document.getElementById("trabajoClinica").value = "";
-  document.getElementById("trabajoDoctor").value = "";
-  document.getElementById("trabajoPaciente").value = "";
-  document.getElementById("trabajoTipo").value = "";
-  document.getElementById("fechaLlegada").value = "";
-  document.getElementById("fechaEntrega").value = "";
-  document.getElementById("estadoTrabajo").value = "Recibido";
-  document.getElementById("trabajoMonto").value = "";
-  document.getElementById("trabajoObservaciones").value = "";
+document.getElementById(
+"trabajoClinica"
+).value = "";
+
+document.getElementById(
+"trabajoDoctor"
+).value = "";
+
+document.getElementById(
+"trabajoPaciente"
+).value = "";
+
+document.getElementById(
+"trabajoTipo"
+).value = "";
+
+document.getElementById(
+"fechaLlegada"
+).value = "";
+
+document.getElementById(
+"fechaEntrega"
+).value = "";
+
+document.getElementById(
+"estadoTrabajo"
+).value = "Recibido";
+
+document.getElementById(
+"trabajoMonto"
+).value = "";
+
+document.getElementById(
+"trabajoObservaciones"
+).value = "";
 
 }
+
 
 
 function claseEstado(estado) {
 
-  if (estado === "Recibido")
-    return "recibido";
+if (estado === "Recibido")
+return "recibido";
 
-  if (estado === "En proceso")
-    return "proceso";
+if (estado === "En proceso")
+return "proceso";
 
-  if (estado === "Terminado")
-    return "terminado";
+if (estado === "Terminado")
+return "terminado";
 
-  if (estado === "Entregado")
-    return "entregado";
+if (estado === "Entregado")
+return "entregado";
 
-  return "recibido";
+return "recibido";
 
 }
+
 
 
 function mostrarTrabajos() {
 
-  const contenedor =
-    document.getElementById("listaTrabajos");
+const contenedor =
+document.getElementById(
+"listaTrabajos"
+);
 
 
-  if (trabajos.length === 0) {
+if (trabajos.length === 0) {
 
-    contenedor.innerHTML =
-      '<div class="vacio">No hay trabajos registrados.</div>';
+contenedor.innerHTML =
+'<div class="vacio">No hay trabajos registrados.</div>';
 
-    return;
-
-  }
-
-
-  contenedor.innerHTML =
-    trabajos.map(trabajo => `
-
-      <div class="item">
-
-        <h3>${escapar(trabajo.paciente)}</h3>
-
-        <p>
-          <strong>Trabajo:</strong>
-          ${escapar(trabajo.tipo)}
-        </p>
-
-        <p>
-          <strong>Clínica:</strong>
-          ${escapar(trabajo.clinica || "-")}
-        </p>
-
-        <p>
-          <strong>Dr./Dra.:</strong>
-          ${escapar(trabajo.doctor || "-")}
-        </p>
-
-        <p>
-          <strong>Llegó:</strong>
-          ${trabajo.fechaLlegada || "-"}
-        </p>
-
-        <p>
-          <strong>Entrega:</strong>
-          ${trabajo.fechaEntrega || "-"}
-        </p>
-
-        <span class="estado ${claseEstado(trabajo.estado)}">
-          ${trabajo.estado}
-        </span>
-
-        <p>
-          <strong>Monto:</strong>
-          $${trabajo.monto || "0.00"}
-        </p>
-
-        <p>
-          <strong>Observaciones:</strong>
-          ${escapar(trabajo.observaciones || "-")}
-        </p>
-
-        <button
-          class="boton rojo"
-          onclick="eliminarTrabajo(${trabajo.id})">
-          Eliminar
-        </button>
-
-      </div>
-
-    `).join("");
+return;
 
 }
+
+
+contenedor.innerHTML =
+trabajos.map(
+trabajo => `
+
+<div class="item">
+
+<h3>
+${escapar(trabajo.paciente)}
+</h3>
+
+<p>
+<strong>Trabajo:</strong>
+${escapar(trabajo.tipo)}
+</p>
+
+<p>
+<strong>Clínica:</strong>
+${escapar(trabajo.clinica || "-")}
+</p>
+
+<p>
+<strong>Dr./Dra.:</strong>
+${escapar(trabajo.doctor || "-")}
+</p>
+
+<p>
+<strong>Fecha de llegada:</strong>
+${trabajo.fechaLlegada || "-"}
+</p>
+
+<p>
+<strong>Fecha de entrega:</strong>
+${trabajo.fechaEntrega || "-"}
+</p>
+
+<p>
+
+<strong>Estado:</strong>
+
+<span
+class="estado ${claseEstado(trabajo.estado)}"
+>
+${escapar(trabajo.estado)}
+</span>
+
+</p>
+
+<p>
+<strong>Monto:</strong>
+$${trabajo.monto || "0.00"}
+</p>
+
+<p>
+<strong>Observaciones:</strong>
+${escapar(trabajo.observaciones || "-")}
+</p>
+
+<button
+class="boton rojo"
+onclick="eliminarTrabajo(${trabajo.id})"
+>
+Eliminar
+</button>
+
+</div>
+
+`
+).join("");
+
+}
+
 
 
 async function eliminarTrabajo(id) {
 
-  if (!confirm("¿Eliminar este trabajo?")) return;
+if (!confirm(
+"¿Eliminar este trabajo?"
+)) return;
 
-  await eliminarRegistro(
-    "trabajos",
-    id
-  );
+await eliminarDeBD(
+"trabajos",
+id
+);
 
-  await cargarDatos();
+await cargarDatos();
 
-  actualizarTodo();
+actualizarTodo();
 
 }
 
 
-/* =====================================================
+
+/* =========================
    CITAS
-   ===================================================== */
+========================= */
 
 async function guardarCita() {
 
-  const paciente =
-    document
-      .getElementById("citaPaciente")
-      .value
-      .trim();
+const paciente =
+document.getElementById(
+"citaPaciente"
+).value.trim();
+
+const telefono =
+document.getElementById(
+"citaTelefono"
+).value.trim();
+
+const fecha =
+document.getElementById(
+"citaFecha"
+).value;
+
+const hora =
+document.getElementById(
+"citaHora"
+).value;
 
 
-  const telefono =
-    document
-      .getElementById("citaTelefono")
-      .value
-      .trim();
+if (
+!paciente ||
+!telefono ||
+!fecha
+) {
 
+alert(
+"Escribe nombre, teléfono y fecha."
+);
 
-  const fecha =
-    document.getElementById("citaFecha").value;
-
-
-  const hora =
-    document.getElementById("citaHora").value;
-
-
-  if (!paciente || !telefono || !fecha) {
-
-    alert(
-      "Necesitas escribir nombre, teléfono y fecha."
-    );
-
-    return;
-
-  }
-
-
-  const cita = {
-
-    id: Date.now(),
-
-    paciente: paciente,
-
-    telefono: telefono,
-
-    fecha: fecha,
-
-    hora: hora || ""
-
-  };
-
-
-  await agregarRegistro(
-    "citas",
-    cita
-  );
-
-
-  await cargarDatos();
-
-  limpiarCita();
-
-  mostrarMensaje(
-    "Cita guardada correctamente."
-  );
-
-  actualizarTodo();
+return;
 
 }
+
+
+const cita = {
+
+id: Date.now(),
+
+paciente:
+
+paciente,
+
+telefono:
+
+telefono,
+
+fecha:
+
+fecha,
+
+hora:
+
+hora
+
+};
+
+
+await guardarEnBD(
+"citas",
+cita
+);
+
+await cargarDatos();
+
+limpiarCita();
+
+actualizarTodo();
+
+mostrarMensaje(
+"Cita guardada correctamente."
+);
+
+}
+
 
 
 function limpiarCita() {
 
-  document.getElementById("citaPaciente").value = "";
-  document.getElementById("citaTelefono").value = "";
-  document.getElementById("citaFecha").value = "";
-  document.getElementById("citaHora").value = "";
+document.getElementById(
+"citaPaciente"
+).value = "";
+
+document.getElementById(
+"citaTelefono"
+).value = "";
+
+document.getElementById(
+"citaFecha"
+).value = "";
+
+document.getElementById(
+"citaHora"
+).value = "";
 
 }
+
 
 
 function mostrarCitas() {
 
-  const contenedor =
-    document.getElementById("listaCitas");
+const contenedor =
+document.getElementById(
+"listaCitas"
+);
 
 
-  if (citas.length === 0) {
+if (citas.length === 0) {
 
-    contenedor.innerHTML =
-      '<div class="vacio">No hay citas registradas.</div>';
+contenedor.innerHTML =
+'<div class="vacio">No hay citas registradas.</div>';
 
-    return;
-
-  }
-
-
-  const ordenadas =
-    [...citas].sort((a, b) => {
-
-      return new Date(
-        a.fecha + "T" + (a.hora || "00:00")
-      ) -
-      new Date(
-        b.fecha + "T" + (b.hora || "00:00")
-      );
-
-    });
-
-
-  contenedor.innerHTML =
-    ordenadas.map(cita => `
-
-      <div class="item">
-
-        <h3>
-          👤 ${escapar(cita.paciente)}
-        </h3>
-
-        <p>
-          <strong>Teléfono:</strong>
-          ${escapar(cita.telefono)}
-        </p>
-
-        <p>
-          <strong>Fecha:</strong>
-          ${formatearFecha(cita.fecha)}
-        </p>
-
-        <p>
-          <strong>Hora:</strong>
-          ${cita.hora || "No indicada"}
-        </p>
-
-        <button
-          class="boton whatsapp"
-          onclick="abrirWhatsApp(
-            '${escaparJS(cita.telefono)}',
-            '${escaparJS(cita.paciente)}',
-            '${cita.fecha}',
-            '${cita.hora}'
-          )">
-
-          💬 Recordar por WhatsApp
-
-        </button>
-
-        <button
-          class="boton rojo"
-          onclick="eliminarCita(${cita.id})">
-
-          Eliminar
-
-        </button>
-
-      </div>
-
-    `).join("");
+return;
 
 }
+
+
+contenedor.innerHTML =
+citas.map(
+cita => `
+
+<div class="item">
+
+<h3>
+👤 ${escapar(cita.paciente)}
+</h3>
+
+<p>
+<strong>Teléfono:</strong>
+${escapar(cita.telefono)}
+</p>
+
+<p>
+<strong>Fecha:</strong>
+${formatearFecha(cita.fecha)}
+</p>
+
+<p>
+<strong>Hora:</strong>
+${cita.hora || "No indicada"}
+</p>
+
+<button
+class="boton whatsapp"
+onclick="abrirWhatsApp(
+'${escaparJS(cita.telefono)}',
+'${escaparJS(cita.paciente)}',
+'${cita.fecha}',
+'${cita.hora}'
+)"
+>
+💬 Recordar por WhatsApp
+</button>
+
+<button
+class="boton rojo"
+onclick="eliminarCita(${cita.id})"
+>
+Eliminar
+</button>
+
+</div>
+
+`
+).join("");
+
+}
+
 
 
 async function eliminarCita(id) {
 
-  if (!confirm("¿Eliminar esta cita?")) return;
+if (!confirm(
+"¿Eliminar esta cita?"
+)) return;
 
-  await eliminarRegistro(
-    "citas",
-    id
-  );
+await eliminarDeBD(
+"citas",
+id
+);
 
-  await cargarDatos();
+await cargarDatos();
 
-  actualizarTodo();
+actualizarTodo();
 
 }
 
 
-/* =====================================================
+
+/* =========================
    WHATSAPP
-   ===================================================== */
+========================= */
 
 function abrirWhatsApp(
-  telefono,
-  paciente,
-  fecha,
-  hora
+telefono,
+paciente,
+fecha,
+hora
 ) {
 
-  const numero =
-    telefono.replace(/\D/g, "");
+const numero =
+telefono.replace(/\D/g,"");
 
 
-  if (!numero) {
+if (!numero) {
 
-    alert("El número de teléfono no es válido.");
+alert(
+"El número no es válido."
+);
 
-    return;
-
-  }
-
-
-  let mensaje =
-    "Hola " +
-    paciente +
-    ".%0A%0A" +
-
-    "Le recordamos que tiene una cita " +
-    "en LAB innovadent con Javier Quiroz " +
-
-    "el día " +
-    formatearFecha(fecha);
-
-
-  if (hora) {
-
-    mensaje +=
-      " a las " + hora;
-
-  }
-
-
-  mensaje +=
-    ".%0A%0A" +
-    "Por favor confirme su asistencia.%0A%0A" +
-    "Gracias.";
-
-
-  const url =
-    "https://wa.me/" +
-    numero +
-    "?text=" +
-    mensaje;
-
-
-  window.open(
-    url,
-    "_blank"
-  );
+return;
 
 }
 
 
-/* =====================================================
-   AVISOS DE MAÑANA
-   ===================================================== */
+let mensaje =
+"Hola " +
+paciente +
+".%0A%0A" +
 
-function obtenerFechaManana() {
+"Le recordamos que tiene una cita " +
+"con Javier Quiroz, Mecánico Dental, " +
 
-  const fecha =
-    new Date();
-
-  fecha.setDate(
-    fecha.getDate() + 1
-  );
+"el día " +
+formatearFecha(fecha);
 
 
-  const año =
-    fecha.getFullYear();
+if (hora) {
 
-  const mes =
-    String(
-      fecha.getMonth() + 1
-    ).padStart(2, "0");
-
-  const dia =
-    String(
-      fecha.getDate()
-    ).padStart(2, "0");
-
-
-  return año +
-    "-" +
-    mes +
-    "-" +
-    dia;
+mensaje +=
+" a las " +
+hora;
 
 }
+
+
+mensaje +=
+".%0A%0A" +
+
+"Por favor confirme su asistencia.%0A%0A" +
+
+"Gracias.";
+
+
+window.open(
+"https://wa.me/" +
+numero +
+"?text=" +
+mensaje,
+"_blank"
+);
+
+}
+
+
+
+/* =========================
+   CITAS DE MAÑANA
+========================= */
+
+function fechaManana() {
+
+const fecha =
+new Date();
+
+fecha.setDate(
+fecha.getDate() + 1
+);
+
+
+const año =
+fecha.getFullYear();
+
+const mes =
+String(
+fecha.getMonth() + 1
+).padStart(2,"0");
+
+const dia =
+String(
+fecha.getDate()
+).padStart(2,"0");
+
+
+return (
+año +
+"-" +
+mes +
+"-" +
+dia
+);
+
+}
+
 
 
 function mostrarAvisosCitas() {
 
-  const contenedor =
-    document.getElementById("avisosCitas");
+const contenedor =
+document.getElementById(
+"avisosCitas"
+);
 
 
-  const manana =
-    obtenerFechaManana();
+const manana =
+fechaManana();
 
 
-  const citasManana =
-    citas.filter(
-      cita => cita.fecha === manana
-    );
+const citasManana =
+citas.filter(
+cita =>
+cita.fecha === manana
+);
 
 
-  if (citasManana.length === 0) {
+if (
+citasManana.length === 0
+) {
 
-    contenedor.innerHTML =
-      '<div class="vacio">No hay citas para mañana.</div>';
+contenedor.innerHTML =
+'<div class="vacio">No hay citas para mañana.</div>';
 
-    return;
-
-  }
-
-
-  contenedor.innerHTML =
-    citasManana.map(cita => `
-
-      <div class="aviso">
-
-        <strong>
-          📅 ${escapar(cita.paciente)}
-        </strong>
-
-        <br>
-
-        Mañana tiene cita
-        ${cita.hora
-          ? " a las " + cita.hora
-          : ""}.
-
-        <br>
-
-        <button
-          class="boton whatsapp"
-          onclick="abrirWhatsApp(
-            '${escaparJS(cita.telefono)}',
-            '${escaparJS(cita.paciente)}',
-            '${cita.fecha}',
-            '${cita.hora}'
-          )">
-
-          💬 Enviar recordatorio
-
-        </button>
-
-      </div>
-
-    `).join("");
+return;
 
 }
 
 
-/* =====================================================
+contenedor.innerHTML =
+citasManana.map(
+cita => `
+
+<div class="aviso">
+
+<strong>
+📅 ${escapar(cita.paciente)}
+</strong>
+
+<br><br>
+
+Mañana tiene cita
+${cita.hora
+? " a las " + cita.hora
+: ""}.
+
+<br><br>
+
+<button
+class="boton whatsapp"
+onclick="abrirWhatsApp(
+'${escaparJS(cita.telefono)}',
+'${escaparJS(cita.paciente)}',
+'${cita.fecha}',
+'${cita.hora}'
+)"
+>
+💬 Enviar recordatorio
+</button>
+
+</div>
+
+`
+).join("");
+
+}
+
+
+
+/* =========================
    RESPALDO
-   ===================================================== */
+========================= */
 
 async function crearRespaldo() {
 
-  try {
+const respaldo = {
 
-    await cargarDatos();
+aplicacion:
+"LAB innovadent",
 
+fecha:
+new Date().toISOString(),
 
-    const respaldo = {
+clientes:
+clientes,
 
-      aplicacion:
-        "LAB innovadent",
+trabajos:
+trabajos,
 
-      version:
-        1,
+citas:
+citas
 
-      fecha:
-        new Date().toISOString(),
-
-      clientes:
-        clientes,
-
-      trabajos:
-        trabajos,
-
-      citas:
-        citas
-
-    };
+};
 
 
-    const contenido =
-      JSON.stringify(
-        respaldo,
-        null,
-        2
-      );
+const archivo =
+new Blob(
+[
+JSON.stringify(
+respaldo,
+null,
+2
+)
+],
+{
+type:
+"application/json"
+}
+);
 
 
-    const archivo =
-      new Blob(
-        [contenido],
-        { type: "application/json" }
-      );
+const url =
+URL.createObjectURL(
+archivo
+);
 
 
-    const url =
-      URL.createObjectURL(archivo);
+const enlace =
+document.createElement(
+"a"
+);
 
 
-    const enlace =
-      document.createElement("a");
+enlace.href = url;
+
+enlace.download =
+"LAB-innovadent-respaldo.json";
 
 
-    const fecha =
-      new Date()
-        .toISOString()
-        .slice(0, 10);
+document.body.appendChild(
+enlace
+);
+
+enlace.click();
+
+document.body.removeChild(
+enlace
+);
+
+URL.revokeObjectURL(
+url
+);
 
 
-    enlace.href = url;
-
-    enlace.download =
-      "LAB-innovadent-respaldo-" +
-      fecha +
-      ".json";
-
-
-    document.body.appendChild(enlace);
-
-    enlace.click();
-
-    document.body.removeChild(enlace);
-
-    URL.revokeObjectURL(url);
-
-
-    mostrarMensaje(
-      "Respaldo creado correctamente."
-    );
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    alert(
-      "No se pudo crear el respaldo."
-    );
-
-  }
+mostrarMensaje(
+"Respaldo creado correctamente."
+);
 
 }
 
 
-/* =====================================================
-   RESTAURAR RESPALDO
-   ===================================================== */
+
+/* =========================
+   RESTAURAR
+========================= */
 
 async function restaurarRespaldo(event) {
 
-  const archivo =
-    event.target.files[0];
+const archivo =
+event.target.files[0];
 
 
-  if (!archivo) return;
+if (!archivo) return;
 
 
-  try {
+try {
 
-    const texto =
-      await archivo.text();
+const texto =
+await archivo.text();
 
-
-    const respaldo =
-      JSON.parse(texto);
-
-
-    if (
-      respaldo.aplicacion !==
-      "LAB innovadent"
-    ) {
-
-      alert(
-        "Este archivo no pertenece a LAB innovadent."
-      );
-
-      return;
-
-    }
+const respaldo =
+JSON.parse(texto);
 
 
-    const confirmar =
-      confirm(
-        "ATENCIÓN:\n\n" +
-        "Al restaurar este respaldo, " +
-        "los datos actuales serán reemplazados " +
-        "por los datos del archivo.\n\n" +
-        "¿Deseas continuar?"
-      );
+if (
+respaldo.aplicacion !==
+"LAB innovadent"
+) {
 
+alert(
+"Este archivo no pertenece a LAB innovadent."
+);
 
-    if (!confirmar) {
-
-      event.target.value = "";
-
-      return;
-
-    }
-
-
-    await borrarTodosLosDatos();
-
-
-    for (
-      const cliente of
-      (respaldo.clientes || [])
-    ) {
-
-      await agregarRegistro(
-        "clientes",
-        cliente
-      );
-
-    }
-
-
-    for (
-      const trabajo of
-      (respaldo.trabajos || [])
-    ) {
-
-      await agregarRegistro(
-        "trabajos",
-        trabajo
-      );
-
-    }
-
-
-    for (
-      const cita of
-      (respaldo.citas || [])
-    ) {
-
-      await agregarRegistro(
-        "citas",
-        cita
-      );
-
-    }
-
-
-    await cargarDatos();
-
-    actualizarTodo();
-
-
-    mostrarMensaje(
-      "Respaldo restaurado correctamente."
-    );
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    alert(
-      "No se pudo restaurar el respaldo. " +
-      "Comprueba que sea un archivo de LAB innovadent."
-    );
-
-  }
-
-
-  event.target.value = "";
+return;
 
 }
 
 
-/* =====================================================
-   BORRAR DATOS PARA RESTAURACIÓN
-   ===================================================== */
+if (!confirm(
+"¿Deseas restaurar este respaldo?"
+)) {
 
-async function borrarTodosLosDatos() {
-
-  const tiendas = [
-    "clientes",
-    "trabajos",
-    "citas"
-  ];
-
-
-  for (const tienda of tiendas) {
-
-    await new Promise(
-      (resolve, reject) => {
-
-        const transaccion =
-          db.transaction(
-            tienda,
-            "readwrite"
-          );
-
-        const almacen =
-          transaccion.objectStore(tienda);
-
-        const solicitud =
-          almacen.clear();
-
-        solicitud.onsuccess =
-          () => resolve();
-
-        solicitud.onerror =
-          () => reject(
-            solicitud.error
-          );
-
-      }
-    );
-
-  }
+return;
 
 }
 
 
-/* =====================================================
-   DASHBOARD
-   ===================================================== */
-
-function actualizarDashboard() {
-
-  document.getElementById(
-    "totalClientes"
-  ).textContent =
-    clientes.length;
+await limpiarBD();
 
 
-  document.getElementById(
-    "totalTrabajos"
-  ).textContent =
-    trabajos.length;
+for (
+const cliente of
+(respaldo.clientes || [])
+) {
 
-
-  document.getElementById(
-    "trabajosProceso"
-  ).textContent =
-
-    trabajos.filter(
-      trabajo =>
-        trabajo.estado === "En proceso"
-    ).length;
-
-
-  document.getElementById(
-    "totalCitas"
-  ).textContent =
-    citas.length;
-
-
-  mostrarAvisosCitas();
+await guardarEnBD(
+"clientes",
+cliente
+);
 
 }
 
 
-/* =====================================================
-   ACTUALIZAR TODO
-   ===================================================== */
+for (
+const trabajo of
+(respaldo.trabajos || [])
+) {
+
+await guardarEnBD(
+"trabajos",
+trabajo
+);
+
+}
+
+
+for (
+const cita of
+(respaldo.citas || [])
+) {
+
+await guardarEnBD(
+"citas",
+cita
+);
+
+}
+
+
+await cargarDatos();
+
+actualizarTodo();
+
+mostrarMensaje(
+"Respaldo restaurado correctamente."
+);
+
+}
+catch(error) {
+
+console.error(error);
+
+alert(
+"No se pudo restaurar el respaldo."
+);
+
+}
+
+
+event.target.value = "";
+
+}
+
+
+
+function limpiarBD() {
+
+return new Promise(
+(resolve,reject) => {
+
+const tiendas = [
+"clientes",
+"trabajos",
+"citas"
+];
+
+
+let pendientes =
+tiendas.length;
+
+
+tiendas.forEach(
+tienda => {
+
+const transaccion =
+db.transaction(
+tienda,
+"readwrite"
+);
+
+const almacen =
+transaccion.objectStore(
+tienda
+);
+
+const solicitud =
+almacen.clear();
+
+
+solicitud.onsuccess =
+() => {
+
+pendientes--;
+
+if (pendientes === 0) {
+resolve();
+}
+
+};
+
+
+solicitud.onerror =
+() => reject(
+solicitud.error
+);
+
+});
+
+});
+
+}
+
+
+
+/* =========================
+   ACTUALIZAR
+========================= */
 
 function actualizarTodo() {
 
-  mostrarClientes();
+mostrarClientes();
 
-  mostrarTrabajos();
+mostrarTrabajos();
 
-  mostrarCitas();
+mostrarCitas();
 
-  actualizarDashboard();
+actualizarDashboard();
 
 }
 
 
-/* =====================================================
+
+function actualizarDashboard() {
+
+document.getElementById(
+"totalClientes"
+).textContent =
+clientes.length;
+
+
+document.getElementById(
+"totalTrabajos"
+).textContent =
+trabajos.length;
+
+
+document.getElementById(
+"trabajosProceso"
+).textContent =
+
+trabajos.filter(
+trabajo =>
+trabajo.estado ===
+"En proceso"
+).length;
+
+
+document.getElementById(
+"totalCitas"
+).textContent =
+citas.length;
+
+
+mostrarAvisosCitas();
+
+}
+
+
+
+/* =========================
    MENSAJES
-   ===================================================== */
+========================= */
 
 function mostrarMensaje(texto) {
 
-  const elemento =
-    document.getElementById("mensaje");
+const elemento =
+document.getElementById(
+"mensaje"
+);
 
 
-  elemento.textContent =
-    texto;
+elemento.textContent =
+texto;
+
+elemento.style.display =
+"block";
 
 
-  elemento.style.display =
-    "block";
+setTimeout(
+() => {
 
+elemento.style.display =
+"none";
 
-  setTimeout(() => {
-
-    elemento.style.display =
-      "none";
-
-  }, 3000);
+},
+3000
+);
 
 }
 
 
-/* =====================================================
+
+/* =========================
    FUNCIONES AUXILIARES
-   ===================================================== */
+========================= */
 
 function formatearFecha(fecha) {
 
-  if (!fecha) return "-";
+if (!fecha) return "-";
+
+const partes =
+fecha.split("-");
 
 
-  const partes =
-    fecha.split("-");
+if (
+partes.length !== 3
+) return fecha;
 
 
-  if (partes.length !== 3)
-    return fecha;
-
-
-  return (
-    partes[2] +
-    "/" +
-    partes[1] +
-    "/" +
-    partes[0]
-  );
+return (
+partes[2] +
+"/" +
+partes[1] +
+"/" +
+partes[0]
+);
 
 }
+
 
 
 function escapar(texto) {
 
-  return String(texto || "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+return String(
+texto || ""
+)
+
+.replace(
+/&/g,
+"&amp;"
+)
+
+.replace(
+/</g,
+"&lt;"
+)
+
+.replace(
+/>/g,
+"&gt;"
+)
+
+.replace(
+/"/g,
+"&quot;"
+)
+
+.replace(
+/'/g,
+"&#039;"
+);
 
 }
+
 
 
 function escaparJS(texto) {
 
-  return String(texto || "")
-    .replace(/\\/g, "\\\\")
-    .replace(/'/g, "\\'");
+return String(
+texto || ""
+)
+
+.replace(
+/\\/g,
+"\\\\"
+)
+
+.replace(
+/'/g,
+"\\'"
+);
 
 }
 
 
-/* =====================================================
+
+/* =========================
    SERVICE WORKER
-   ===================================================== */
+========================= */
 
-if ("serviceWorker" in navigator) {
+if (
+"serviceWorker" in navigator
+) {
 
-  window.addEventListener(
-    "load",
-    () => {
+window.addEventListener(
+"load",
+function() {
 
-      navigator.serviceWorker
-        .register("./sw.js")
-        .then(() => {
+navigator.serviceWorker
+.register("./sw.js")
+.then(
+function() {
 
-          console.log(
-            "LAB innovadent: Service Worker registrado."
-          );
+console.log(
+"Service Worker activo."
+);
 
-        })
-        .catch(error => {
+}
+)
+.catch(
+function(error) {
 
-          console.error(
-            "Error registrando Service Worker:",
-            error
-          );
+console.log(
+"Service Worker:",
+error
+);
 
-        });
+}
+);
 
-    }
-  );
+});
 
 }
 
 
-/* =====================================================
-   ARRANCAR
-   ===================================================== */
+/* INICIAR */
 
-iniciarAplicacion();
+iniciar();
 
 </script>
 
