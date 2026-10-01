@@ -12,19 +12,238 @@
   <title>LAB innovadent</title>
 
   <style>
-    * {
-      box-sizing: border-box;
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+  }
+
+  header {
+    background: #2563eb;
+    color: white;
+    padding: 20px;
+    text-align: center;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 28px;
+  }
+
+  header p {
+    margin: 6px 0 0;
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    padding: 12px;
+    background: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,.1);
+  }
+
+  nav button,
+  .boton {
+    border: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  nav button {
+    background: #2563eb;
+    color: white;
+  }
+
+  main {
+    max-width: 1100px;
+    margin: auto;
+    padding: 20px;
+  }
+
+  .seccion {
+    display: none;
+  }
+
+  .seccion.activa {
+    display: block;
+  }
+
+  .tarjetas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+  }
+
+  .tarjeta,
+  .formulario,
+  .item {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 7px rgba(0,0,0,.08);
+  }
+
+  .tarjeta {
+    text-align: center;
+  }
+
+  .tarjeta h3 {
+    margin: 0;
+    font-size: 30px;
+    color: #2563eb;
+  }
+
+  .campo {
+    margin-bottom: 15px;
+  }
+
+  label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+
+  textarea {
+    min-height: 90px;
+  }
+
+  .verde {
+    background: #2563eb;
+    color: white;
+  }
+
+  .azul {
+    background: #2563eb;
+    color: white;
+  }
+
+  .rojo {
+    background: #dc2626;
+    color: white;
+  }
+
+  .whatsapp {
+    background: #25d366;
+    color: white;
+  }
+
+  .gris {
+    background: #475569;
+    color: white;
+  }
+
+  .lista {
+    display: grid;
+    gap: 15px;
+  }
+
+  .item h3 {
+    margin-top: 0;
+    color: #2563eb;
+  }
+
+  .estado {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+  }
+
+  .recibido {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+
+  .proceso {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  .terminado {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .entregado {
+    background: #e0e7ff;
+    color: #3730a3;
+  }
+
+  .aviso {
+    background: #fff7ed;
+    border-left: 5px solid #f97316;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+
+  .vacio {
+    text-align: center;
+    color: #64748b;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+  }
+
+  .dos-columnas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+  }
+
+  .respaldo {
+    background: #ecfeff;
+    border: 1px solid #99f6e4;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+  }
+
+  .respaldo h3 {
+    margin-top: 0;
+  }
+
+  #mensaje {
+    display: none;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    background: #dcfce7;
+    color: #166534;
+    font-weight: bold;
+  }
+
+  @media (max-width: 600px) {
+    main {
+      padding: 12px;
     }
 
-    body{
-<div style="text-align:center; padding:20px 10px 15px;">
-
-  <img
-    src="./lab-innovadent-icon-192.png"
-    alt="Laboratorio Dental Innovadent"
-    style="width:120px; height:120px; object-fit:contain; display:block; margin:0 auto 10px;"
-  >
-
+    header h1 {
+      font-size: 23px;
+    }
+  }
+</style>
   <h1 style="margin:0;">
     Laboratorio Dental Innovadent
   </h1>
