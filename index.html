@@ -1356,6 +1356,82 @@ const VERSION_BD =
 
 let db;
 
+/* =========================
+   BORRADORES AUTOMÁTICOS
+========================= */
+
+const CLAVE_BORRADOR_CLIENTE = "LAB_innovadent_borrador_cliente";
+const CLAVE_BORRADOR_TRABAJO = "LAB_innovadent_borrador_trabajo";
+const CLAVE_BORRADOR_CITA = "LAB_innovadent_borrador_cita";
+
+let temporizadorBorrador = null;
+
+function guardarBorrador(clave, ids) {
+  try {
+    const datos = {};
+    ids.forEach(id => {
+      const elemento = document.getElementById(id);
+      if (elemento) datos[id] = elemento.value;
+    });
+    localStorage.setItem(clave, JSON.stringify(datos));
+  } catch (error) {
+    console.error("No se pudo guardar el borrador:", error);
+  }
+}
+
+function recuperarBorrador(clave, ids) {
+  try {
+    const texto = localStorage.getItem(clave);
+    if (!texto) return;
+    const datos = JSON.parse(texto);
+    ids.forEach(id => {
+      const elemento = document.getElementById(id);
+      if (elemento && datos[id] !== undefined) elemento.value = datos[id];
+    });
+  } catch (error) {
+    console.error("No se pudo recuperar el borrador:", error);
+  }
+}
+
+function borrarBorrador(clave) {
+  localStorage.removeItem(clave);
+}
+
+function configurarBorradoresAutomaticos() {
+  const grupos = [
+    {
+      clave: CLAVE_BORRADOR_CLIENTE,
+      ids: ["clienteClinica", "clienteDoctor", "clientePaciente", "clienteTelefono", "clienteCorreo"]
+    },
+    {
+      clave: CLAVE_BORRADOR_TRABAJO,
+      ids: ["trabajoClinica", "trabajoDoctor", "trabajoTelefono", "trabajoPaciente", "trabajoTipo", "fechaLlegada", "fechaEntrega", "estadoTrabajo", "procesoTrabajo", "trabajoMonto", "trabajoImpuesto", "trabajoTotal", "trabajoObservaciones"]
+    },
+    {
+      clave: CLAVE_BORRADOR_CITA,
+      ids: ["citaPaciente", "citaTelefono", "citaFecha", "citaHora"]
+    }
+  ];
+
+  grupos.forEach(grupo => {
+    recuperarBorrador(grupo.clave, grupo.ids);
+    grupo.ids.forEach(id => {
+      const elemento = document.getElementById(id);
+      if (elemento) {
+        elemento.addEventListener("input", () => {
+          guardarBorrador(grupo.clave, grupo.ids);
+        });
+        elemento.addEventListener("change", () => {
+          guardarBorrador(grupo.clave, grupo.ids);
+        });
+      }
+    });
+  });
+
+  calcularTotalTrabajo();
+}
+
+
 let clientes = [];
 
 let trabajos = [];
@@ -1566,6 +1642,7 @@ await abrirBaseDatos();
 await cargarDatos();
 
 actualizarTodo();
+configurarBorradoresAutomaticos();
 
 }
 
