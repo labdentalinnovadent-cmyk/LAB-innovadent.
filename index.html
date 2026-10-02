@@ -989,10 +989,16 @@ Nuevo trabajo
 <div class="campo">
 
 <label>
-Clínica
+Clínica / cliente facturado
 </label>
 
-<input id="trabajoClinica">
+<select id="trabajoClinica" onchange="autocompletarClinicaTrabajo()">
+<option value="">Selecciona una clínica</option>
+</select>
+
+<small style="color:#64748b;">
+Al seleccionar la clínica se llenarán automáticamente sus datos de facturación y WhatsApp.
+</small>
 
 </div>
 
@@ -1033,6 +1039,17 @@ Paciente
 
 </div>
 
+
+<div class="campo">
+
+<label>
+Trabajo / precio guardado</label>
+
+<select id="trabajoPrecioCatalogo" onchange="autocompletarPrecioTrabajo()">
+<option value="">Selecciona un trabajo guardado</option>
+</select>
+
+</div>
 
 <div class="campo">
 
@@ -1201,6 +1218,14 @@ El 7% se calcula automáticamente cuando selecciones “Sí, 7%”.
 
 </div>
 
+
+<div id="resumenFacturacionTrabajo" class="respaldo" style="display:none;">
+
+<h3>🧾 Datos que se usarán para Dmóvil</h3>
+
+<div id="detalleFacturacionTrabajo"></div>
+
+</div>
 
 <div class="campo">
 
@@ -1465,6 +1490,12 @@ onclick="guardarDatosFacturacion()"
 
 <div id="datosFacturacionGuardados"></div>
 
+<div class="formulario" style="margin-top:15px;">
+<h3>🏥 Clínicas guardadas</h3>
+<p>Estas clínicas aparecerán automáticamente al crear un nuevo trabajo.</p>
+<div id="listaClinicasFacturacion" class="lista"></div>
+</div>
+
 <br>
 
 <div class="formulario">
@@ -1577,7 +1608,7 @@ function configurarBorradoresAutomaticos() {
     },
     {
       clave: CLAVE_BORRADOR_TRABAJO,
-      ids: ["trabajoClinica", "trabajoDoctor", "trabajoTelefono", "trabajoPaciente", "trabajoTipo", "fechaLlegada", "fechaEntrega", "estadoTrabajo", "procesoTrabajo", "trabajoMonto", "trabajoImpuesto", "trabajoTotal", "trabajoObservaciones"]
+      ids: ["trabajoClinica", "trabajoPrecioCatalogo", "trabajoDoctor", "trabajoTelefono", "trabajoPaciente", "trabajoTipo", "fechaLlegada", "fechaEntrega", "estadoTrabajo", "procesoTrabajo", "trabajoMonto", "trabajoImpuesto", "trabajoTotal", "trabajoObservaciones"]
     },
     {
       clave: CLAVE_BORRADOR_CITA,
@@ -1805,48 +1836,23 @@ solicitud.error
    FACTURACIÓN
 ========================= */
 
+const CLAVE_CLINICAS_FACTURACION = "LAB_innovadent_clinicas_facturacion";
 const CLAVE_PRECIOS_CATALOGO = "LAB_innovadent_precios_catalogo";
+const CLAVE_DATOS_FACTURACION = "LAB_innovadent_datos_facturacion";
 
-function cargarDatosFacturacion() {
+function obtenerClinicasFacturacion() {
   try {
-    const texto = localStorage.getItem(CLAVE_DATOS_FACTURACION);
-    if (!texto) {
-      mostrarDatosFacturacion();
-      mostrarPreciosCatalogo();
-      return;
-    }
-
-    const datos = JSON.parse(texto);
-
-    [
-      "facturaTipoCliente",
-      "facturaTipoPersona",
-      "facturaTipoDocumento",
-      "facturaRuc",
-      "facturaDv",
-      "facturaClinica",
-      "facturaProvincia",
-      "facturaDistrito",
-      "facturaCorregimiento",
-      "facturaDireccion",
-      "facturaCorreo",
-      "facturaTelefono",
-      "facturaContacto",
-      "facturaWhatsapp"
-    ].forEach(id => {
-      const elemento = document.getElementById(id);
-      if (elemento && datos[id] !== undefined) elemento.value = datos[id];
-    });
-
-    mostrarDatosFacturacion();
-    mostrarPreciosCatalogo();
+    const texto = localStorage.getItem(CLAVE_CLINICAS_FACTURACION);
+    const lista = JSON.parse(texto || "[]");
+    return Array.isArray(lista) ? lista : [];
   } catch (error) {
-    console.error("No se pudieron cargar los datos de facturación:", error);
+    return [];
   }
 }
 
-function guardarDatosFacturacion() {
+function guardarClinicaFacturacion() {
   const datos = {
+    id: Date.now(),
     facturaTipoCliente: document.getElementById("facturaTipoCliente").value,
     facturaTipoPersona: document.getElementById("facturaTipoPersona").value,
     facturaTipoDocumento: document.getElementById("facturaTipoDocumento").value,
@@ -1868,89 +1874,202 @@ function guardarDatosFacturacion() {
     return;
   }
 
+  const lista = obtenerClinicasFacturacion();
+
+  // Si ya existe una clínica con el mismo RUC, actualizamos sus datos.
+  const indice = lista.findIndex(item =>
+    (item.facturaRuc && datos.facturaRuc && item.facturaRuc === datos.facturaRuc) ||
+    item.facturaClinica.toLowerCase() === datos.facturaClinica.toLowerCase()
+  );
+
+  if (indice >= 0) {
+    datos.id = lista[indice].id;
+    lista[indice] = datos;
+  } else {
+    lista.push(datos);
+  }
+
+  localStorage.setItem(CLAVE_CLINICAS_FACTURACION, JSON.stringify(lista));
+
+  // Conservamos también el último perfil para compatibilidad.
+  localStorage.setItem(CLAVE_DATOS_FACTURACION, JSON.stringify(datos));
+
+  mostrarDatosFacturacion();
+  mostrarClinicasFacturacion();
+  actualizarSelectClinicasTrabajo();
+  mostrarMensaje("Clínica guardada correctamente.");
+}
+
+function cargarDatosFacturacion() {
+  try {
+    let lista = obtenerClinicasFacturacion();
+
+    // Migración automática del antiguo perfil único.
+    if (lista.length === 0) {
+      const antiguo = localStorage.getItem(CLAVE_DATOS_FACTURACION);
+      if (antiguo) {
+        const datos = JSON.parse(antiguo);
+        if (datos && datos.facturaClinica) {
+          datos.id = Date.now();
+          lista = [datos];
+          localStorage.setItem(CLAVE_CLINICAS_FACTURACION, JSON.stringify(lista));
+        }
+      }
+    }
+
+    mostrarDatosFacturacion();
+    mostrarClinicasFacturacion();
+    actualizarSelectClinicasTrabajo();
+    actualizarSelectPreciosTrabajo();
+  } catch (error) {
+    console.error("No se pudieron cargar los datos de facturación:", error);
+  }
+}
+
+function cargarClinicaEnFormulario(id) {
+  const datos = obtenerClinicasFacturacion().find(item => item.id === id);
+  if (!datos) return;
+
+  [
+    "facturaTipoCliente",
+    "facturaTipoPersona",
+    "facturaTipoDocumento",
+    "facturaRuc",
+    "facturaDv",
+    "facturaClinica",
+    "facturaProvincia",
+    "facturaDistrito",
+    "facturaCorregimiento",
+    "facturaDireccion",
+    "facturaCorreo",
+    "facturaTelefono",
+    "facturaContacto",
+    "facturaWhatsapp"
+  ].forEach(campo => {
+    const elemento = document.getElementById(campo);
+    if (elemento && datos[campo] !== undefined) elemento.value = datos[campo];
+  });
+
   localStorage.setItem(CLAVE_DATOS_FACTURACION, JSON.stringify(datos));
   mostrarDatosFacturacion();
-  mostrarMensaje("Datos de facturación guardados correctamente.");
+  mostrarMensaje("Datos de la clínica cargados.");
+}
+
+function eliminarClinicaFacturacion(id) {
+  if (!confirm("¿Eliminar esta clínica de los datos de facturación?")) return;
+
+  const lista = obtenerClinicasFacturacion().filter(item => item.id !== id);
+  localStorage.setItem(CLAVE_CLINICAS_FACTURACION, JSON.stringify(lista));
+
+  mostrarClinicasFacturacion();
+  actualizarSelectClinicasTrabajo();
+  mostrarMensaje("Clínica eliminada.");
 }
 
 function mostrarDatosFacturacion() {
   const contenedor = document.getElementById("datosFacturacionGuardados");
   if (!contenedor) return;
 
-  const texto = localStorage.getItem(CLAVE_DATOS_FACTURACION);
+  const lista = obtenerClinicasFacturacion();
 
-  if (!texto) {
-    contenedor.innerHTML = '<div class="vacio">Todavía no hay datos de facturación guardados.</div>';
+  if (lista.length === 0) {
+    contenedor.innerHTML = '<div class="vacio">Todavía no hay clínicas guardadas.</div>';
     return;
   }
 
-  try {
-    const datos = JSON.parse(texto);
+  contenedor.innerHTML = '<div class="aviso">Tienes <strong>' + lista.length +
+    '</strong> clínica(s) guardada(s). Selecciónalas al crear un trabajo.</div>';
+}
 
-    contenedor.innerHTML = `
-      <div class="item">
-        <h3>🧾 Datos guardados para Dmóvil</h3>
-        <p><strong>Tipo de cliente:</strong> ${escapar(datos.facturaTipoCliente || "-")}</p>
-        <p><strong>Tipo de persona:</strong> ${escapar(datos.facturaTipoPersona || "-")}</p>
-        <p><strong>Documento:</strong> ${escapar(datos.facturaTipoDocumento || "-")}</p>
-        <p><strong>CÉDULA/RUC:</strong> ${escapar(datos.facturaRuc || "-")}</p>
-        <p><strong>DV:</strong> ${escapar(datos.facturaDv || "-")}</p>
-        <p><strong>Razón social:</strong> ${escapar(datos.facturaClinica || "-")}</p>
-        <p><strong>Provincia:</strong> ${escapar(datos.facturaProvincia || "-")}</p>
-        <p><strong>Distrito:</strong> ${escapar(datos.facturaDistrito || "-")}</p>
-        <p><strong>Corregimiento:</strong> ${escapar(datos.facturaCorregimiento || "-")}</p>
-        <p><strong>Dirección:</strong> ${escapar(datos.facturaDireccion || "-")}</p>
-        <p><strong>Correo:</strong> ${escapar(datos.facturaCorreo || "-")}</p>
-        <p><strong>Teléfono:</strong> ${escapar(datos.facturaTelefono || "-")}</p>
-        <p><strong>Enviar factura a:</strong> ${escapar(datos.facturaContacto || "-")}</p>
-        <p><strong>WhatsApp factura:</strong> ${escapar(datos.facturaWhatsapp || "-")}</p>
-        <button class="boton whatsapp" onclick="enviarFacturaWhatsApp()">
-          💬 Abrir WhatsApp para enviar factura
-        </button>
-      </div>
-    `;
-  } catch (error) {
-    contenedor.innerHTML = '<div class="vacio">No se pudieron leer los datos guardados.</div>';
+function mostrarClinicasFacturacion() {
+  const contenedor = document.getElementById("listaClinicasFacturacion");
+  if (!contenedor) return;
+
+  const lista = obtenerClinicasFacturacion();
+
+  if (lista.length === 0) {
+    contenedor.innerHTML = '<div class="vacio">No hay clínicas guardadas.</div>';
+    return;
+  }
+
+  contenedor.innerHTML = lista.map(datos => `
+    <div class="item">
+      <h3>${escapar(datos.facturaClinica || "-")}</h3>
+      <p><strong>RUC:</strong> ${escapar(datos.facturaRuc || "-")} &nbsp; <strong>DV:</strong> ${escapar(datos.facturaDv || "-")}</p>
+      <p><strong>Correo:</strong> ${escapar(datos.facturaCorreo || "-")}</p>
+      <p><strong>WhatsApp factura:</strong> ${escapar(datos.facturaWhatsapp || "-")}</p>
+      <p><strong>Recibe:</strong> ${escapar(datos.facturaContacto || "-")}</p>
+
+      <button class="boton azul" onclick="cargarClinicaEnFormulario(${datos.id})">
+        ✏️ Editar datos
+      </button>
+
+      <button class="boton rojo" onclick="eliminarClinicaFacturacion(${datos.id})">
+        Eliminar
+      </button>
+    </div>
+  `).join("");
+}
+
+function actualizarSelectClinicasTrabajo() {
+  const select = document.getElementById("trabajoClinica");
+  if (!select) return;
+
+  const valorActual = select.value;
+  const lista = obtenerClinicasFacturacion();
+
+  select.innerHTML =
+    '<option value="">Selecciona una clínica</option>' +
+    lista.map(datos =>
+      '<option value="' + datos.id + '">' +
+      escapar(datos.facturaClinica || "Sin nombre") +
+      '</option>'
+    ).join("");
+
+  if (lista.some(datos => String(datos.id) === String(valorActual))) {
+    select.value = valorActual;
   }
 }
 
-function enviarFacturaWhatsApp() {
-  const texto = localStorage.getItem(CLAVE_DATOS_FACTURACION);
+function autocompletarClinicaTrabajo() {
+  const id = Number(document.getElementById("trabajoClinica").value);
+  const datos = obtenerClinicasFacturacion().find(item => item.id === id);
 
-  if (!texto) {
-    alert("Primero guarda los datos de facturación.");
+  if (!datos) {
+    document.getElementById("resumenFacturacionTrabajo").style.display = "none";
     return;
   }
 
-  const datos = JSON.parse(texto);
-  const numero = String(datos.facturaWhatsapp || "").replace(/\D/g, "");
+  // Copiamos automáticamente los datos que también sirven para el trabajo.
+  document.getElementById("trabajoDoctor").value = datos.facturaContacto || "";
+  document.getElementById("trabajoTelefono").value = datos.facturaWhatsapp || "";
 
-  if (!numero) {
-    alert("Agrega el número de WhatsApp de la persona que recibirá la factura.");
-    return;
-  }
+  const detalle = document.getElementById("detalleFacturacionTrabajo");
 
-  const mensaje = encodeURIComponent(
-    "Hola " + (datos.facturaContacto || "") +
-    ". Le envío la factura correspondiente a los trabajos realizados en LAB innovadent. Gracias."
-  );
+  detalle.innerHTML = `
+    <p><strong>Clínica:</strong> ${escapar(datos.facturaClinica || "-")}</p>
+    <p><strong>RUC:</strong> ${escapar(datos.facturaRuc || "-")} &nbsp; <strong>DV:</strong> ${escapar(datos.facturaDv || "-")}</p>
+    <p><strong>Correo:</strong> ${escapar(datos.facturaCorreo || "-")}</p>
+    <p><strong>Dirección:</strong> ${escapar(datos.facturaDireccion || "-")}</p>
+    <p><strong>Factura por WhatsApp a:</strong> ${escapar(datos.facturaContacto || "-")} — ${escapar(datos.facturaWhatsapp || "-")}</p>
+  `;
 
-  window.open("https://wa.me/" + numero + "?text=" + mensaje, "_blank");
-}
-
-function calcularPrecioCatalogo() {
-  const sin7 = parseFloat(document.getElementById("precioSin7").value) || 0;
-  const con7 = sin7 * 1.07;
-  document.getElementById("precioCon7").value = con7.toFixed(2);
-  return Number(con7.toFixed(2));
+  document.getElementById("resumenFacturacionTrabajo").style.display = "block";
 }
 
 function obtenerPreciosCatalogo() {
   try {
-    return JSON.parse(localStorage.getItem(CLAVE_PRECIOS_CATALOGO) || "[]");
+    const lista = JSON.parse(localStorage.getItem(CLAVE_PRECIOS_CATALOGO) || "[]");
+    return Array.isArray(lista) ? lista : [];
   } catch (error) {
     return [];
   }
+}
+
+function calcularPrecioCatalogo() {
+  const sin7 = parseFloat(document.getElementById("precioSin7").value) || 0;
+  document.getElementById("precioCon7").value = (sin7 * 1.07).toFixed(2);
+  return Number((sin7 * 1.07).toFixed(2));
 }
 
 function guardarPrecioCatalogo() {
@@ -1963,13 +2082,17 @@ function guardarPrecioCatalogo() {
   }
 
   const precios = obtenerPreciosCatalogo();
+  const existente = precios.findIndex(item => item.nombre.toLowerCase() === nombre.toLowerCase());
 
-  precios.push({
-    id: Date.now(),
+  const registro = {
+    id: existente >= 0 ? precios[existente].id : Date.now(),
     nombre: nombre,
     sin7: Number(sin7.toFixed(2)),
     con7: Number((sin7 * 1.07).toFixed(2))
-  });
+  };
+
+  if (existente >= 0) precios[existente] = registro;
+  else precios.push(registro);
 
   localStorage.setItem(CLAVE_PRECIOS_CATALOGO, JSON.stringify(precios));
 
@@ -1978,26 +2101,51 @@ function guardarPrecioCatalogo() {
   document.getElementById("precioCon7").value = "";
 
   mostrarPreciosCatalogo();
-  mostrarMensaje("Precio agregado correctamente.");
+  actualizarSelectPreciosTrabajo();
+  mostrarMensaje("Precio guardado correctamente.");
 }
 
 function eliminarPrecioCatalogo(id) {
   const precios = obtenerPreciosCatalogo().filter(precio => precio.id !== id);
   localStorage.setItem(CLAVE_PRECIOS_CATALOGO, JSON.stringify(precios));
   mostrarPreciosCatalogo();
+  actualizarSelectPreciosTrabajo();
 }
 
-function usarPrecioCatalogo(id) {
+function actualizarSelectPreciosTrabajo() {
+  const select = document.getElementById("trabajoPrecioCatalogo");
+  if (!select) return;
+
+  const valorActual = select.value;
+  const precios = obtenerPreciosCatalogo();
+
+  select.innerHTML =
+    '<option value="">Selecciona un trabajo guardado</option>' +
+    precios.map(precio =>
+      '<option value="' + precio.id + '">' +
+      escapar(precio.nombre) +
+      ' — $' + Number(precio.sin7).toFixed(2) +
+      ' sin 7% / $' + Number(precio.con7).toFixed(2) + ' con 7%' +
+      '</option>'
+    ).join("");
+
+  if (precios.some(precio => String(precio.id) === String(valorActual))) {
+    select.value = valorActual;
+  }
+}
+
+function autocompletarPrecioTrabajo() {
+  const id = Number(document.getElementById("trabajoPrecioCatalogo").value);
   const precio = obtenerPreciosCatalogo().find(item => item.id === id);
+
   if (!precio) return;
 
   document.getElementById("trabajoTipo").value = precio.nombre;
-  document.getElementById("trabajoMonto").value = precio.sin7.toFixed(2);
+  document.getElementById("trabajoMonto").value = Number(precio.sin7).toFixed(2);
   document.getElementById("trabajoImpuesto").value = "no";
   calcularTotalTrabajo();
 
-  mostrarSeccion("nuevoTrabajo");
-  mostrarMensaje("Precio cargado sin 7%. Puedes elegir el 7% si corresponde.");
+  mostrarMensaje("Precio cargado. Puedes elegir 7% si corresponde.");
 }
 
 function mostrarPreciosCatalogo() {
@@ -2016,14 +2164,7 @@ function mostrarPreciosCatalogo() {
       <h3>${escapar(precio.nombre)}</h3>
       <p><strong>Sin 7%:</strong> $${Number(precio.sin7).toFixed(2)}</p>
       <p><strong>Con 7%:</strong> $${Number(precio.con7).toFixed(2)}</p>
-
-      <button class="boton azul" onclick="usarPrecioCatalogo(${precio.id})">
-        ➕ Usar en nuevo trabajo
-      </button>
-
-      <button class="boton rojo" onclick="eliminarPrecioCatalogo(${precio.id})">
-        Eliminar
-      </button>
+      <button class="boton rojo" onclick="eliminarPrecioCatalogo(${precio.id})">Eliminar</button>
     </div>
   `).join("");
 }
@@ -2044,6 +2185,8 @@ await cargarDatos();
 actualizarTodo();
 configurarBorradoresAutomaticos();
 cargarDatosFacturacion();
+actualizarSelectClinicasTrabajo();
+actualizarSelectPreciosTrabajo();
 
 }
 
@@ -2354,9 +2497,31 @@ const trabajo = {
 id: Date.now(),
 
 clinica:
-document.getElementById(
-"trabajoClinica"
-).value,
+(() => {
+  const id = Number(document.getElementById("trabajoClinica").value);
+  const datos = obtenerClinicasFacturacion().find(item => item.id === id);
+  return datos ? datos.facturaClinica : document.getElementById("trabajoClinica").value;
+})(),
+
+clinicaId:
+Number(document.getElementById("trabajoClinica").value) || null,
+
+datosFacturacion:
+(() => {
+  const id = Number(document.getElementById("trabajoClinica").value);
+  const datos = obtenerClinicasFacturacion().find(item => item.id === id);
+  return datos ? {
+    ruc: datos.facturaRuc,
+    dv: datos.facturaDv,
+    correo: datos.facturaCorreo,
+    direccion: datos.facturaDireccion,
+    provincia: datos.facturaProvincia,
+    distrito: datos.facturaDistrito,
+    corregimiento: datos.facturaCorregimiento,
+    contactoFactura: datos.facturaContacto,
+    whatsappFactura: datos.facturaWhatsapp
+  } : null;
+})(),
 
 doctor:
 document.getElementById(
@@ -2452,6 +2617,10 @@ document.getElementById(
 
 document.getElementById(
 "trabajoPaciente"
+).value = "";
+
+document.getElementById(
+"trabajoPrecioCatalogo"
 ).value = "";
 
 document.getElementById(
@@ -2710,6 +2879,20 @@ Dr./Dra.:
 </strong>
 ${escapar(trabajo.doctor || "-")}
 </p>
+
+${trabajo.datosFacturacion ? `
+<p>
+<strong>RUC:</strong> ${escapar(trabajo.datosFacturacion.ruc || "-")}
+&nbsp; <strong>DV:</strong> ${escapar(trabajo.datosFacturacion.dv || "-")}
+</p>
+<p>
+<strong>Correo factura:</strong> ${escapar(trabajo.datosFacturacion.correo || "-")}
+</p>
+<p>
+<strong>Factura por WhatsApp a:</strong>
+${escapar(trabajo.datosFacturacion.contactoFactura || "-")}
+</p>
+` : ""}
 
 <p>
 <strong>
@@ -3332,6 +3515,9 @@ citas,
 datosFacturacion:
 localStorage.getItem(CLAVE_DATOS_FACTURACION),
 
+clinicasFacturacion:
+localStorage.getItem(CLAVE_CLINICAS_FACTURACION),
+
 preciosCatalogo:
 localStorage.getItem(CLAVE_PRECIOS_CATALOGO)
 
@@ -3489,6 +3675,13 @@ if (respaldo.datosFacturacion) {
   localStorage.setItem(
     CLAVE_DATOS_FACTURACION,
     respaldo.datosFacturacion
+  );
+}
+
+if (respaldo.clinicasFacturacion) {
+  localStorage.setItem(
+    CLAVE_CLINICAS_FACTURACION,
+    respaldo.clinicasFacturacion
   );
 }
 
