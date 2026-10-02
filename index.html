@@ -400,6 +400,37 @@ textarea {
   color: #3730a3;
 }
 
+.proceso-detalle {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 6px 10px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: bold;
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.proceso-detalle.rodete {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.proceso-detalle.dientes {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+.proceso-detalle.enmuflado {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.proceso-detalle.envio {
+  background: #dcfce7;
+  color: #166534;
+}
+
 
 /* =========================
    LISTAS
@@ -1056,6 +1087,39 @@ Terminado
 
 <option>
 Entregado
+</option>
+
+</select>
+
+</div>
+
+
+<div class="campo">
+
+<label>
+Proceso en el que está
+</label>
+
+<select id="procesoTrabajo">
+
+<option value="No aplica">
+No aplica
+</option>
+
+<option value="Prueba de rodete">
+Prueba de rodete
+</option>
+
+<option value="Prueba de dientes">
+Prueba de dientes
+</option>
+
+<option value="Enmuflado">
+Enmuflado
+</option>
+
+<option value="Terminado y envío a la clínica">
+Terminado y envío a la clínica
 </option>
 
 </select>
@@ -1777,6 +1841,11 @@ document.getElementById(
 "estadoTrabajo"
 ).value,
 
+proceso:
+document.getElementById(
+"procesoTrabajo"
+).value,
+
 monto:
 document.getElementById(
 "trabajoMonto"
@@ -1845,6 +1914,11 @@ document.getElementById(
 "Recibido";
 
 document.getElementById(
+"procesoTrabajo"
+).value =
+"No aplica";
+
+document.getElementById(
 "trabajoMonto"
 ).value = "";
 
@@ -1889,6 +1963,46 @@ return "recibido";
 
 
 
+function claseProceso(proceso) {
+
+  if (proceso === "Prueba de rodete")
+    return "rodete";
+
+  if (proceso === "Prueba de dientes")
+    return "dientes";
+
+  if (proceso === "Enmuflado")
+    return "enmuflado";
+
+  if (proceso === "Terminado y envío a la clínica")
+    return "envio";
+
+  return "";
+}
+
+
+async function cambiarProcesoTrabajo(id, nuevoProceso) {
+
+  const trabajo = trabajos.find(t => t.id === id);
+
+  if (!trabajo) return;
+
+  trabajo.proceso = nuevoProceso;
+
+  if (nuevoProceso === "Terminado y envío a la clínica") {
+    trabajo.estado = "Terminado";
+  } else if (nuevoProceso !== "No aplica") {
+    trabajo.estado = "En proceso";
+  }
+
+  await guardarEnBD("trabajos", trabajo);
+  await cargarDatos();
+  actualizarTodo();
+
+  mostrarMensaje("Proceso cambiado a: " + nuevoProceso);
+}
+
+
 async function cambiarEstadoTrabajo(id, nuevoEstado) {
 
   const trabajo = trabajos.find(t => t.id === id);
@@ -1897,15 +2011,27 @@ async function cambiarEstadoTrabajo(id, nuevoEstado) {
 
   trabajo.estado = nuevoEstado;
 
+  if (nuevoEstado === "Recibido") {
+    trabajo.proceso = "No aplica";
+  }
+
+  if (nuevoEstado === "En proceso" && !trabajo.proceso) {
+    trabajo.proceso = "No aplica";
+  }
+
+  if (nuevoEstado === "Terminado") {
+    trabajo.proceso = "Terminado y envío a la clínica";
+  }
+
+  if (nuevoEstado === "Entregado") {
+    trabajo.proceso = "Entregado";
+  }
+
   await guardarEnBD("trabajos", trabajo);
-
   await cargarDatos();
-
   actualizarTodo();
 
-  mostrarMensaje(
-    "Estado cambiado a: " + nuevoEstado
-  );
+  mostrarMensaje("Estado cambiado a: " + nuevoEstado);
 }
 
 
@@ -1913,6 +2039,7 @@ function mensajeEstadoTrabajo(estado, trabajo) {
 
   const paciente = trabajo.paciente || "el paciente";
   const tipo = trabajo.tipo || "trabajo dental";
+  const proceso = trabajo.proceso || trabajo.estado || "recibido";
 
   if (estado === "Recibido") {
     return "Hola. Le informamos que hemos recibido el trabajo dental de " +
@@ -1921,7 +2048,8 @@ function mensajeEstadoTrabajo(estado, trabajo) {
 
   if (estado === "En proceso") {
     return "Hola. Le informamos que el trabajo dental de " +
-      paciente + " (" + tipo + ") ya se encuentra EN PROCESO en LAB innovadent. Gracias.";
+      paciente + " (" + tipo + ") ya se encuentra EN PROCESO en LAB innovadent. " +
+      "Proceso actual: " + proceso + ". Gracias.";
   }
 
   if (estado === "Terminado") {
@@ -2043,7 +2171,55 @@ class="estado ${claseEstado(trabajo.estado)}"
 ${escapar(trabajo.estado)}
 </span>
 
+<br>
+
+<strong>
+Proceso:
+</strong>
+
+<span
+class="proceso-detalle ${claseProceso(trabajo.proceso)}"
+>
+${escapar(trabajo.proceso || "No aplica")}
+</span>
+
 </p>
+
+<div class="estado-botones">
+
+<strong style="width:100%;">
+Cambiar proceso:
+</strong>
+
+<button
+class="btn-proceso"
+onclick="cambiarProcesoTrabajo(${trabajo.id}, 'Prueba de rodete')"
+>
+🦷 Prueba de rodete
+</button>
+
+<button
+class="btn-proceso"
+onclick="cambiarProcesoTrabajo(${trabajo.id}, 'Prueba de dientes')"
+>
+🦷 Prueba de dientes
+</button>
+
+<button
+class="btn-proceso"
+onclick="cambiarProcesoTrabajo(${trabajo.id}, 'Enmuflado')"
+>
+🔧 Enmuflado
+</button>
+
+<button
+class="btn-terminado"
+onclick="cambiarProcesoTrabajo(${trabajo.id}, 'Terminado y envío a la clínica')"
+>
+📦 Terminado y envío
+</button>
+
+</div>
 
 <p>
 <strong>
