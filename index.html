@@ -688,7 +688,10 @@ textarea {
     <h2>Acceso a LAB innovadent</h2>
     <p id="textoAcceso">Usa el reconocimiento facial, huella o el método de seguridad de tu tablet.</p>
     <div id="mensajeAcceso"></div>
-    <button id="btnBiometria" class="boton azul" onclick="iniciarAccesoBiometrico()">🔐 Entrar con biometría</button>
+    <button id="btnBiometria" class="boton azul" onclick="iniciarAccesoBiometrico()">👤 Entrar con mi rostro</button>
+    <div style="margin:18px 0 8px;border-top:1px solid #e2e8f0;padding-top:16px;font-weight:bold;color:#475569;">👥 Acceso del equipo</div>
+    <input id="claveEquipo" type="password" inputmode="numeric" maxlength="12" placeholder="Clave del equipo" style="text-align:center;">
+    <button class="boton gris" style="width:100%;margin-top:8px;" onclick="entrarConClaveEquipo()">🔑 Entrar con clave</button>
     <button id="btnCerrarAcceso" class="boton gris" onclick="bloquearAplicacion()">Bloquear aplicación</button>
   </div>
 </div>
@@ -3402,6 +3405,8 @@ texto || ""
    ACCESO BIOMÉTRICO / PASSKEY
 ========================= */
 const CLAVE_CREDENCIAL_BIOMETRICA = "LAB_innovadent_credencial_biometrica";
+const CLAVE_EQUIPO = "LAB_innovadent_clave_equipo";
+const CLAVE_EQUIPO_POR_DEFECTO = "innovadent";
 
 function esWebAuthnDisponible() {
   return window.isSecureContext &&
@@ -3543,6 +3548,38 @@ async function iniciarAccesoBiometrico() {
   }
 }
 
+
+function entrarConClaveEquipo() {
+  const campo = document.getElementById("claveEquipo");
+  const clave = (campo.value || "").trim();
+
+  if (!clave) {
+    mensajeAcceso("Escribe la clave autorizada del equipo.");
+    return;
+  }
+
+  const claveGuardada = localStorage.getItem(CLAVE_EQUIPO) || CLAVE_EQUIPO_POR_DEFECTO;
+
+  if (clave === claveGuardada) {
+    sessionStorage.setItem("LAB_innovadent_acceso", "ok");
+    campo.value = "";
+    ocultarPantallaAcceso();
+    mensajeAcceso("");
+  } else {
+    campo.value = "";
+    mensajeAcceso("La clave del equipo no es correcta.");
+  }
+}
+
+function establecerClaveEquipo(nuevaClave) {
+  if (!nuevaClave || nuevaClave.length < 4) {
+    mensajeAcceso("La clave del equipo debe tener al menos 4 caracteres.");
+    return false;
+  }
+  localStorage.setItem(CLAVE_EQUIPO, nuevaClave);
+  return true;
+}
+
 function bloquearAplicacion() {
   sessionStorage.removeItem("LAB_innovadent_acceso");
   mostrarPantallaAcceso();
@@ -3559,14 +3596,14 @@ async function iniciarSeguridadBiometrica() {
 
   if (!esWebAuthnDisponible()) {
     document.getElementById("textoAcceso").textContent =
-      "La biometría depende de las funciones de seguridad disponibles en tu tablet y navegador.";
+      "El reconocimiento facial depende de las funciones de seguridad disponibles en tu tablet y navegador. La clave queda como acceso opcional para el equipo.";
     return;
   }
 
   const tieneCredencial = !!localStorage.getItem(CLAVE_CREDENCIAL_BIOMETRICA);
   if (!tieneCredencial) {
     document.getElementById("textoAcceso").textContent =
-      "La primera vez, pulsa el botón y la tablet te pedirá configurar su método de seguridad.";
+      "Tu acceso principal es con el rostro. Si alguien autorizado de tu equipo necesita entrar, puede usar la clave del equipo.";
   }
 }
 
