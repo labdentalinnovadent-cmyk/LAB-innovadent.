@@ -698,6 +698,10 @@ textarea {
     Nueva cita
   </button>
 
+  <button onclick="mostrarSeccion('facturacion')">
+    Facturación
+  </button>
+
 </nav>
 
 
@@ -1344,6 +1348,75 @@ Guardar cita
 </section>
 
 
+<!-- =========================
+     FACTURACIÓN
+========================= -->
+
+<section
+id="facturacion"
+class="seccion"
+>
+
+<h2>
+🧾 Datos para facturación
+</h2>
+
+<p>
+Aquí puedes guardar los datos fiscales de la clínica para preparar las facturas en Dmóvil.
+</p>
+
+<div class="formulario">
+
+<div class="dos-columnas">
+
+<div class="campo">
+<label>Nombre de la clínica</label>
+<input id="facturaClinica" placeholder="Nombre legal de la clínica">
+</div>
+
+<div class="campo">
+<label>RUC</label>
+<input id="facturaRuc" placeholder="RUC de la clínica">
+</div>
+
+<div class="campo">
+<label>DV</label>
+<input id="facturaDv" placeholder="DV">
+</div>
+
+<div class="campo">
+<label>Correo electrónico</label>
+<input id="facturaCorreo" type="email" placeholder="correo@ejemplo.com">
+</div>
+
+<div class="campo">
+<label>Nombre de quien recibe la factura por WhatsApp</label>
+<input id="facturaContacto" placeholder="Nombre de la persona">
+</div>
+
+<div class="campo">
+<label>WhatsApp para enviar la factura</label>
+<input id="facturaWhatsapp" type="tel" placeholder="Ejemplo: 50761234567">
+</div>
+
+</div>
+
+<button
+class="boton verde"
+onclick="guardarDatosFacturacion()"
+>
+💾 Guardar datos de facturación
+</button>
+
+</div>
+
+<br>
+
+<div id="datosFacturacionGuardados"></div>
+
+</section>
+
+
 </main>
 
 
@@ -1370,6 +1443,7 @@ let db;
 const CLAVE_BORRADOR_CLIENTE = "LAB_innovadent_borrador_cliente";
 const CLAVE_BORRADOR_TRABAJO = "LAB_innovadent_borrador_trabajo";
 const CLAVE_BORRADOR_CITA = "LAB_innovadent_borrador_cita";
+const CLAVE_DATOS_FACTURACION = "LAB_innovadent_datos_facturacion";
 
 let temporizadorBorrador = null;
 
@@ -1417,7 +1491,7 @@ function configurarBorradoresAutomaticos() {
     {
       clave: CLAVE_BORRADOR_CITA,
       ids: ["citaPaciente", "citaTelefono", "citaFecha", "citaHora"]
-    }
+    },
   ];
 
   grupos.forEach(grupo => {
@@ -1637,6 +1711,107 @@ solicitud.error
 
 
 /* =========================
+   FACTURACIÓN
+========================= */
+
+function cargarDatosFacturacion() {
+  try {
+    const texto = localStorage.getItem(CLAVE_DATOS_FACTURACION);
+    if (!texto) return;
+    const datos = JSON.parse(texto);
+
+    ["facturaClinica","facturaRuc","facturaDv","facturaCorreo","facturaContacto","facturaWhatsapp"]
+      .forEach(id => {
+        const elemento = document.getElementById(id);
+        if (elemento && datos[id] !== undefined) {
+          elemento.value = datos[id];
+        }
+      });
+
+    mostrarDatosFacturacion();
+  } catch (error) {
+    console.error("No se pudieron cargar los datos de facturación:", error);
+  }
+}
+
+function guardarDatosFacturacion() {
+  const datos = {
+    facturaClinica: document.getElementById("facturaClinica").value.trim(),
+    facturaRuc: document.getElementById("facturaRuc").value.trim(),
+    facturaDv: document.getElementById("facturaDv").value.trim(),
+    facturaCorreo: document.getElementById("facturaCorreo").value.trim(),
+    facturaContacto: document.getElementById("facturaContacto").value.trim(),
+    facturaWhatsapp: document.getElementById("facturaWhatsapp").value.trim()
+  };
+
+  if (!datos.facturaClinica) {
+    alert("Escribe el nombre de la clínica.");
+    return;
+  }
+
+  localStorage.setItem(CLAVE_DATOS_FACTURACION, JSON.stringify(datos));
+  mostrarDatosFacturacion();
+  mostrarMensaje("Datos de facturación guardados correctamente.");
+}
+
+function mostrarDatosFacturacion() {
+  const contenedor = document.getElementById("datosFacturacionGuardados");
+  if (!contenedor) return;
+
+  const texto = localStorage.getItem(CLAVE_DATOS_FACTURACION);
+  if (!texto) {
+    contenedor.innerHTML = '<div class="vacio">Todavía no hay datos de facturación guardados.</div>';
+    return;
+  }
+
+  try {
+    const datos = JSON.parse(texto);
+
+    contenedor.innerHTML = `
+      <div class="item">
+        <h3>🧾 Datos guardados</h3>
+        <p><strong>Clínica:</strong> ${escapar(datos.facturaClinica || "-")}</p>
+        <p><strong>RUC:</strong> ${escapar(datos.facturaRuc || "-")}</p>
+        <p><strong>DV:</strong> ${escapar(datos.facturaDv || "-")}</p>
+        <p><strong>Correo:</strong> ${escapar(datos.facturaCorreo || "-")}</p>
+        <p><strong>Enviar factura a:</strong> ${escapar(datos.facturaContacto || "-")}</p>
+        <p><strong>WhatsApp factura:</strong> ${escapar(datos.facturaWhatsapp || "-")}</p>
+        <button class="boton whatsapp" onclick="enviarFacturaWhatsApp()">
+          💬 Abrir WhatsApp para enviar factura
+        </button>
+      </div>
+    `;
+  } catch (error) {
+    contenedor.innerHTML = '<div class="vacio">No se pudieron leer los datos guardados.</div>';
+  }
+}
+
+function enviarFacturaWhatsApp() {
+  const texto = localStorage.getItem(CLAVE_DATOS_FACTURACION);
+
+  if (!texto) {
+    alert("Primero guarda los datos de facturación.");
+    return;
+  }
+
+  const datos = JSON.parse(texto);
+  const numero = String(datos.facturaWhatsapp || "").replace(/\D/g, "");
+
+  if (!numero) {
+    alert("Agrega el número de WhatsApp de la persona que recibirá la factura.");
+    return;
+  }
+
+  const mensaje = encodeURIComponent(
+    "Hola " + (datos.facturaContacto || "") +
+    ". Le envío la factura correspondiente a los trabajos realizados en LAB innovadent. Gracias."
+  );
+
+  window.open("https://wa.me/" + numero + "?text=" + mensaje, "_blank");
+}
+
+
+/* =========================
    INICIAR
 ========================= */
 
@@ -1650,6 +1825,7 @@ await cargarDatos();
 
 actualizarTodo();
 configurarBorradoresAutomaticos();
+cargarDatosFacturacion();
 
 }
 
