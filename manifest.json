@@ -1,4 +1,5 @@
 {
+  "id": "./?lab-innovadent-horizontal",
   "name": "Laboratorio Dental Innovadent",
   "short_name": "Innovadent",
   "start_url": "./",
@@ -9,7 +10,7 @@
   "lang": "es",
   "background_color": "#ffffff",
   "theme_color": "#13a8b8",
-  "orientation": "landscape",
+  "orientation": "landscape-primary",
   "prefer_related_applications": false,
   "icons": [
     {
