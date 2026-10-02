@@ -1358,35 +1358,86 @@ class="seccion"
 >
 
 <h2>
-🧾 Datos para facturación
+🧾 Datos para Dmóvil y facturación
 </h2>
 
 <p>
-Aquí puedes guardar los datos fiscales de la clínica para preparar las facturas en Dmóvil.
+Guarda aquí los datos fiscales de cada clínica para no tener que preguntarlos cada vez.
 </p>
 
 <div class="formulario">
 
+<h3>👤 Datos del cliente</h3>
+
 <div class="dos-columnas">
 
 <div class="campo">
-<label>Nombre de la clínica</label>
-<input id="facturaClinica" placeholder="Nombre legal de la clínica">
+<label>Tipo de cliente</label>
+<select id="facturaTipoCliente">
+<option value="Contribuyente">Contribuyente</option>
+<option value="Consumidor final">Consumidor final</option>
+</select>
 </div>
 
 <div class="campo">
-<label>RUC</label>
-<input id="facturaRuc" placeholder="RUC de la clínica">
+<label>Tipo de persona</label>
+<select id="facturaTipoPersona">
+<option value="Natural">Natural</option>
+<option value="Jurídica">Jurídica</option>
+</select>
+</div>
+
+<div class="campo">
+<label>Documento de identidad</label>
+<select id="facturaTipoDocumento">
+<option value="CÉDULA/RUC">CÉDULA/RUC</option>
+<option value="RUC">RUC</option>
+</select>
+</div>
+
+<div class="campo">
+<label>CÉDULA / RUC</label>
+<input id="facturaRuc" placeholder="Número de identificación">
 </div>
 
 <div class="campo">
 <label>DV</label>
-<input id="facturaDv" placeholder="DV">
+<input id="facturaDv" placeholder="Dígito verificador">
+</div>
+
+<div class="campo">
+<label>Razón social</label>
+<input id="facturaClinica" placeholder="Nombre legal de la clínica">
+</div>
+
+<div class="campo">
+<label>Provincia</label>
+<input id="facturaProvincia" placeholder="Ejemplo: Chiriquí">
+</div>
+
+<div class="campo">
+<label>Distrito</label>
+<input id="facturaDistrito" placeholder="Ejemplo: David">
+</div>
+
+<div class="campo">
+<label>Corregimiento</label>
+<input id="facturaCorregimiento" placeholder="Corregimiento">
+</div>
+
+<div class="campo">
+<label>Dirección</label>
+<input id="facturaDireccion" placeholder="Dirección de la clínica">
 </div>
 
 <div class="campo">
 <label>Correo electrónico</label>
 <input id="facturaCorreo" type="email" placeholder="correo@ejemplo.com">
+</div>
+
+<div class="campo">
+<label>Teléfono</label>
+<input id="facturaTelefono" type="tel" placeholder="Teléfono">
 </div>
 
 <div class="campo">
@@ -1405,7 +1456,7 @@ Aquí puedes guardar los datos fiscales de la clínica para preparar las factura
 class="boton verde"
 onclick="guardarDatosFacturacion()"
 >
-💾 Guardar datos de facturación
+💾 Guardar datos de la clínica
 </button>
 
 </div>
@@ -1413,6 +1464,46 @@ onclick="guardarDatosFacturacion()"
 <br>
 
 <div id="datosFacturacionGuardados"></div>
+
+<br>
+
+<div class="formulario">
+
+<h3>💰 Precios de trabajos</h3>
+
+<p>
+Agrega cada trabajo una sola vez. La aplicación calculará automáticamente el precio con 7%.
+</p>
+
+<div class="dos-columnas">
+
+<div class="campo">
+<label>Nombre del trabajo</label>
+<input id="precioNombre" placeholder="Ejemplo: Prótesis flexible">
+</div>
+
+<div class="campo">
+<label>Precio sin 7%</label>
+<input id="precioSin7" type="number" step="0.01" placeholder="Ejemplo: 100.00" oninput="calcularPrecioCatalogo()">
+</div>
+
+<div class="campo">
+<label>Precio con 7%</label>
+<input id="precioCon7" type="number" step="0.01" readonly>
+</div>
+
+</div>
+
+<button
+class="boton azul"
+onclick="guardarPrecioCatalogo()"
+>
+➕ Agregar precio
+</button>
+
+<div id="listaPreciosCatalogo" class="lista" style="margin-top:15px;"></div>
+
+</div>
 
 </section>
 
@@ -1714,21 +1805,41 @@ solicitud.error
    FACTURACIÓN
 ========================= */
 
+const CLAVE_PRECIOS_CATALOGO = "LAB_innovadent_precios_catalogo";
+
 function cargarDatosFacturacion() {
   try {
     const texto = localStorage.getItem(CLAVE_DATOS_FACTURACION);
-    if (!texto) return;
+    if (!texto) {
+      mostrarDatosFacturacion();
+      mostrarPreciosCatalogo();
+      return;
+    }
+
     const datos = JSON.parse(texto);
 
-    ["facturaClinica","facturaRuc","facturaDv","facturaCorreo","facturaContacto","facturaWhatsapp"]
-      .forEach(id => {
-        const elemento = document.getElementById(id);
-        if (elemento && datos[id] !== undefined) {
-          elemento.value = datos[id];
-        }
-      });
+    [
+      "facturaTipoCliente",
+      "facturaTipoPersona",
+      "facturaTipoDocumento",
+      "facturaRuc",
+      "facturaDv",
+      "facturaClinica",
+      "facturaProvincia",
+      "facturaDistrito",
+      "facturaCorregimiento",
+      "facturaDireccion",
+      "facturaCorreo",
+      "facturaTelefono",
+      "facturaContacto",
+      "facturaWhatsapp"
+    ].forEach(id => {
+      const elemento = document.getElementById(id);
+      if (elemento && datos[id] !== undefined) elemento.value = datos[id];
+    });
 
     mostrarDatosFacturacion();
+    mostrarPreciosCatalogo();
   } catch (error) {
     console.error("No se pudieron cargar los datos de facturación:", error);
   }
@@ -1736,16 +1847,24 @@ function cargarDatosFacturacion() {
 
 function guardarDatosFacturacion() {
   const datos = {
-    facturaClinica: document.getElementById("facturaClinica").value.trim(),
+    facturaTipoCliente: document.getElementById("facturaTipoCliente").value,
+    facturaTipoPersona: document.getElementById("facturaTipoPersona").value,
+    facturaTipoDocumento: document.getElementById("facturaTipoDocumento").value,
     facturaRuc: document.getElementById("facturaRuc").value.trim(),
     facturaDv: document.getElementById("facturaDv").value.trim(),
+    facturaClinica: document.getElementById("facturaClinica").value.trim(),
+    facturaProvincia: document.getElementById("facturaProvincia").value.trim(),
+    facturaDistrito: document.getElementById("facturaDistrito").value.trim(),
+    facturaCorregimiento: document.getElementById("facturaCorregimiento").value.trim(),
+    facturaDireccion: document.getElementById("facturaDireccion").value.trim(),
     facturaCorreo: document.getElementById("facturaCorreo").value.trim(),
+    facturaTelefono: document.getElementById("facturaTelefono").value.trim(),
     facturaContacto: document.getElementById("facturaContacto").value.trim(),
     facturaWhatsapp: document.getElementById("facturaWhatsapp").value.trim()
   };
 
   if (!datos.facturaClinica) {
-    alert("Escribe el nombre de la clínica.");
+    alert("Escribe la razón social o nombre de la clínica.");
     return;
   }
 
@@ -1759,6 +1878,7 @@ function mostrarDatosFacturacion() {
   if (!contenedor) return;
 
   const texto = localStorage.getItem(CLAVE_DATOS_FACTURACION);
+
   if (!texto) {
     contenedor.innerHTML = '<div class="vacio">Todavía no hay datos de facturación guardados.</div>';
     return;
@@ -1769,11 +1889,19 @@ function mostrarDatosFacturacion() {
 
     contenedor.innerHTML = `
       <div class="item">
-        <h3>🧾 Datos guardados</h3>
-        <p><strong>Clínica:</strong> ${escapar(datos.facturaClinica || "-")}</p>
-        <p><strong>RUC:</strong> ${escapar(datos.facturaRuc || "-")}</p>
+        <h3>🧾 Datos guardados para Dmóvil</h3>
+        <p><strong>Tipo de cliente:</strong> ${escapar(datos.facturaTipoCliente || "-")}</p>
+        <p><strong>Tipo de persona:</strong> ${escapar(datos.facturaTipoPersona || "-")}</p>
+        <p><strong>Documento:</strong> ${escapar(datos.facturaTipoDocumento || "-")}</p>
+        <p><strong>CÉDULA/RUC:</strong> ${escapar(datos.facturaRuc || "-")}</p>
         <p><strong>DV:</strong> ${escapar(datos.facturaDv || "-")}</p>
+        <p><strong>Razón social:</strong> ${escapar(datos.facturaClinica || "-")}</p>
+        <p><strong>Provincia:</strong> ${escapar(datos.facturaProvincia || "-")}</p>
+        <p><strong>Distrito:</strong> ${escapar(datos.facturaDistrito || "-")}</p>
+        <p><strong>Corregimiento:</strong> ${escapar(datos.facturaCorregimiento || "-")}</p>
+        <p><strong>Dirección:</strong> ${escapar(datos.facturaDireccion || "-")}</p>
         <p><strong>Correo:</strong> ${escapar(datos.facturaCorreo || "-")}</p>
+        <p><strong>Teléfono:</strong> ${escapar(datos.facturaTelefono || "-")}</p>
         <p><strong>Enviar factura a:</strong> ${escapar(datos.facturaContacto || "-")}</p>
         <p><strong>WhatsApp factura:</strong> ${escapar(datos.facturaWhatsapp || "-")}</p>
         <button class="boton whatsapp" onclick="enviarFacturaWhatsApp()">
@@ -1808,6 +1936,96 @@ function enviarFacturaWhatsApp() {
   );
 
   window.open("https://wa.me/" + numero + "?text=" + mensaje, "_blank");
+}
+
+function calcularPrecioCatalogo() {
+  const sin7 = parseFloat(document.getElementById("precioSin7").value) || 0;
+  const con7 = sin7 * 1.07;
+  document.getElementById("precioCon7").value = con7.toFixed(2);
+  return Number(con7.toFixed(2));
+}
+
+function obtenerPreciosCatalogo() {
+  try {
+    return JSON.parse(localStorage.getItem(CLAVE_PRECIOS_CATALOGO) || "[]");
+  } catch (error) {
+    return [];
+  }
+}
+
+function guardarPrecioCatalogo() {
+  const nombre = document.getElementById("precioNombre").value.trim();
+  const sin7 = parseFloat(document.getElementById("precioSin7").value) || 0;
+
+  if (!nombre || sin7 <= 0) {
+    alert("Escribe el nombre del trabajo y un precio mayor que 0.");
+    return;
+  }
+
+  const precios = obtenerPreciosCatalogo();
+
+  precios.push({
+    id: Date.now(),
+    nombre: nombre,
+    sin7: Number(sin7.toFixed(2)),
+    con7: Number((sin7 * 1.07).toFixed(2))
+  });
+
+  localStorage.setItem(CLAVE_PRECIOS_CATALOGO, JSON.stringify(precios));
+
+  document.getElementById("precioNombre").value = "";
+  document.getElementById("precioSin7").value = "";
+  document.getElementById("precioCon7").value = "";
+
+  mostrarPreciosCatalogo();
+  mostrarMensaje("Precio agregado correctamente.");
+}
+
+function eliminarPrecioCatalogo(id) {
+  const precios = obtenerPreciosCatalogo().filter(precio => precio.id !== id);
+  localStorage.setItem(CLAVE_PRECIOS_CATALOGO, JSON.stringify(precios));
+  mostrarPreciosCatalogo();
+}
+
+function usarPrecioCatalogo(id) {
+  const precio = obtenerPreciosCatalogo().find(item => item.id === id);
+  if (!precio) return;
+
+  document.getElementById("trabajoTipo").value = precio.nombre;
+  document.getElementById("trabajoMonto").value = precio.sin7.toFixed(2);
+  document.getElementById("trabajoImpuesto").value = "no";
+  calcularTotalTrabajo();
+
+  mostrarSeccion("nuevoTrabajo");
+  mostrarMensaje("Precio cargado sin 7%. Puedes elegir el 7% si corresponde.");
+}
+
+function mostrarPreciosCatalogo() {
+  const contenedor = document.getElementById("listaPreciosCatalogo");
+  if (!contenedor) return;
+
+  const precios = obtenerPreciosCatalogo();
+
+  if (precios.length === 0) {
+    contenedor.innerHTML = '<div class="vacio">Todavía no has agregado precios de trabajos.</div>';
+    return;
+  }
+
+  contenedor.innerHTML = precios.map(precio => `
+    <div class="item">
+      <h3>${escapar(precio.nombre)}</h3>
+      <p><strong>Sin 7%:</strong> $${Number(precio.sin7).toFixed(2)}</p>
+      <p><strong>Con 7%:</strong> $${Number(precio.con7).toFixed(2)}</p>
+
+      <button class="boton azul" onclick="usarPrecioCatalogo(${precio.id})">
+        ➕ Usar en nuevo trabajo
+      </button>
+
+      <button class="boton rojo" onclick="eliminarPrecioCatalogo(${precio.id})">
+        Eliminar
+      </button>
+    </div>
+  `).join("");
 }
 
 
@@ -3109,7 +3327,13 @@ trabajos:
 trabajos,
 
 citas:
-citas
+citas,
+
+datosFacturacion:
+localStorage.getItem(CLAVE_DATOS_FACTURACION),
+
+preciosCatalogo:
+localStorage.getItem(CLAVE_PRECIOS_CATALOGO)
 
 };
 
@@ -3261,8 +3485,23 @@ cita
 
 }
 
+if (respaldo.datosFacturacion) {
+  localStorage.setItem(
+    CLAVE_DATOS_FACTURACION,
+    respaldo.datosFacturacion
+  );
+}
+
+if (respaldo.preciosCatalogo) {
+  localStorage.setItem(
+    CLAVE_PRECIOS_CATALOGO,
+    respaldo.preciosCatalogo
+  );
+}
+
 
 await cargarDatos();
+cargarDatosFacturacion();
 
 actualizarTodo();
 
