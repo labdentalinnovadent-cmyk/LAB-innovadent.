@@ -634,12 +634,65 @@ textarea {
 
 }
 
+
+/* =========================
+   ACCESO BIOMÉTRICO
+========================= */
+#pantallaAcceso {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: linear-gradient(135deg,#e8f9fa 0%,#ffffff 55%,#fff1f1 100%);
+}
+.acceso-tarjeta {
+  width: min(430px,100%);
+  background: white;
+  padding: 30px 24px;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.15);
+  text-align: center;
+}
+.acceso-logo {
+  width: min(280px,85%);
+  max-height: 110px;
+  object-fit: contain;
+}
+.acceso-icono {
+  font-size: 52px;
+  margin: 12px 0;
+}
+.acceso-tarjeta h2 { color:#087f8c; margin:8px 0; }
+.acceso-tarjeta p { color:#64748b; line-height:1.5; }
+#mensajeAcceso { min-height:24px; margin:12px 0; font-weight:bold; color:#b45309; }
+#btnBiometria { width:100%; margin-top:10px; font-size:17px; padding:14px 18px; }
+#btnCerrarAcceso { display:none; }
+
 </style>
 
 </head>
 
 
 <body>
+
+<!-- =========================
+     ACCESO BIOMÉTRICO
+========================= -->
+<div id="pantallaAcceso">
+  <div class="acceso-tarjeta">
+    <img class="acceso-logo" src="./logo-innovadent-app.png" alt="LAB innovadent">
+    <div class="acceso-icono">🔐</div>
+    <h2>Acceso a LAB innovadent</h2>
+    <p id="textoAcceso">Usa el reconocimiento facial, huella o el método de seguridad de tu tablet.</p>
+    <div id="mensajeAcceso"></div>
+    <button id="btnBiometria" class="boton azul" onclick="iniciarAccesoBiometrico()">🔐 Entrar con biometría</button>
+    <button id="btnCerrarAcceso" class="boton gris" onclick="bloquearAplicacion()">Bloquear aplicación</button>
+  </div>
+</div>
+
 
 
 <!-- =========================
@@ -3344,6 +3397,180 @@ texto || ""
 
 
 
+
+/* =========================
+   ACCESO BIOMÉTRICO / PASSKEY
+========================= */
+const CLAVE_CREDENCIAL_BIOMETRICA = "LAB_innovadent_credencial_biometrica";
+
+function esWebAuthnDisponible() {
+  return window.isSecureContext &&
+    !!window.PublicKeyCredential &&
+    !!navigator.credentials &&
+    !!navigator.credentials.create &&
+    !!navigator.credentials.get;
+}
+
+function bytesABase64URL(bytes) {
+  let bin = "";
+  bytes = new Uint8Array(bytes);
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+
+function base64URLABytes(texto) {
+  const base64 = texto.replace(/-/g,"+").replace(/_/g,"/");
+  const pad = "=".repeat((4 - base64.length % 4) % 4);
+  const bin = atob(base64 + pad);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return bytes;
+}
+
+function mostrarPantallaAcceso() {
+  const pantalla = document.getElementById("pantallaAcceso");
+  if (pantalla) pantalla.style.display = "flex";
+}
+
+function ocultarPantallaAcceso() {
+  const pantalla = document.getElementById("pantallaAcceso");
+  if (pantalla) pantalla.style.display = "none";
+}
+
+function mensajeAcceso(texto) {
+  const el = document.getElementById("mensajeAcceso");
+  if (el) el.textContent = texto || "";
+}
+
+async function prepararBiometria() {
+  if (!esWebAuthnDisponible()) {
+    mensajeAcceso("Esta tablet o este navegador no permite acceso biométrico desde esta aplicación.");
+    return false;
+  }
+
+  try {
+    const existente = localStorage.getItem(CLAVE_CREDENCIAL_BIOMETRICA);
+    if (existente) return true;
+
+    mensajeAcceso("Preparando el reconocimiento de seguridad de la tablet...");
+
+    const challenge = crypto.getRandomValues(new Uint8Array(32));
+    const userId = crypto.getRandomValues(new Uint8Array(16));
+
+    const credencial = await navigator.credentials.create({
+      publicKey: {
+        challenge,
+        rp: {
+          name: "LAB innovadent",
+          id: location.hostname
+        },
+        user: {
+          id: userId,
+          name: "javier@lab-innovadent",
+          displayName: "LAB innovadent"
+        },
+        pubKeyCredParams: [
+          { type: "public-key", alg: -7 },
+          { type: "public-key", alg: -257 }
+        ],
+        authenticatorSelection: {
+          authenticatorAttachment: "platform",
+          residentKey: "required",
+          requireResidentKey: true,
+          userVerification: "required"
+        },
+        timeout: 60000,
+        attestation: "none"
+      }
+    });
+
+    if (!credencial) throw new Error("No se creó la credencial.");
+
+    localStorage.setItem(
+      CLAVE_CREDENCIAL_BIOMETRICA,
+      bytesABase64URL(credencial.rawId)
+    );
+
+    mensajeAcceso("Biometría preparada. Ya puedes entrar.");
+    return true;
+  } catch (error) {
+    console.error("No se pudo preparar la biometría:", error);
+    mensajeAcceso("No se pudo configurar la biometría. Verifica que el reconocimiento facial o la seguridad de la tablet esté activada.");
+    return false;
+  }
+}
+
+async function iniciarAccesoBiometrico() {
+  if (!esWebAuthnDisponible()) {
+    mensajeAcceso("La tablet/navegador no ofrece biometría compatible con esta aplicación.");
+    return;
+  }
+
+  try {
+    let credencialGuardada = localStorage.getItem(CLAVE_CREDENCIAL_BIOMETRICA);
+
+    if (!credencialGuardada) {
+      const preparada = await prepararBiometria();
+      if (!preparada) return;
+      credencialGuardada = localStorage.getItem(CLAVE_CREDENCIAL_BIOMETRICA);
+    }
+
+    mensajeAcceso("Confirma tu identidad en la tablet...");
+
+    const challenge = crypto.getRandomValues(new Uint8Array(32));
+
+    const assertion = await navigator.credentials.get({
+      publicKey: {
+        challenge,
+        rpId: location.hostname,
+        allowCredentials: [{
+          type: "public-key",
+          id: base64URLABytes(credencialGuardada)
+        }],
+        userVerification: "required",
+        timeout: 60000
+      }
+    });
+
+    if (!assertion) throw new Error("No se recibió confirmación.");
+
+    sessionStorage.setItem("LAB_innovadent_acceso", "ok");
+    ocultarPantallaAcceso();
+    mensajeAcceso("");
+  } catch (error) {
+    console.error("Acceso biométrico:", error);
+    mensajeAcceso("No se pudo confirmar la identidad. Inténtalo nuevamente.");
+  }
+}
+
+function bloquearAplicacion() {
+  sessionStorage.removeItem("LAB_innovadent_acceso");
+  mostrarPantallaAcceso();
+}
+
+async function iniciarSeguridadBiometrica() {
+  const acceso = sessionStorage.getItem("LAB_innovadent_acceso");
+  if (acceso === "ok") {
+    ocultarPantallaAcceso();
+    return;
+  }
+
+  mostrarPantallaAcceso();
+
+  if (!esWebAuthnDisponible()) {
+    document.getElementById("textoAcceso").textContent =
+      "La biometría depende de las funciones de seguridad disponibles en tu tablet y navegador.";
+    return;
+  }
+
+  const tieneCredencial = !!localStorage.getItem(CLAVE_CREDENCIAL_BIOMETRICA);
+  if (!tieneCredencial) {
+    document.getElementById("textoAcceso").textContent =
+      "La primera vez, pulsa el botón y la tablet te pedirá configurar su método de seguridad.";
+  }
+}
+
+
 /* =========================
    SERVICE WORKER
 ========================= */
@@ -3387,6 +3614,7 @@ error
    INICIAR APLICACIÓN
 ========================= */
 
+iniciarSeguridadBiometrica();
 iniciar();
 
 </script>
