@@ -1130,14 +1130,60 @@ Terminado y envío a la clínica
 <div class="campo">
 
 <label>
-Monto
+Monto antes de impuesto
 </label>
 
 <input
 id="trabajoMonto"
 type="number"
 step="0.01"
+placeholder="Ejemplo: 100.00"
+oninput="calcularTotalTrabajo()"
 >
+
+</div>
+
+
+<div class="campo">
+
+<label>
+¿Aplica impuesto del 7%?
+</label>
+
+<select
+id="trabajoImpuesto"
+onchange="calcularTotalTrabajo()"
+>
+
+<option value="no">
+No
+</option>
+
+<option value="si">
+Sí, 7%
+</option>
+
+</select>
+
+</div>
+
+
+<div class="campo">
+
+<label>
+Total con impuesto
+</label>
+
+<input
+id="trabajoTotal"
+type="number"
+step="0.01"
+readonly
+>
+
+<small style="color:#64748b;">
+El 7% se calcula automáticamente cuando selecciones “Sí, 7%”.
+</small>
 
 </div>
 
@@ -1773,6 +1819,30 @@ actualizarTodo();
    TRABAJOS
 ========================= */
 
+function calcularTotalTrabajo() {
+
+  const monto =
+    parseFloat(
+      document.getElementById("trabajoMonto").value
+    ) || 0;
+
+  const aplica =
+    document.getElementById("trabajoImpuesto").value === "si";
+
+  const total =
+    aplica ? monto * 1.07 : monto;
+
+  const campoTotal =
+    document.getElementById("trabajoTotal");
+
+  if (campoTotal) {
+    campoTotal.value = total.toFixed(2);
+  }
+
+  return Number(total.toFixed(2));
+}
+
+
 async function guardarTrabajo() {
 
 const paciente =
@@ -1847,9 +1917,19 @@ document.getElementById(
 ).value,
 
 monto:
+parseFloat(
 document.getElementById(
 "trabajoMonto"
-).value,
+).value
+) || 0,
+
+impuesto7:
+document.getElementById(
+"trabajoImpuesto"
+).value === "si",
+
+total:
+calcularTotalTrabajo(),
 
 observaciones:
 document.getElementById(
@@ -1920,6 +2000,14 @@ document.getElementById(
 
 document.getElementById(
 "trabajoMonto"
+).value = "";
+
+document.getElementById(
+"trabajoImpuesto"
+).value = "no";
+
+document.getElementById(
+"trabajoTotal"
 ).value = "";
 
 document.getElementById(
@@ -2226,7 +2314,29 @@ onclick="cambiarProcesoTrabajo(${trabajo.id}, 'Terminado y envío a la clínica'
 Monto:
 </strong>
 
-$${trabajo.monto || "0.00"}
+${Number(trabajo.monto || 0).toFixed(2)}
+
+</p>
+
+<p>
+<strong>
+Impuesto 7%:
+</strong>
+
+${trabajo.impuesto7 ? (Number(trabajo.monto || 0) * 0.07).toFixed(2) : "0.00"}
+
+</p>
+
+<p>
+<strong>
+Total:
+</strong>
+
+${Number(
+  trabajo.total !== undefined
+    ? trabajo.total
+    : trabajo.monto || 0
+).toFixed(2)}
 
 </p>
 
