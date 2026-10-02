@@ -9,7 +9,7 @@
   "lang": "es",
   "background_color": "#ffffff",
   "theme_color": "#13a8b8",
-  "orientation": "portrait",
+  "orientation": "landscape",
   "prefer_related_applications": false,
   "icons": [
     {
