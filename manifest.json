@@ -1,23 +1,28 @@
 {
   "name": "Laboratorio Dental Innovadent",
   "short_name": "Innovadent",
-  "description": "Sistema de gestión para Laboratorio Dental Innovadent",
-  "start_url": "./index.html",
+  "id": "./",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
+  "description": "Sistema de gestión para Laboratorio Dental Innovadent",
+  "lang": "es",
   "background_color": "#ffffff",
   "theme_color": "#13a8b8",
   "orientation": "portrait",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "./icono-innovador-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "./icono-innovador-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
