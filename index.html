@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
 
 <meta charset="UTF-8">
@@ -8,10 +9,10 @@
 
 <title>Laboratorio Dental Innovadent</title>
 
+<meta name="theme-color" content="#13a8b8">
+
 <meta name="description"
 content="Sistema de gestión para Laboratorio Dental Innovadent">
-
-<meta name="theme-color" content="#2563eb">
 
 <link rel="manifest" href="./manifest.json">
 
@@ -28,6 +29,10 @@ href="./lab-innovadent-icon-192.png">
 
 <style>
 
+/* =========================
+   ESTILO GENERAL
+========================= */
+
 * {
   box-sizing: border-box;
 }
@@ -35,12 +40,552 @@ href="./lab-innovadent-icon-192.png">
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
-  background: #f1f5f9;
-  color: #1e293b;
+  background: #f5f8f9;
+  color: #344054;
 }
 
 
-/* ENCABEZADO */
+/* =========================
+   ENCABEZADO
+========================= */
+
+header {
+
+  background:
+    linear-gradient(
+      135deg,
+      #e8f9fa 0%,
+      #ffffff 50%,
+      #fff1f1 100%
+    );
+
+  color: #344054;
+
+  text-align: center;
+
+  padding: 18px 15px 20px;
+
+  border-bottom: 1px solid #d7eef0;
+}
+
+
+.logo-principal {
+
+  width: min(850px, 92%);
+
+  height: auto;
+
+  max-height: 170px;
+
+  object-fit: contain;
+
+  display: block;
+
+  margin: 0 auto 5px;
+}
+
+
+.propietario {
+
+  margin: 5px 0 0;
+
+  font-size: 18px;
+
+  font-weight: 600;
+
+  color: #555b63;
+}
+
+
+/* =========================
+   MENÚ
+========================= */
+
+nav {
+
+  background: white;
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 14px;
+
+  box-shadow:
+    0 2px 7px rgba(0,0,0,.10);
+}
+
+
+nav button {
+
+  background: white;
+
+  color: #13a8b8;
+
+  border: 1px solid #13a8b8;
+
+  border-radius: 9px;
+
+  padding: 11px 16px;
+
+  font-size: 15px;
+
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+
+nav button:first-child {
+
+  background: #13a8b8;
+
+  color: white;
+}
+
+
+nav button:hover {
+
+  opacity: .88;
+}
+
+
+/* =========================
+   CONTENIDO
+========================= */
+
+main {
+
+  max-width: 1100px;
+
+  margin: auto;
+
+  padding: 25px;
+}
+
+
+.seccion {
+
+  display: none;
+}
+
+
+.seccion.activa {
+
+  display: block;
+}
+
+
+/* =========================
+   TARJETAS
+========================= */
+
+.tarjetas {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(180px, 1fr)
+    );
+
+  gap: 18px;
+
+  margin: 20px 0;
+}
+
+
+.tarjeta {
+
+  background: white;
+
+  padding: 25px;
+
+  border-radius: 14px;
+
+  text-align: center;
+
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.08);
+
+  border-top: 4px solid #13a8b8;
+}
+
+
+.tarjeta h3 {
+
+  margin: 0;
+
+  font-size: 32px;
+
+  color: #13a8b8;
+}
+
+
+/* =========================
+   FORMULARIOS
+========================= */
+
+.formulario {
+
+  background: white;
+
+  padding: 22px;
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.08);
+}
+
+
+.dos-columnas {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(240px, 1fr)
+    );
+
+  gap: 16px;
+}
+
+
+.campo {
+
+  margin-bottom: 15px;
+}
+
+
+label {
+
+  display: block;
+
+  font-weight: bold;
+
+  margin-bottom: 6px;
+
+  color: #344054;
+}
+
+
+input,
+select,
+textarea {
+
+  width: 100%;
+
+  padding: 11px;
+
+  border: 1px solid #cbd5e1;
+
+  border-radius: 8px;
+
+  font-size: 16px;
+
+  background: white;
+}
+
+
+input:focus,
+select:focus,
+textarea:focus {
+
+  outline: none;
+
+  border-color: #13a8b8;
+
+  box-shadow:
+    0 0 0 2px rgba(19,168,184,.15);
+}
+
+
+textarea {
+
+  min-height: 90px;
+}
+
+
+/* =========================
+   BOTONES
+========================= */
+
+.boton {
+
+  border: none;
+
+  border-radius: 8px;
+
+  padding: 11px 16px;
+
+  font-weight: bold;
+
+  cursor: pointer;
+
+  margin: 3px;
+}
+
+
+.azul {
+
+  background: #13a8b8;
+
+  color: white;
+}
+
+
+.verde {
+
+  background: #16a34a;
+
+  color: white;
+}
+
+
+.rojo {
+
+  background: #dc2626;
+
+  color: white;
+}
+
+
+.gris {
+
+  background: #475569;
+
+  color: white;
+}
+
+
+.whatsapp {
+
+  background: #25d366;
+
+  color: white;
+}
+
+
+/* =========================
+   LISTAS
+========================= */
+
+.lista {
+
+  display: grid;
+
+  gap: 15px;
+}
+
+
+.item {
+
+  background: white;
+
+  padding: 20px;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 2px 8px rgba(0,0,0,.08);
+}
+
+
+.item h3 {
+
+  color: #13a8b8;
+
+  margin-top: 0;
+}
+
+
+/* =========================
+   ESTADOS DE TRABAJOS
+========================= */
+
+.estado {
+
+  display: inline-block;
+
+  padding: 6px 10px;
+
+  border-radius: 20px;
+
+  font-size: 13px;
+
+  font-weight: bold;
+}
+
+
+.recibido {
+
+  background: #dff7fa;
+
+  color: #087f8c;
+}
+
+
+.proceso {
+
+  background: #fff3cd;
+
+  color: #8a6100;
+}
+
+
+.terminado {
+
+  background: #dcfce7;
+
+  color: #166534;
+}
+
+
+.entregado {
+
+  background: #e0e7ff;
+
+  color: #3730a3;
+}
+
+
+/* =========================
+   RESPALDO
+========================= */
+
+.respaldo {
+
+  background: #edfafa;
+
+  border: 1px solid #9bdfe5;
+
+  padding: 20px;
+
+  border-radius: 14px;
+
+  margin: 25px 0;
+}
+
+
+.respaldo h3 {
+
+  color: #087f8c;
+}
+
+
+/* =========================
+   AVISOS
+========================= */
+
+.aviso {
+
+  background: #fff7ed;
+
+  border-left: 5px solid #f47f82;
+
+  padding: 15px;
+
+  border-radius: 8px;
+
+  margin-bottom: 10px;
+}
+
+
+.vacio {
+
+  text-align: center;
+
+  color: #64748b;
+
+  padding: 25px;
+
+  background: white;
+
+  border-radius: 10px;
+}
+
+
+/* =========================
+   MENSAJES
+========================= */
+
+#mensaje {
+
+  display: none;
+
+  padding: 12px;
+
+  margin-bottom: 15px;
+
+  border-radius: 8px;
+
+  background: #dcf7f9;
+
+  color: #087f8c;
+
+  font-weight: bold;
+}
+
+
+/* =========================
+   MÓVIL Y TABLETA
+========================= */
+
+@media (max-width: 600px) {
+
+  main {
+
+    padding: 14px;
+  }
+
+
+  header {
+
+    padding: 12px 10px 16px;
+  }
+
+
+  .logo-principal {
+
+    width: 96%;
+
+    max-height: 125px;
+  }
+
+
+  .propietario {
+
+    font-size: 15px;
+  }
+
+
+  nav button {
+
+    font-size: 14px;
+
+    padding: 10px 12px;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     ENCABEZADO
+========================= -->
 
 <header>
 
@@ -55,314 +600,11 @@ body {
   </p>
 
 </header>
-  margin: 0;
-  font-size: 30px;
-}
 
-header p {
-  margin: 8px 0 0;
-  font-size: 18px;
-}
 
-
-/* MENU */
-
-nav {
-  background: white;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  padding: 14px;
-  box-shadow: 0 2px 6px rgba(0,0,0,.12);
-}
-
-nav button {
-  background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 9px;
-  padding: 11px 16px;
-  font-size: 15px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-nav button:hover {
-  opacity: .9;
-}
-
-
-/* CONTENIDO */
-
-main {
-  max-width: 1100px;
-  margin: auto;
-  padding: 25px;
-}
-
-.seccion {
-  display: none;
-}
-
-.seccion.activa {
-  display: block;
-}
-
-
-/* TARJETAS */
-
-.tarjetas {
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fit,
-    minmax(180px, 1fr)
-  );
-  gap: 18px;
-  margin: 20px 0;
-}
-
-.tarjeta {
-  background: white;
-  padding: 25px;
-  border-radius: 14px;
-  text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,.08);
-}
-
-.tarjeta h3 {
-  margin: 0;
-  font-size: 32px;
-  color: #2563eb;
-}
-
-
-/* FORMULARIOS */
-
-.formulario {
-  background: white;
-  padding: 22px;
-  border-radius: 14px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.08);
-}
-
-.dos-columnas {
-  display: grid;
-  grid-template-columns:
-    repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
-}
-
-.campo {
-  margin-bottom: 15px;
-}
-
-label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 6px;
-}
-
-input,
-select,
-textarea {
-  width: 100%;
-  padding: 11px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 16px;
-}
-
-textarea {
-  min-height: 90px;
-}
-
-
-/* BOTONES */
-
-.boton {
-  border: none;
-  border-radius: 8px;
-  padding: 11px 16px;
-  font-weight: bold;
-  cursor: pointer;
-  margin: 3px;
-}
-
-.azul {
-  background: #2563eb;
-  color: white;
-}
-
-.verde {
-  background: #16a34a;
-  color: white;
-}
-
-.rojo {
-  background: #dc2626;
-  color: white;
-}
-
-.gris {
-  background: #475569;
-  color: white;
-}
-
-.whatsapp {
-  background: #25d366;
-  color: white;
-}
-
-
-/* LISTAS */
-
-.lista {
-  display: grid;
-  gap: 15px;
-}
-
-.item {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.08);
-}
-
-.item h3 {
-  color: #2563eb;
-  margin-top: 0;
-}
-
-
-/* ESTADOS */
-
-.estado {
-  display: inline-block;
-  padding: 6px 10px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: bold;
-}
-
-.recibido {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-
-.proceso {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.terminado {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.entregado {
-  background: #e0e7ff;
-  color: #3730a3;
-}
-
-
-/* RESPALDO */
-
-.respaldo {
-  background: #eff6ff;
-  border: 1px solid #93c5fd;
-  padding: 20px;
-  border-radius: 14px;
-  margin: 25px 0;
-}
-
-
-/* AVISOS */
-
-.aviso {
-  background: #fff7ed;
-  border-left: 5px solid #f97316;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-}
-
-.vacio {
-  text-align: center;
-  color: #64748b;
-  background: white;
-  padding: 25px;
-  border-radius: 10px;
-}
-
-
-/* MENSAJES */
-
-#mensaje {
-  display: none;
-  padding: 12px;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  background: #dcfce7;
-  color: #166534;
-  font-weight: bold;
-}
-
-
-/* MÓVIL / TABLETA */
-
-@media (max-width: 600px) {
-
-  main {
-    padding: 14px;
-  }
-
-  header h1 {
-    font-size: 24px;
-  }
-
-  header p {
-    font-size: 16px;
-  }
-
-  .logo-principal {
-    width: 110px;
-    height: 110px;
-  }
-
-  nav button {
-    font-size: 14px;
-    padding: 10px 12px;
-  }
-
-}
-
-</style>
-
-</head>
-
-
-<body>
-
-
-<header>
-
-  <img
-    class="logo-principal"
-    src="./lab-innovadent-icon-192.png"
-    alt="Laboratorio Dental Innovadent"
-  >
-
-  <h1>
-    Laboratorio Dental Innovadent
-  </h1>
-
-  <p>
-    by Javier Quiroz, Mecánico Dental
-  </p>
-
-</header>
-
+<!-- =========================
+     MENÚ
+========================= -->
 
 <nav>
 
@@ -395,10 +637,13 @@ textarea {
 
 <main>
 
+
 <div id="mensaje"></div>
 
 
-<!-- ================= INICIO ================= -->
+<!-- =========================
+     INICIO
+========================= -->
 
 <section
 id="inicio"
@@ -410,37 +655,75 @@ class="seccion activa"
 
 <div class="tarjetas">
 
-  <div class="tarjeta">
-    <h3 id="totalClientes">0</h3>
-    <p>Clientes</p>
-  </div>
 
-  <div class="tarjeta">
-    <h3 id="totalTrabajos">0</h3>
-    <p>Trabajos</p>
-  </div>
+<div class="tarjeta">
 
-  <div class="tarjeta">
-    <h3 id="trabajosProceso">0</h3>
-    <p>En proceso</p>
-  </div>
+<h3 id="totalClientes">
+0
+</h3>
 
-  <div class="tarjeta">
-    <h3 id="totalCitas">0</h3>
-    <p>Citas</p>
-  </div>
+<p>
+Clientes
+</p>
 
 </div>
 
 
+<div class="tarjeta">
+
+<h3 id="totalTrabajos">
+0
+</h3>
+
+<p>
+Trabajos
+</p>
+
+</div>
+
+
+<div class="tarjeta">
+
+<h3 id="trabajosProceso">
+0
+</h3>
+
+<p>
+En proceso
+</p>
+
+</div>
+
+
+<div class="tarjeta">
+
+<h3 id="totalCitas">
+0
+</h3>
+
+<p>
+Citas
+</p>
+
+</div>
+
+
+</div>
+
+
+<!-- RESPALDO -->
+
 <div class="respaldo">
 
-<h3>💾 Seguridad de tus datos</h3>
+<h3>
+💾 Seguridad de tus datos
+</h3>
 
 <p>
 Los clientes, trabajos y citas se guardan
 en la base de datos local de esta tableta.
 </p>
+
 
 <button
 class="boton azul"
@@ -449,12 +732,14 @@ onclick="crearRespaldo()"
 💾 Crear respaldo
 </button>
 
+
 <button
 class="boton gris"
 onclick="document.getElementById('archivoRespaldo').click()"
 >
 📥 Restaurar respaldo
 </button>
+
 
 <input
 id="archivoRespaldo"
@@ -467,53 +752,101 @@ onchange="restaurarRespaldo(event)"
 </div>
 
 
-<h2>📅 Citas de mañana</h2>
+<h2>
+📅 Citas de mañana
+</h2>
+
 
 <div id="avisosCitas"></div>
+
 
 </section>
 
 
 
-<!-- ================= CLIENTES ================= -->
+<!-- =========================
+     CLIENTES
+========================= -->
 
 <section
 id="clientes"
 class="seccion"
 >
 
-<h2>Clientes</h2>
+<h2>
+Clientes
+</h2>
+
 
 <div class="formulario">
 
+
 <div class="dos-columnas">
 
+
 <div class="campo">
-<label>Clínica</label>
+
+<label>
+Clínica
+</label>
+
 <input id="clienteClinica">
+
 </div>
 
+
 <div class="campo">
-<label>Dr. / Dra.</label>
+
+<label>
+Dr. / Dra.
+</label>
+
 <input id="clienteDoctor">
+
 </div>
 
+
 <div class="campo">
-<label>Paciente</label>
+
+<label>
+Paciente
+</label>
+
 <input id="clientePaciente">
+
 </div>
+
 
 <div class="campo">
-<label>Teléfono</label>
-<input id="clienteTelefono" type="tel">
+
+<label>
+Teléfono
+</label>
+
+<input
+id="clienteTelefono"
+type="tel"
+>
+
 </div>
+
 
 <div class="campo">
-<label>Correo</label>
-<input id="clienteCorreo" type="email">
-</div>
+
+<label>
+Correo
+</label>
+
+<input
+id="clienteCorreo"
+type="email"
+>
 
 </div>
+
+
+</div>
+
 
 <button
 class="boton verde"
@@ -522,95 +855,176 @@ onclick="guardarCliente()"
 Guardar cliente
 </button>
 
+
 </div>
+
 
 <br>
 
-<div id="listaClientes" class="lista"></div>
+
+<div
+id="listaClientes"
+class="lista"
+></div>
+
 
 </section>
 
 
 
-<!-- ================= TRABAJOS ================= -->
+<!-- =========================
+     TRABAJOS
+========================= -->
 
 <section
 id="trabajos"
 class="seccion"
 >
 
-<h2>Trabajos</h2>
+<h2>
+Trabajos
+</h2>
 
-<div id="listaTrabajos" class="lista"></div>
+
+<div
+id="listaTrabajos"
+class="lista"
+></div>
+
 
 </section>
 
 
 
-<!-- ================= NUEVO TRABAJO ================= -->
+<!-- =========================
+     NUEVO TRABAJO
+========================= -->
 
 <section
 id="nuevoTrabajo"
 class="seccion"
 >
 
-<h2>Nuevo trabajo</h2>
+<h2>
+Nuevo trabajo
+</h2>
+
 
 <div class="formulario">
 
+
 <div class="dos-columnas">
 
+
 <div class="campo">
-<label>Clínica</label>
+
+<label>
+Clínica
+</label>
+
 <input id="trabajoClinica">
+
 </div>
 
+
 <div class="campo">
-<label>Dr. / Dra.</label>
+
+<label>
+Dr. / Dra.
+</label>
+
 <input id="trabajoDoctor">
+
 </div>
 
+
 <div class="campo">
-<label>Paciente</label>
+
+<label>
+Paciente
+</label>
+
 <input id="trabajoPaciente">
+
 </div>
 
+
 <div class="campo">
-<label>Tipo de trabajo</label>
+
+<label>
+Tipo de trabajo
+</label>
+
 <input
 id="trabajoTipo"
 placeholder="Ejemplo: prótesis, corona, reparación"
 >
+
 </div>
 
-<div class="campo">
-<label>Fecha de llegada</label>
-<input id="fechaLlegada" type="date">
-</div>
-
-<div class="campo">
-<label>Fecha de entrega</label>
-<input id="fechaEntrega" type="date">
-</div>
 
 <div class="campo">
 
-<label>Estado</label>
+<label>
+Fecha de llegada
+</label>
+
+<input
+id="fechaLlegada"
+type="date"
+>
+
+</div>
+
+
+<div class="campo">
+
+<label>
+Fecha de entrega
+</label>
+
+<input
+id="fechaEntrega"
+type="date"
+>
+
+</div>
+
+
+<div class="campo">
+
+<label>
+Estado
+</label>
 
 <select id="estadoTrabajo">
 
-<option>Recibido</option>
-<option>En proceso</option>
-<option>Terminado</option>
-<option>Entregado</option>
+<option>
+Recibido
+</option>
+
+<option>
+En proceso
+</option>
+
+<option>
+Terminado
+</option>
+
+<option>
+Entregado
+</option>
 
 </select>
 
 </div>
 
+
 <div class="campo">
 
-<label>Monto</label>
+<label>
+Monto
+</label>
 
 <input
 id="trabajoMonto"
@@ -620,14 +1034,19 @@ step="0.01"
 
 </div>
 
+
 </div>
 
 
 <div class="campo">
 
-<label>Observaciones</label>
+<label>
+Observaciones
+</label>
 
-<textarea id="trabajoObservaciones"></textarea>
+<textarea
+id="trabajoObservaciones"
+></textarea>
 
 </div>
 
@@ -639,46 +1058,67 @@ onclick="guardarTrabajo()"
 Guardar trabajo
 </button>
 
+
 </div>
 
 </section>
 
 
 
-<!-- ================= CITAS ================= -->
+<!-- =========================
+     CITAS
+========================= -->
 
 <section
 id="citas"
 class="seccion"
 >
 
-<h2>📅 Citas de pacientes</h2>
+<h2>
+📅 Citas de pacientes
+</h2>
+
 
 <p>
 Las citas son directamente con
-<strong>Javier Quiroz, Mecánico Dental</strong>.
+<strong>
+Javier Quiroz, Mecánico Dental
+</strong>.
 </p>
 
-<div id="listaCitas" class="lista"></div>
+
+<div
+id="listaCitas"
+class="lista"
+></div>
+
 
 </section>
 
 
 
-<!-- ================= NUEVA CITA ================= -->
+<!-- =========================
+     NUEVA CITA
+========================= -->
 
 <section
 id="nuevaCita"
 class="seccion"
 >
 
-<h2>➕ Nueva cita</h2>
+<h2>
+➕ Nueva cita
+</h2>
+
 
 <div class="formulario">
 
+
 <div class="campo">
 
-<label>Nombre del paciente</label>
+<label>
+Nombre del paciente
+</label>
 
 <input
 id="citaPaciente"
@@ -690,7 +1130,9 @@ placeholder="Nombre completo"
 
 <div class="campo">
 
-<label>Número de teléfono</label>
+<label>
+Número de teléfono
+</label>
 
 <input
 id="citaTelefono"
@@ -703,7 +1145,9 @@ placeholder="Ejemplo: 50761234567"
 
 <div class="campo">
 
-<label>Fecha de la cita</label>
+<label>
+Fecha de la cita
+</label>
 
 <input
 id="citaFecha"
@@ -715,7 +1159,9 @@ type="date"
 
 <div class="campo">
 
-<label>Hora de la cita</label>
+<label>
+Hora de la cita
+</label>
 
 <input
 id="citaHora"
@@ -732,15 +1178,18 @@ onclick="guardarCita()"
 Guardar cita
 </button>
 
+
 </div>
 
 </section>
+
 
 </main>
 
 
 
 <script>
+
 
 /* =========================
    BASE DE DATOS
@@ -749,7 +1198,8 @@ Guardar cita
 const NOMBRE_BD =
 "LAB_innovadent_BD";
 
-const VERSION_BD = 1;
+const VERSION_BD =
+1;
 
 let db;
 
@@ -841,7 +1291,10 @@ reject(solicitud.error);
 
 
 
-function guardarEnBD(tienda,dato) {
+function guardarEnBD(
+tienda,
+dato
+) {
 
 return new Promise(
 (resolve,reject) => {
@@ -911,7 +1364,10 @@ solicitud.error
 
 
 
-function eliminarDeBD(tienda,id) {
+function eliminarDeBD(
+tienda,
+id
+) {
 
 return new Promise(
 (resolve,reject) => {
@@ -945,7 +1401,7 @@ solicitud.error
 
 
 /* =========================
-   INICIO
+   INICIAR
 ========================= */
 
 async function iniciar() {
@@ -959,6 +1415,7 @@ await cargarDatos();
 actualizarTodo();
 
 }
+
 catch(error) {
 
 console.error(error);
@@ -997,8 +1454,11 @@ document
 .querySelectorAll(".seccion")
 .forEach(
 seccion =>
-seccion.classList.remove("activa")
+seccion.classList.remove(
+"activa"
+)
 );
+
 
 document
 .getElementById(id)
@@ -1046,7 +1506,6 @@ document.getElementById(
 ).value,
 
 paciente:
-
 paciente,
 
 telefono:
@@ -1115,7 +1574,9 @@ document.getElementById(
 );
 
 
-if (clientes.length === 0) {
+if (
+clientes.length === 0
+) {
 
 contenedor.innerHTML =
 '<div class="vacio">No hay clientes registrados.</div>';
@@ -1136,22 +1597,30 @@ ${escapar(cliente.paciente)}
 </h3>
 
 <p>
-<strong>Clínica:</strong>
+<strong>
+Clínica:
+</strong>
 ${escapar(cliente.clinica || "-")}
 </p>
 
 <p>
-<strong>Dr./Dra.:</strong>
+<strong>
+Dr./Dra.:
+</strong>
 ${escapar(cliente.doctor || "-")}
 </p>
 
 <p>
-<strong>Teléfono:</strong>
+<strong>
+Teléfono:
+</strong>
 ${escapar(cliente.telefono || "-")}
 </p>
 
 <p>
-<strong>Correo:</strong>
+<strong>
+Correo:
+</strong>
 ${escapar(cliente.correo || "-")}
 </p>
 
@@ -1173,9 +1642,12 @@ Eliminar
 
 async function eliminarCliente(id) {
 
-if (!confirm(
+if (
+!confirm(
 "¿Eliminar este cliente?"
-)) return;
+)
+) return;
+
 
 await eliminarDeBD(
 "clientes",
@@ -1201,13 +1673,17 @@ document.getElementById(
 "trabajoPaciente"
 ).value.trim();
 
+
 const tipo =
 document.getElementById(
 "trabajoTipo"
 ).value.trim();
 
 
-if (!paciente || !tipo) {
+if (
+!paciente ||
+!tipo
+) {
 
 alert(
 "Escribe el paciente y el tipo de trabajo."
@@ -1233,11 +1709,9 @@ document.getElementById(
 ).value,
 
 paciente:
-
 paciente,
 
 tipo:
-
 tipo,
 
 fechaLlegada:
@@ -1315,7 +1789,8 @@ document.getElementById(
 
 document.getElementById(
 "estadoTrabajo"
-).value = "Recibido";
+).value =
+"Recibido";
 
 document.getElementById(
 "trabajoMonto"
@@ -1331,17 +1806,29 @@ document.getElementById(
 
 function claseEstado(estado) {
 
-if (estado === "Recibido")
+if (
+estado === "Recibido"
+)
 return "recibido";
 
-if (estado === "En proceso")
+
+if (
+estado === "En proceso"
+)
 return "proceso";
 
-if (estado === "Terminado")
+
+if (
+estado === "Terminado"
+)
 return "terminado";
 
-if (estado === "Entregado")
+
+if (
+estado === "Entregado"
+)
 return "entregado";
+
 
 return "recibido";
 
@@ -1357,7 +1844,9 @@ document.getElementById(
 );
 
 
-if (trabajos.length === 0) {
+if (
+trabajos.length === 0
+) {
 
 contenedor.innerHTML =
 '<div class="vacio">No hay trabajos registrados.</div>';
@@ -1378,33 +1867,45 @@ ${escapar(trabajo.paciente)}
 </h3>
 
 <p>
-<strong>Trabajo:</strong>
+<strong>
+Trabajo:
+</strong>
 ${escapar(trabajo.tipo)}
 </p>
 
 <p>
-<strong>Clínica:</strong>
+<strong>
+Clínica:
+</strong>
 ${escapar(trabajo.clinica || "-")}
 </p>
 
 <p>
-<strong>Dr./Dra.:</strong>
+<strong>
+Dr./Dra.:
+</strong>
 ${escapar(trabajo.doctor || "-")}
 </p>
 
 <p>
-<strong>Fecha de llegada:</strong>
+<strong>
+Fecha de llegada:
+</strong>
 ${trabajo.fechaLlegada || "-"}
 </p>
 
 <p>
-<strong>Fecha de entrega:</strong>
+<strong>
+Fecha de entrega:
+</strong>
 ${trabajo.fechaEntrega || "-"}
 </p>
 
 <p>
 
-<strong>Estado:</strong>
+<strong>
+Estado:
+</strong>
 
 <span
 class="estado ${claseEstado(trabajo.estado)}"
@@ -1415,13 +1916,23 @@ ${escapar(trabajo.estado)}
 </p>
 
 <p>
-<strong>Monto:</strong>
+<strong>
+Monto:
+</strong>
+
 $${trabajo.monto || "0.00"}
+
 </p>
 
 <p>
-<strong>Observaciones:</strong>
-${escapar(trabajo.observaciones || "-")}
+<strong>
+Observaciones:
+</strong>
+
+${escapar(
+trabajo.observaciones || "-"
+)}
+
 </p>
 
 <button
@@ -1442,9 +1953,12 @@ Eliminar
 
 async function eliminarTrabajo(id) {
 
-if (!confirm(
+if (
+!confirm(
 "¿Eliminar este trabajo?"
-)) return;
+)
+) return;
+
 
 await eliminarDeBD(
 "trabajos",
@@ -1470,15 +1984,18 @@ document.getElementById(
 "citaPaciente"
 ).value.trim();
 
+
 const telefono =
 document.getElementById(
 "citaTelefono"
 ).value.trim();
 
+
 const fecha =
 document.getElementById(
 "citaFecha"
 ).value;
+
 
 const hora =
 document.getElementById(
@@ -1506,19 +2023,15 @@ const cita = {
 id: Date.now(),
 
 paciente:
-
 paciente,
 
 telefono:
-
 telefono,
 
 fecha:
-
 fecha,
 
 hora:
-
 hora
 
 };
@@ -1573,7 +2086,9 @@ document.getElementById(
 );
 
 
-if (citas.length === 0) {
+if (
+citas.length === 0
+) {
 
 contenedor.innerHTML =
 '<div class="vacio">No hay citas registradas.</div>';
@@ -1594,17 +2109,23 @@ cita => `
 </h3>
 
 <p>
-<strong>Teléfono:</strong>
+<strong>
+Teléfono:
+</strong>
 ${escapar(cita.telefono)}
 </p>
 
 <p>
-<strong>Fecha:</strong>
+<strong>
+Fecha:
+</strong>
 ${formatearFecha(cita.fecha)}
 </p>
 
 <p>
-<strong>Hora:</strong>
+<strong>
+Hora:
+</strong>
 ${cita.hora || "No indicada"}
 </p>
 
@@ -1638,9 +2159,12 @@ Eliminar
 
 async function eliminarCita(id) {
 
-if (!confirm(
+if (
+!confirm(
 "¿Eliminar esta cita?"
-)) return;
+)
+) return;
+
 
 await eliminarDeBD(
 "citas",
@@ -1687,9 +2211,11 @@ paciente +
 ".%0A%0A" +
 
 "Le recordamos que tiene una cita " +
+
 "con Javier Quiroz, Mecánico Dental, " +
 
 "el día " +
+
 formatearFecha(fecha);
 
 
@@ -1703,6 +2229,7 @@ hora;
 
 
 mensaje +=
+
 ".%0A%0A" +
 
 "Por favor confirme su asistencia.%0A%0A" +
@@ -1887,7 +2414,8 @@ document.createElement(
 );
 
 
-enlace.href = url;
+enlace.href =
+url;
 
 enlace.download =
 "LAB-innovadent-respaldo.json";
@@ -1926,7 +2454,8 @@ const archivo =
 event.target.files[0];
 
 
-if (!archivo) return;
+if (!archivo)
+return;
 
 
 try {
@@ -1952,9 +2481,11 @@ return;
 }
 
 
-if (!confirm(
+if (
+!confirm(
 "¿Deseas restaurar este respaldo?"
-)) {
+)
+) {
 
 return;
 
@@ -2012,6 +2543,7 @@ mostrarMensaje(
 );
 
 }
+
 catch(error) {
 
 console.error(error);
@@ -2068,8 +2600,12 @@ solicitud.onsuccess =
 
 pendientes--;
 
-if (pendientes === 0) {
+if (
+pendientes === 0
+) {
+
 resolve();
+
 }
 
 };
@@ -2182,7 +2718,9 @@ elemento.style.display =
 
 function formatearFecha(fecha) {
 
-if (!fecha) return "-";
+if (!fecha)
+return "-";
+
 
 const partes =
 fecha.split("-");
@@ -2190,7 +2728,8 @@ fecha.split("-");
 
 if (
 partes.length !== 3
-) return fecha;
+)
+return fecha;
 
 
 return (
@@ -2299,11 +2838,15 @@ error
 }
 
 
-/* INICIAR */
+/* =========================
+   INICIAR APLICACIÓN
+========================= */
 
 iniciar();
 
 </script>
 
+
 </body>
+
 </html>
