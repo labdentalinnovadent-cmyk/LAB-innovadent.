@@ -3408,6 +3408,24 @@ iniciar();
 </script>
 
 
+
+<script>
+(function () {
+  function fijarHorizontal() {
+    try {
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock("landscape").catch(function () {});
+      }
+    } catch (e) {}
+  }
+
+  window.addEventListener("load", fijarHorizontal);
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) fijarHorizontal();
+  });
+})();
+</script>
+
 </body>
 
 </html>
