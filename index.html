@@ -364,6 +364,43 @@ textarea {
 }
 
 
+.estado-botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.estado-botones button {
+  border: none;
+  border-radius: 7px;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-recibido {
+  background: #dff7fa;
+  color: #087f8c;
+}
+
+.btn-proceso {
+  background: #fff3cd;
+  color: #8a6100;
+}
+
+.btn-terminado {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.btn-entregado {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+
 /* =========================
    LISTAS
 ========================= */
@@ -925,6 +962,21 @@ Dr. / Dra.
 </label>
 
 <input id="trabajoDoctor">
+
+</div>
+
+
+<div class="campo">
+
+<label>
+WhatsApp de la clínica
+</label>
+
+<input
+id="trabajoTelefono"
+type="tel"
+placeholder="Ejemplo: 50761234567"
+>
 
 </div>
 
@@ -1699,6 +1751,11 @@ document.getElementById(
 "trabajoDoctor"
 ).value,
 
+telefono:
+document.getElementById(
+"trabajoTelefono"
+).value,
+
 paciente:
 paciente,
 
@@ -1760,6 +1817,10 @@ document.getElementById(
 
 document.getElementById(
 "trabajoDoctor"
+).value = "";
+
+document.getElementById(
+"trabajoTelefono"
 ).value = "";
 
 document.getElementById(
@@ -1825,6 +1886,84 @@ return "recibido";
 
 }
 
+
+
+
+async function cambiarEstadoTrabajo(id, nuevoEstado) {
+
+  const trabajo = trabajos.find(t => t.id === id);
+
+  if (!trabajo) return;
+
+  trabajo.estado = nuevoEstado;
+
+  await guardarEnBD("trabajos", trabajo);
+
+  await cargarDatos();
+
+  actualizarTodo();
+
+  mostrarMensaje(
+    "Estado cambiado a: " + nuevoEstado
+  );
+}
+
+
+function mensajeEstadoTrabajo(estado, trabajo) {
+
+  const paciente = trabajo.paciente || "el paciente";
+  const tipo = trabajo.tipo || "trabajo dental";
+
+  if (estado === "Recibido") {
+    return "Hola. Le informamos que hemos recibido el trabajo dental de " +
+      paciente + " (" + tipo + ") en LAB innovadent. Queda registrado como recibido. Gracias.";
+  }
+
+  if (estado === "En proceso") {
+    return "Hola. Le informamos que el trabajo dental de " +
+      paciente + " (" + tipo + ") ya se encuentra EN PROCESO en LAB innovadent. Gracias.";
+  }
+
+  if (estado === "Terminado") {
+    return "Hola. Le informamos que el trabajo dental de " +
+      paciente + " (" + tipo + ") ya está TERMINADO y listo para entrega. Gracias.";
+  }
+
+  if (estado === "Entregado") {
+    return "Hola. Le informamos que el trabajo dental de " +
+      paciente + " (" + tipo + ") ha sido entregado. Gracias.";
+  }
+
+  return "Hola. Le informamos sobre el estado del trabajo dental de " +
+    paciente + " (" + tipo + ").";
+}
+
+
+function avisarEstadoWhatsApp(id) {
+
+  const trabajo = trabajos.find(t => t.id === id);
+
+  if (!trabajo) return;
+
+  const numero = String(trabajo.telefono || "").replace(/\D/g, "");
+
+  if (!numero) {
+    alert(
+      "Este trabajo no tiene número de WhatsApp de la clínica. " +
+      "Agrega el número en el campo WhatsApp de la clínica."
+    );
+    return;
+  }
+
+  const mensaje = encodeURIComponent(
+    mensajeEstadoTrabajo(trabajo.estado, trabajo)
+  );
+
+  window.open(
+    "https://wa.me/" + numero + "?text=" + mensaje,
+    "_blank"
+  );
+}
 
 
 function mostrarTrabajos() {
@@ -1925,6 +2064,58 @@ trabajo.observaciones || "-"
 )}
 
 </p>
+
+<p>
+<strong>
+WhatsApp clínica:
+</strong>
+${escapar(trabajo.telefono || "-")}
+</p>
+
+<div class="estado-botones">
+
+<strong style="width:100%;">
+Cambiar estado:
+</strong>
+
+<button
+class="btn-recibido"
+onclick="cambiarEstadoTrabajo(${trabajo.id}, 'Recibido')"
+>
+📥 Recibido
+</button>
+
+<button
+class="btn-proceso"
+onclick="cambiarEstadoTrabajo(${trabajo.id}, 'En proceso')"
+>
+🔧 En proceso
+</button>
+
+<button
+class="btn-terminado"
+onclick="cambiarEstadoTrabajo(${trabajo.id}, 'Terminado')"
+>
+✅ Terminado
+</button>
+
+<button
+class="btn-entregado"
+onclick="cambiarEstadoTrabajo(${trabajo.id}, 'Entregado')"
+>
+📦 Entregado
+</button>
+
+</div>
+
+<br>
+
+<button
+class="boton whatsapp"
+onclick="avisarEstadoWhatsApp(${trabajo.id})"
+>
+💬 Avisar a la clínica por WhatsApp
+</button>
 
 <button
 class="boton rojo"
