@@ -879,17 +879,6 @@ Dr. / Dra.
 <div class="campo">
 
 <label>
-Paciente
-</label>
-
-<input id="clientePaciente">
-
-</div>
-
-
-<div class="campo">
-
-<label>
 Teléfono
 </label>
 
@@ -2248,16 +2237,15 @@ document
 
 async function guardarCliente() {
 
-const paciente =
+const clinica =
 document.getElementById(
-"clientePaciente"
+"clienteClinica"
 ).value.trim();
 
-
-if (!paciente) {
+if (!clinica) {
 
 alert(
-"Escribe el nombre del paciente."
+"Escribe el nombre de la clínica."
 );
 
 return;
@@ -2270,17 +2258,12 @@ const cliente = {
 id: Date.now(),
 
 clinica:
-document.getElementById(
-"clienteClinica"
-).value,
+clinica,
 
 doctor:
 document.getElementById(
 "clienteDoctor"
 ).value,
-
-paciente:
-paciente,
 
 telefono:
 document.getElementById(
@@ -2325,10 +2308,6 @@ document.getElementById(
 ).value = "";
 
 document.getElementById(
-"clientePaciente"
-).value = "";
-
-document.getElementById(
 "clienteTelefono"
 ).value = "";
 
@@ -2367,7 +2346,7 @@ cliente => `
 <div class="item">
 
 <h3>
-${escapar(cliente.paciente)}
+${escapar(cliente.clinica || "Cliente")}
 </h3>
 
 <p>
