@@ -1921,7 +1921,38 @@ function guardarClinicaFacturacion() {
   mostrarDatosFacturacion();
   mostrarClinicasFacturacion();
   actualizarSelectClinicasTrabajo();
-  mostrarMensaje("Clínica guardada correctamente.");
+
+  // Después de guardar, dejamos el formulario completamente limpio
+  // para poder registrar la siguiente clínica sin borrar campo por campo.
+  const camposFactura = [
+    "facturaTipoCliente",
+    "facturaTipoPersona",
+    "facturaTipoDocumento",
+    "facturaRuc",
+    "facturaDv",
+    "facturaClinica",
+    "facturaProvincia",
+    "facturaDistrito",
+    "facturaCorregimiento",
+    "facturaDireccion",
+    "facturaCorreo",
+    "facturaTelefono",
+    "facturaContacto",
+    "facturaWhatsapp"
+  ];
+
+  camposFactura.forEach(id => {
+    const elemento = document.getElementById(id);
+    if (!elemento) return;
+
+    if (elemento.tagName === "SELECT") {
+      elemento.selectedIndex = 0;
+    } else {
+      elemento.value = "";
+    }
+  });
+
+  mostrarMensaje("Clínica guardada correctamente. Los campos quedaron listos para registrar otra.");
 }
 
 function cargarDatosFacturacion() {
