@@ -945,6 +945,41 @@ Trabajos
 </h2>
 
 
+<div class="formulario" style="margin-bottom:20px;">
+<h3>🔎 Buscar y ordenar trabajos</h3>
+<div class="dos-columnas">
+<div class="campo">
+<label>Buscar trabajo</label>
+<input id="buscarTrabajos" type="search" placeholder="Paciente, clínica, trabajo o número..." oninput="mostrarTrabajos()">
+</div>
+<div class="campo">
+<label>Filtrar por estado</label>
+<select id="filtroEstadoTrabajos" onchange="mostrarTrabajos()">
+<option value="">Todos los estados</option>
+<option value="Recibido">Recibido</option>
+<option value="En proceso">En proceso</option>
+<option value="Terminado">Terminado</option>
+<option value="Entregado">Entregado</option>
+</select>
+</div>
+<div class="campo">
+<label>Ordenar trabajos</label>
+<select id="ordenTrabajos" onchange="mostrarTrabajos()">
+<option value="llegada_desc">Llegada: más recientes primero</option>
+<option value="llegada_asc">Llegada: más antiguos primero</option>
+<option value="clinica_asc">Clínica: A–Z</option>
+<option value="clinica_desc">Clínica: Z–A</option>
+<option value="paciente_asc">Paciente: A–Z</option>
+<option value="paciente_desc">Paciente: Z–A</option>
+<option value="trabajo_asc">Trabajo: A–Z</option>
+<option value="trabajo_desc">Trabajo: Z–A</option>
+</select>
+</div>
+</div>
+<button class="boton gris" onclick="limpiarFiltrosTrabajos()">🔄 Mostrar todos</button>
+<div id="resumenBusquedaTrabajos" style="margin-top:10px;color:#64748b;font-weight:bold;"></div>
+</div>
+
 <div
 id="listaTrabajos"
 class="lista"
@@ -2808,255 +2843,108 @@ function avisarEstadoWhatsApp(id) {
 }
 
 
+function normalizarTexto(texto) {
+  return String(texto || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+function limpiarFiltrosTrabajos() {
+  const buscar = document.getElementById("buscarTrabajos");
+  const estado = document.getElementById("filtroEstadoTrabajos");
+  const orden = document.getElementById("ordenTrabajos");
+  if (buscar) buscar.value = "";
+  if (estado) estado.value = "";
+  if (orden) orden.value = "llegada_desc";
+  mostrarTrabajos();
+}
+
 function mostrarTrabajos() {
+  const contenedor = document.getElementById("listaTrabajos");
+  const buscar = normalizarTexto(document.getElementById("buscarTrabajos")?.value || "");
+  const estadoFiltro = document.getElementById("filtroEstadoTrabajos")?.value || "";
+  const orden = document.getElementById("ordenTrabajos")?.value || "llegada_desc";
 
-const contenedor =
-document.getElementById(
-"listaTrabajos"
-);
+  if (trabajos.length === 0) {
+    contenedor.innerHTML = '<div class="vacio">No hay trabajos registrados.</div>';
+    return;
+  }
 
+  let lista = trabajos.filter(trabajo => {
+    const texto = normalizarTexto([
+      trabajo.id, trabajo.paciente, trabajo.clinica, trabajo.tipo,
+      trabajo.doctor, trabajo.telefono
+    ].join(" "));
+    return (!buscar || texto.includes(buscar)) &&
+           (!estadoFiltro || trabajo.estado === estadoFiltro);
+  });
 
-if (
-trabajos.length === 0
-) {
+  const texto = (v) => normalizarTexto(v);
+  lista.sort((a,b) => {
+    if (orden === "llegada_asc" || orden === "llegada_desc") {
+      const da = a.fechaLlegada || "";
+      const db = b.fechaLlegada || "";
+      return orden === "llegada_asc" ? da.localeCompare(db) : db.localeCompare(da);
+    }
+    if (orden === "clinica_asc" || orden === "clinica_desc") {
+      const x = texto(a.clinica), y = texto(b.clinica);
+      return orden === "clinica_asc" ? x.localeCompare(y) : y.localeCompare(x);
+    }
+    if (orden === "paciente_asc" || orden === "paciente_desc") {
+      const x = texto(a.paciente), y = texto(b.paciente);
+      return orden === "paciente_asc" ? x.localeCompare(y) : y.localeCompare(x);
+    }
+    if (orden === "trabajo_asc" || orden === "trabajo_desc") {
+      const x = texto(a.tipo), y = texto(b.tipo);
+      return orden === "trabajo_asc" ? x.localeCompare(y) : y.localeCompare(x);
+    }
+    return 0;
+  });
 
-contenedor.innerHTML =
-'<div class="vacio">No hay trabajos registrados.</div>';
+  const resumen = document.getElementById("resumenBusquedaTrabajos");
+  if (resumen) resumen.textContent = `Mostrando ${lista.length} de ${trabajos.length} trabajos.`;
 
-return;
+  if (lista.length === 0) {
+    contenedor.innerHTML = '<div class="vacio">No se encontraron trabajos con esos criterios.</div>';
+    return;
+  }
 
-}
-
-
-contenedor.innerHTML =
-trabajos.map(
-trabajo => `
-
+  contenedor.innerHTML = lista.map(trabajo => `
 <div class="item">
-
-<h3>
-${escapar(trabajo.paciente)}
-</h3>
-
-<p>
-<strong>
-Trabajo:
-</strong>
-${escapar(trabajo.tipo)}
-</p>
-
-<p>
-<strong>
-Clínica:
-</strong>
-${escapar(trabajo.clinica || "-")}
-</p>
-
-<p>
-<strong>
-Dr./Dra.:
-</strong>
-${escapar(trabajo.doctor || "-")}
-</p>
-
+<h3>${escapar(trabajo.paciente)}</h3>
+<p><strong>Trabajo:</strong> ${escapar(trabajo.tipo)}</p>
+<p><strong>Clínica:</strong> ${escapar(trabajo.clinica || "-")}</p>
+<p><strong>Dr./Dra.:</strong> ${escapar(trabajo.doctor || "-")}</p>
 ${trabajo.datosFacturacion ? `
-<p>
-<strong>RUC:</strong> ${escapar(trabajo.datosFacturacion.ruc || "-")}
-&nbsp; <strong>DV:</strong> ${escapar(trabajo.datosFacturacion.dv || "-")}
-</p>
-<p>
-<strong>Correo factura:</strong> ${escapar(trabajo.datosFacturacion.correo || "-")}
-</p>
-<p>
-<strong>Factura por WhatsApp a:</strong>
-${escapar(trabajo.datosFacturacion.contactoFactura || "-")}
-</p>
-` : ""}
-
-<p>
-<strong>
-Fecha de llegada:
-</strong>
-${trabajo.fechaLlegada || "-"}
-</p>
-
-<p>
-<strong>
-Fecha de entrega:
-</strong>
-${trabajo.fechaEntrega || "-"}
-</p>
-
-<p>
-
-<strong>
-Estado:
-</strong>
-
-<span
-class="estado ${claseEstado(trabajo.estado)}"
->
-${escapar(trabajo.estado)}
-</span>
-
-<br>
-
-<strong>
-Proceso:
-</strong>
-
-<span
-class="proceso-detalle ${claseProceso(trabajo.proceso)}"
->
-${escapar(trabajo.proceso || "No aplica")}
-</span>
-
-</p>
-
+<p><strong>RUC:</strong> ${escapar(trabajo.datosFacturacion.ruc || "-")} &nbsp; <strong>DV:</strong> ${escapar(trabajo.datosFacturacion.dv || "-")}</p>
+<p><strong>Correo factura:</strong> ${escapar(trabajo.datosFacturacion.correo || "-")}</p>
+<p><strong>Factura por WhatsApp a:</strong> ${escapar(trabajo.datosFacturacion.contactoFactura || "-")}</p>` : ""}
+<p><strong>Fecha de llegada:</strong> ${trabajo.fechaLlegada || "-"}</p>
+<p><strong>Fecha de entrega:</strong> ${trabajo.fechaEntrega || "-"}</p>
+<p><strong>Estado:</strong> <span class="estado ${claseEstado(trabajo.estado)}">${escapar(trabajo.estado)}</span><br>
+<strong>Proceso:</strong> <span class="proceso-detalle ${claseProceso(trabajo.proceso)}">${escapar(trabajo.proceso || "No aplica")}</span></p>
 <div class="estado-botones">
-
-<strong style="width:100%;">
-Cambiar proceso:
-</strong>
-
-<button
-class="btn-proceso"
-onclick="cambiarProcesoTrabajo(${trabajo.id}, 'Prueba de rodete')"
->
-🦷 Prueba de rodete
-</button>
-
-<button
-class="btn-proceso"
-onclick="cambiarProcesoTrabajo(${trabajo.id}, 'Prueba de dientes')"
->
-🦷 Prueba de dientes
-</button>
-
-<button
-class="btn-proceso"
-onclick="cambiarProcesoTrabajo(${trabajo.id}, 'Enmuflado')"
->
-🔧 Enmuflado
-</button>
-
-<button
-class="btn-terminado"
-onclick="cambiarProcesoTrabajo(${trabajo.id}, 'Terminado y envío a la clínica')"
->
-📦 Terminado y envío
-</button>
-
+<strong style="width:100%;">Cambiar proceso:</strong>
+<button class="btn-proceso" onclick="cambiarProcesoTrabajo(${trabajo.id}, 'Prueba de rodete')">🦷 Prueba de rodete</button>
+<button class="btn-proceso" onclick="cambiarProcesoTrabajo(${trabajo.id}, 'Prueba de dientes')">🦷 Prueba de dientes</button>
+<button class="btn-proceso" onclick="cambiarProcesoTrabajo(${trabajo.id}, 'Enmuflado')">🔧 Enmuflado</button>
+<button class="btn-terminado" onclick="cambiarProcesoTrabajo(${trabajo.id}, 'Terminado y envío a la clínica')">📦 Terminado y envío</button>
 </div>
-
-<p>
-<strong>
-Monto:
-</strong>
-
-${Number(trabajo.monto || 0).toFixed(2)}
-
-</p>
-
-<p>
-<strong>
-Impuesto 7%:
-</strong>
-
-${trabajo.impuesto7 ? (Number(trabajo.monto || 0) * 0.07).toFixed(2) : "0.00"}
-
-</p>
-
-<p>
-<strong>
-Total:
-</strong>
-
-${Number(
-  trabajo.total !== undefined
-    ? trabajo.total
-    : trabajo.monto || 0
-).toFixed(2)}
-
-</p>
-
-<p>
-<strong>
-Observaciones:
-</strong>
-
-${escapar(
-trabajo.observaciones || "-"
-)}
-
-</p>
-
-<p>
-<strong>
-WhatsApp clínica:
-</strong>
-${escapar(trabajo.telefono || "-")}
-</p>
-
+<p><strong>Monto:</strong> ${Number(trabajo.monto || 0).toFixed(2)}</p>
+<p><strong>Impuesto 7%:</strong> ${trabajo.impuesto7 ? (Number(trabajo.monto || 0) * 0.07).toFixed(2) : "0.00"}</p>
+<p><strong>Total:</strong> ${Number(trabajo.total !== undefined ? trabajo.total : trabajo.monto || 0).toFixed(2)}</p>
+<p><strong>Observaciones:</strong> ${escapar(trabajo.observaciones || "-")}</p>
+<p><strong>WhatsApp clínica:</strong> ${escapar(trabajo.telefono || "-")}</p>
 <div class="estado-botones">
-
-<strong style="width:100%;">
-Cambiar estado:
-</strong>
-
-<button
-class="btn-recibido"
-onclick="cambiarEstadoTrabajo(${trabajo.id}, 'Recibido')"
->
-📥 Recibido
-</button>
-
-<button
-class="btn-proceso"
-onclick="cambiarEstadoTrabajo(${trabajo.id}, 'En proceso')"
->
-🔧 En proceso
-</button>
-
-<button
-class="btn-terminado"
-onclick="cambiarEstadoTrabajo(${trabajo.id}, 'Terminado')"
->
-✅ Terminado
-</button>
-
-<button
-class="btn-entregado"
-onclick="cambiarEstadoTrabajo(${trabajo.id}, 'Entregado')"
->
-📦 Entregado
-</button>
-
+<strong style="width:100%;">Cambiar estado:</strong>
+<button class="btn-recibido" onclick="cambiarEstadoTrabajo(${trabajo.id}, 'Recibido')">📥 Recibido</button>
+<button class="btn-proceso" onclick="cambiarEstadoTrabajo(${trabajo.id}, 'En proceso')">🔧 En proceso</button>
+<button class="btn-terminado" onclick="cambiarEstadoTrabajo(${trabajo.id}, 'Terminado')">✅ Terminado</button>
+<button class="btn-entregado" onclick="cambiarEstadoTrabajo(${trabajo.id}, 'Entregado')">📦 Entregado</button>
 </div>
-
 <br>
-
-<button
-class="boton whatsapp"
-onclick="avisarEstadoWhatsApp(${trabajo.id})"
->
-💬 Avisar a la clínica por WhatsApp
-</button>
-
-<button
-class="boton rojo"
-onclick="eliminarTrabajo(${trabajo.id})"
->
-Eliminar
-</button>
-
-</div>
-
-`
-).join("");
-
+<button class="boton whatsapp" onclick="avisarEstadoWhatsApp(${trabajo.id})">💬 Avisar a la clínica por WhatsApp</button>
+<button class="boton rojo" onclick="eliminarTrabajo(${trabajo.id})">Eliminar</button>
+</div>`).join("");
 }
-
 
 
 async function eliminarTrabajo(id) {
