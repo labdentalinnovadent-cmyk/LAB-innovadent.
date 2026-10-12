@@ -1461,17 +1461,23 @@ Guarda aquí los datos fiscales de cada clínica para no tener que preguntarlos 
 
 <div class="campo">
 <label>Provincia</label>
-<input id="facturaProvincia" placeholder="Ejemplo: Chiriquí">
+<select id="facturaProvincia" onchange="cambioProvinciaFactura()">
+<option value="">Cargando provincias...</option>
+</select>
 </div>
 
 <div class="campo">
 <label>Distrito</label>
-<input id="facturaDistrito" placeholder="Ejemplo: David">
+<select id="facturaDistrito" onchange="cambioDistritoFactura()" disabled>
+<option value="">Primero selecciona una provincia</option>
+</select>
 </div>
 
 <div class="campo">
 <label>Corregimiento</label>
-<input id="facturaCorregimiento" placeholder="Corregimiento">
+<select id="facturaCorregimiento" disabled>
+<option value="">Primero selecciona un distrito</option>
+</select>
 </div>
 
 <div class="campo">
@@ -1614,7 +1620,16 @@ function recuperarBorrador(clave, ids) {
     const datos = JSON.parse(texto);
     ids.forEach(id => {
       const elemento = document.getElementById(id);
-      if (elemento && datos[id] !== undefined) elemento.value = datos[id];
+      if (elemento && datos[id] !== undefined) {
+        const valor = String(datos[id]);
+        if (elemento.tagName === "SELECT" && valor && !Array.from(elemento.options).some(opcion => opcion.value === valor)) {
+          const opcion = document.createElement("option");
+          opcion.value = valor;
+          opcion.textContent = valor + " (guardado anteriormente)";
+          elemento.appendChild(opcion);
+        }
+        elemento.value = valor;
+      }
     });
   } catch (error) {
     console.error("No se pudo recuperar el borrador:", error);
@@ -2014,9 +2029,6 @@ function cargarClinicaEnFormulario(id) {
     "facturaRuc",
     "facturaDv",
     "facturaClinica",
-    "facturaProvincia",
-    "facturaDistrito",
-    "facturaCorregimiento",
     "facturaDireccion",
     "facturaCorreo",
     "facturaTelefono",
@@ -2026,6 +2038,8 @@ function cargarClinicaEnFormulario(id) {
     const elemento = document.getElementById(campo);
     if (elemento && datos[campo] !== undefined) elemento.value = datos[campo];
   });
+  asegurarOpcion(document.getElementById("facturaProvincia"), datos.facturaProvincia);
+  cambioProvinciaFactura(true, datos.facturaDistrito, datos.facturaCorregimiento);
 
   localStorage.setItem(CLAVE_DATOS_FACTURACION, JSON.stringify(datos));
 
@@ -2288,6 +2302,127 @@ function mostrarPreciosCatalogo() {
    INICIAR
 ========================= */
 
+const CLAVE_DIVISIONES_PANAMA = "LAB_innovadent_divisiones_panama_v1";
+let divisionesPanama = [];
+
+function listaDistritosDeProvincia(provincia) {
+  if (!provincia) return [];
+  let distritos = provincia.distrito || provincia.district || [];
+  if (!Array.isArray(distritos)) {
+    distritos = Object.keys(distritos).map(nombre => ({
+      nombre,
+      corregimientos: distritos[nombre].corregimientos || distritos[nombre].corregimientos || []
+    }));
+  }
+  return distritos;
+}
+
+function nombreDe(item) {
+  return String(item && (item.nombre || item.name || item.nombre_distrito) || "");
+}
+
+function ponerOpciones(select, opciones, textoInicial) {
+  if (!select) return;
+  select.innerHTML = "";
+  const inicial = document.createElement("option");
+  inicial.value = "";
+  inicial.textContent = textoInicial;
+  select.appendChild(inicial);
+  opciones.forEach(item => {
+    const nombre = typeof item === "string" ? item : nombreDe(item);
+    if (!nombre) return;
+    const opcion = document.createElement("option");
+    opcion.value = nombre;
+    opcion.textContent = nombre;
+    select.appendChild(opcion);
+  });
+}
+
+function asegurarOpcion(select, valor) {
+  if (!select || !valor) return;
+  if (!Array.from(select.options).some(opcion => opcion.value === String(valor))) {
+    const opcion = document.createElement("option");
+    opcion.value = String(valor);
+    opcion.textContent = String(valor) + " (guardado anteriormente)";
+    select.appendChild(opcion);
+  }
+  select.value = String(valor);
+}
+
+function provinciaSeleccionada() {
+  return divisionesPanama.find(item => nombreDe(item) === document.getElementById("facturaProvincia").value);
+}
+
+function cambioProvinciaFactura(conservarValores, distritoGuardado, corregimientoGuardado) {
+  const provincia = provinciaSeleccionada();
+  const selectDistrito = document.getElementById("facturaDistrito");
+  const selectCorregimiento = document.getElementById("facturaCorregimiento");
+  const distritoAnterior = conservarValores ? (distritoGuardado || selectDistrito.value) : "";
+  const corregimientoAnterior = conservarValores ? (corregimientoGuardado || selectCorregimiento.value) : "";
+  ponerOpciones(selectDistrito, provincia ? listaDistritosDeProvincia(provincia) : [], provincia ? "Selecciona un distrito" : "Primero selecciona una provincia");
+  selectDistrito.disabled = !provincia;
+  ponerOpciones(selectCorregimiento, [], "Primero selecciona un distrito");
+  selectCorregimiento.disabled = true;
+  if (distritoAnterior) {
+    asegurarOpcion(selectDistrito, distritoAnterior);
+    cambioDistritoFactura(true, corregimientoAnterior);
+  }
+}
+
+function cambioDistritoFactura(conservarValor, corregimientoGuardado) {
+  const provincia = provinciaSeleccionada();
+  const distritoNombre = document.getElementById("facturaDistrito").value;
+  const selectCorregimiento = document.getElementById("facturaCorregimiento");
+  const anterior = conservarValor ? (corregimientoGuardado || selectCorregimiento.value) : "";
+  const distrito = listaDistritosDeProvincia(provincia).find(item => nombreDe(item) === distritoNombre);
+  const corregimientos = distrito ? (distrito.corregimientos || distrito.corregimiento || []) : [];
+  ponerOpciones(selectCorregimiento, corregimientos, distritoNombre ? "Selecciona un corregimiento" : "Primero selecciona un distrito");
+  selectCorregimiento.disabled = !distritoNombre;
+  if (anterior) asegurarOpcion(selectCorregimiento, anterior);
+}
+
+async function cargarDivisionesPanama() {
+  const provinciasBase = [
+    "Bocas del Toro", "Coclé", "Colón", "Chiriquí", "Darién",
+    "Herrera", "Los Santos", "Panamá", "Panamá Oeste", "Veraguas",
+    "Comarca Emberá-Wounaan", "Comarca Guna Yala", "Comarca Ngäbe-Buglé",
+    "Comarca Naso Tjër Di", "Comarca Madungandí", "Comarca Wargandí"
+  ];
+  try {
+    const guardadas = localStorage.getItem(CLAVE_DIVISIONES_PANAMA);
+    if (guardadas) {
+      const datos = JSON.parse(guardadas);
+      if (datos && Array.isArray(datos.provincia)) divisionesPanama = datos.provincia;
+    }
+  } catch (error) {
+    console.warn("No se pudieron leer las divisiones guardadas.", error);
+  }
+
+  try {
+    const respuesta = await fetch("https://gist.githubusercontent.com/Yizack/cbe7cef5572e6b832da0e9bd3454b312/raw/provincias.json");
+    if (respuesta.ok) {
+      const datos = await respuesta.json();
+      if (datos && Array.isArray(datos.provincia)) {
+        divisionesPanama = datos.provincia;
+        localStorage.setItem(CLAVE_DIVISIONES_PANAMA, JSON.stringify(datos));
+      }
+    }
+  } catch (error) {
+    console.warn("Se usarán las divisiones guardadas en esta tableta si no hay conexión.", error);
+  }
+
+  const selectProvincia = document.getElementById("facturaProvincia");
+  const provinciaActual = selectProvincia.value;
+  const opciones = divisionesPanama.length ? divisionesPanama : provinciasBase;
+  ponerOpciones(selectProvincia, opciones, "Selecciona una provincia");
+  if (provinciaActual) asegurarOpcion(selectProvincia, provinciaActual);
+  selectProvincia.addEventListener("change", () => {
+    document.getElementById("facturaDistrito").value = "";
+    document.getElementById("facturaCorregimiento").value = "";
+  });
+  if (selectProvincia.value) cambioProvinciaFactura(true);
+}
+
 async function iniciar() {
 
 try {
@@ -2297,6 +2432,7 @@ await abrirBaseDatos();
 await cargarDatos();
 
 actualizarTodo();
+await cargarDivisionesPanama();
 configurarBorradoresAutomaticos();
 cargarDatosFacturacion();
 actualizarSelectClinicasTrabajo();
