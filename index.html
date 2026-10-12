@@ -1590,6 +1590,7 @@ const CLAVE_BORRADOR_CLIENTE = "LAB_innovadent_borrador_cliente";
 const CLAVE_BORRADOR_TRABAJO = "LAB_innovadent_borrador_trabajo";
 const CLAVE_BORRADOR_CITA = "LAB_innovadent_borrador_cita";
 const CLAVE_DATOS_FACTURACION = "LAB_innovadent_datos_facturacion";
+const CLAVE_BORRADOR_FACTURACION = "LAB_innovadent_borrador_facturacion";
 
 let temporizadorBorrador = null;
 
@@ -1639,6 +1640,23 @@ function configurarBorradoresAutomaticos() {
       ids: ["citaPaciente", "citaTelefono", "citaFecha", "citaHora"]
     },
   ];
+
+  const camposFactura = [
+    "facturaTipoCliente", "facturaTipoPersona", "facturaTipoDocumento",
+    "facturaRuc", "facturaDv", "facturaClinica", "facturaProvincia",
+    "facturaDistrito", "facturaCorregimiento", "facturaDireccion",
+    "facturaCorreo", "facturaTelefono", "facturaContacto", "facturaWhatsapp"
+  ];
+
+  // Recupera lo que se estaba escribiendo aunque se cambie de pestaña o se cierre la app.
+  recuperarBorrador(CLAVE_BORRADOR_FACTURACION, camposFactura);
+  camposFactura.forEach(id => {
+    const elemento = document.getElementById(id);
+    if (elemento) {
+      elemento.addEventListener("input", () => guardarBorrador(CLAVE_BORRADOR_FACTURACION, camposFactura));
+      elemento.addEventListener("change", () => guardarBorrador(CLAVE_BORRADOR_FACTURACION, camposFactura));
+    }
+  });
 
   grupos.forEach(grupo => {
     recuperarBorrador(grupo.clave, grupo.ids);
@@ -1952,6 +1970,7 @@ function guardarClinicaFacturacion() {
     }
   });
 
+  borrarBorrador(CLAVE_BORRADOR_FACTURACION);
   mostrarMensaje("Clínica guardada correctamente. Los campos quedaron listos para registrar otra.");
 }
 
