@@ -2086,7 +2086,7 @@ function mostrarClinicasFacturacion() {
       <p><strong>WhatsApp factura:</strong> ${escapar(datos.facturaWhatsapp || "-")}</p>
       <p><strong>Recibe:</strong> ${escapar(datos.facturaContacto || "-")}</p>
 
-      <button class="boton azul" onclick="cargarClinicaEnFormulario(${datos.id})">
+      <button type="button" class="boton azul" onclick="cargarClinicaEnFormulario(String(${datos.id})); return false;">
         ✏️ Editar datos
       </button>
 
