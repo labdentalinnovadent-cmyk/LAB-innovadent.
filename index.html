@@ -2097,15 +2097,32 @@ function mostrarClinicasFacturacion() {
       <p><strong>WhatsApp factura:</strong> ${escapar(datos.facturaWhatsapp || "-")}</p>
       <p><strong>Recibe:</strong> ${escapar(datos.facturaContacto || "-")}</p>
 
-      <button type="button" class="boton azul" onclick="cargarClinicaEnFormulario(String(${datos.id})); return false;">
+      <button type="button" class="boton azul" data-editar-clinica="${escapar(String(datos.id))}">
         ✏️ Editar datos
       </button>
 
-      <button class="boton rojo" onclick="eliminarClinicaFacturacion(${datos.id})">
+      <button type="button" class="boton rojo" data-eliminar-clinica="${escapar(String(datos.id))}">
         Eliminar
       </button>
     </div>
   `).join("");
+
+  // Manejador directo en la lista: no depende de atributos onclick dentro del HTML.
+  contenedor.onclick = function(evento) {
+    const botonEditar = evento.target.closest("[data-editar-clinica]");
+    const botonEliminar = evento.target.closest("[data-eliminar-clinica]");
+    if (botonEditar && contenedor.contains(botonEditar)) {
+      evento.preventDefault();
+      const id = botonEditar.getAttribute("data-editar-clinica");
+      cargarClinicaEnFormulario(id);
+      return;
+    }
+    if (botonEliminar && contenedor.contains(botonEliminar)) {
+      evento.preventDefault();
+      const id = botonEliminar.getAttribute("data-eliminar-clinica");
+      eliminarClinicaFacturacion(id);
+    }
+  };
 }
 
 function actualizarSelectClinicasTrabajo() {
