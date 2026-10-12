@@ -2038,7 +2038,18 @@ function cargarClinicaEnFormulario(id) {
   ]);
 
   mostrarDatosFacturacion();
-  mostrarMensaje("Datos cargados. Puedes modificarlos y pulsar Guardar clínica para actualizar el registro.");
+
+  // Lleva la pantalla al formulario para que se vean inmediatamente los datos cargados.
+  const formularioFactura = document.getElementById("facturacion");
+  const primerCampoFactura = document.getElementById("facturaClinica");
+  if (primerCampoFactura) {
+    primerCampoFactura.focus();
+    primerCampoFactura.scrollIntoView({ behavior: "smooth", block: "center" });
+  } else if (formularioFactura) {
+    formularioFactura.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  mostrarMensaje("Datos cargados en el formulario. Modifica lo necesario y pulsa Guardar datos de la clínica para guardar los cambios.");
 }
 
 function eliminarClinicaFacturacion(id) {
