@@ -2001,8 +2001,11 @@ function cargarDatosFacturacion() {
 }
 
 function cargarClinicaEnFormulario(id) {
-  const datos = obtenerClinicasFacturacion().find(item => item.id === id);
-  if (!datos) return;
+  const datos = obtenerClinicasFacturacion().find(item => String(item.id) === String(id));
+  if (!datos) {
+    mostrarMensaje("No se encontró esa clínica. Actualiza la aplicación e inténtalo de nuevo.");
+    return;
+  }
 
   [
     "facturaTipoCliente",
@@ -2025,8 +2028,17 @@ function cargarClinicaEnFormulario(id) {
   });
 
   localStorage.setItem(CLAVE_DATOS_FACTURACION, JSON.stringify(datos));
+
+  // Al editar una clínica, el borrador debe coincidir con los datos que acabamos de cargar.
+  guardarBorrador(CLAVE_BORRADOR_FACTURACION, [
+    "facturaTipoCliente", "facturaTipoPersona", "facturaTipoDocumento",
+    "facturaRuc", "facturaDv", "facturaClinica", "facturaProvincia",
+    "facturaDistrito", "facturaCorregimiento", "facturaDireccion",
+    "facturaCorreo", "facturaTelefono", "facturaContacto", "facturaWhatsapp"
+  ]);
+
   mostrarDatosFacturacion();
-  mostrarMensaje("Datos de la clínica cargados.");
+  mostrarMensaje("Datos cargados. Puedes modificarlos y pulsar Guardar clínica para actualizar el registro.");
 }
 
 function eliminarClinicaFacturacion(id) {
