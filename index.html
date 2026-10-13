@@ -1327,69 +1327,57 @@ class="seccion"
 <div class="formulario">
 
 
+<div class="dos-columnas">
+
 <div class="campo">
+<label>Nombre del paciente</label>
+<input id="citaPaciente" placeholder="Nombre completo">
+</div>
 
-<label>
-Nombre del paciente
-</label>
+<div class="campo">
+<label>Número de WhatsApp</label>
+<input id="citaTelefono" type="tel" placeholder="Ejemplo: 50761234567">
+</div>
 
-<input
-id="citaPaciente"
-placeholder="Nombre completo"
->
+<div class="campo">
+<label>Fecha propuesta de la cita</label>
+<input id="citaFecha" type="date">
+</div>
+
+<div class="campo">
+<label>Hora de la cita (si ya la sabe)</label>
+<input id="citaHora" type="time">
+<small style="color:#64748b;">Si aún no sabe la hora, déjala vacía y marca “Hora pendiente”.</small>
+</div>
+
+<div class="campo">
+<label>Motivo de consulta</label>
+<input id="citaConsulta" placeholder="Ej. evaluación, ajuste, reparación...">
+</div>
+
+<div class="campo">
+<label>Estado de la cita</label>
+<select id="citaEstado">
+<option value="Por confirmar">Por confirmar</option>
+<option value="Confirmada">Confirmada</option>
+<option value="Indeciso">Paciente indeciso</option>
+<option value="Hora pendiente">Hora pendiente</option>
+<option value="Reprogramar">Necesita reprogramar</option>
+</select>
+</div>
+
+<div class="campo">
+<label>¿Necesita recordatorio por WhatsApp?</label>
+<select id="citaRecordatorio">
+<option value="si">Sí, recordar por WhatsApp</option>
+<option value="no">No necesita recordatorio</option>
+</select>
+</div>
 
 </div>
 
-
-<div class="campo">
-
-<label>
-Número de teléfono
-</label>
-
-<input
-id="citaTelefono"
-type="tel"
-placeholder="Ejemplo: 50761234567"
->
-
-</div>
-
-
-<div class="campo">
-
-<label>
-Fecha de la cita
-</label>
-
-<input
-id="citaFecha"
-type="date"
->
-
-</div>
-
-
-<div class="campo">
-
-<label>
-Hora de la cita
-</label>
-
-<input
-id="citaHora"
-type="time"
->
-
-</div>
-
-
-<button
-class="boton verde"
-onclick="guardarCita()"
->
-Guardar cita
-</button>
+<button class="boton verde" onclick="guardarCita()">💾 Guardar cita</button>
+<p style="color:#64748b;">Guardar no envía mensajes automáticamente. Podrás abrir WhatsApp y revisar el texto antes de enviarlo.</p>
 
 
 </div>
@@ -1652,7 +1640,7 @@ function configurarBorradoresAutomaticos() {
     },
     {
       clave: CLAVE_BORRADOR_CITA,
-      ids: ["citaPaciente", "citaTelefono", "citaFecha", "citaHora"]
+      ids: ["citaPaciente", "citaTelefono", "citaFecha", "citaHora", "citaConsulta", "citaEstado", "citaRecordatorio"]
     },
   ];
 
@@ -3201,276 +3189,157 @@ actualizarTodo();
 ========================= */
 
 async function guardarCita() {
+  const paciente = document.getElementById("citaPaciente").value.trim();
+  const telefono = document.getElementById("citaTelefono").value.trim();
+  const fecha = document.getElementById("citaFecha").value;
+  const hora = document.getElementById("citaHora").value;
+  const consulta = document.getElementById("citaConsulta").value.trim();
+  const estado = document.getElementById("citaEstado").value || "Por confirmar";
+  const recordatorio = document.getElementById("citaRecordatorio").value || "si";
 
-const paciente =
-document.getElementById(
-"citaPaciente"
-).value.trim();
+  if (!paciente || !telefono || !fecha) {
+    alert("Escribe el nombre, WhatsApp y la fecha propuesta de la cita.");
+    return;
+  }
 
+  const cita = {
+    id: Date.now(),
+    paciente,
+    telefono,
+    fecha,
+    hora,
+    consulta,
+    estado,
+    recordatorio
+  };
 
-const telefono =
-document.getElementById(
-"citaTelefono"
-).value.trim();
-
-
-const fecha =
-document.getElementById(
-"citaFecha"
-).value;
-
-
-const hora =
-document.getElementById(
-"citaHora"
-).value;
-
-
-if (
-!paciente ||
-!telefono ||
-!fecha
-) {
-
-alert(
-"Escribe nombre, teléfono y fecha."
-);
-
-return;
-
+  await guardarEnBD("citas", cita);
+  await cargarDatos();
+  limpiarCita();
+  borrarBorrador(CLAVE_BORRADOR_CITA);
+  actualizarTodo();
+  mostrarMensaje("Cita guardada correctamente.");
 }
-
-
-const cita = {
-
-id: Date.now(),
-
-paciente:
-paciente,
-
-telefono:
-telefono,
-
-fecha:
-fecha,
-
-hora:
-hora
-
-};
-
-
-await guardarEnBD(
-"citas",
-cita
-);
-
-await cargarDatos();
-
-limpiarCita();
-
-actualizarTodo();
-
-mostrarMensaje(
-"Cita guardada correctamente."
-);
-
-}
-
-
 
 function limpiarCita() {
-
-document.getElementById(
-"citaPaciente"
-).value = "";
-
-document.getElementById(
-"citaTelefono"
-).value = "";
-
-document.getElementById(
-"citaFecha"
-).value = "";
-
-document.getElementById(
-"citaHora"
-).value = "";
-
+  ["citaPaciente", "citaTelefono", "citaFecha", "citaHora", "citaConsulta"].forEach(id => {
+    const elemento = document.getElementById(id);
+    if (elemento) elemento.value = "";
+  });
+  document.getElementById("citaEstado").value = "Por confirmar";
+  document.getElementById("citaRecordatorio").value = "si";
 }
-
-
 
 function mostrarCitas() {
+  const contenedor = document.getElementById("listaCitas");
+  if (!citas.length) {
+    contenedor.innerHTML = '<div class="vacio">No hay citas registradas.</div>';
+    return;
+  }
 
-const contenedor =
-document.getElementById(
-"listaCitas"
-);
+  const prioridad = { "Indeciso": 0, "Hora pendiente": 1, "Por confirmar": 2, "Reprogramar": 3, "Confirmada": 4 };
+  const lista = [...citas].sort((a, b) => {
+    const pa = prioridad[a.estado || (a.hora ? "Por confirmar" : "Hora pendiente")] ?? 5;
+    const pb = prioridad[b.estado || (b.hora ? "Por confirmar" : "Hora pendiente")] ?? 5;
+    return pa - pb || String(a.fecha || "").localeCompare(String(b.fecha || ""));
+  });
 
-
-if (
-citas.length === 0
-) {
-
-contenedor.innerHTML =
-'<div class="vacio">No hay citas registradas.</div>';
-
-return;
-
+  contenedor.innerHTML = lista.map(cita => {
+    const estado = cita.estado || (cita.hora ? "Por confirmar" : "Hora pendiente");
+    const recordatorio = cita.recordatorio || "si";
+    const consulta = cita.consulta || "No especificado";
+    return `
+      <div class="item">
+        <h3>👤 ${escapar(cita.paciente)}</h3>
+        <p><strong>WhatsApp:</strong> ${escapar(cita.telefono)}</p>
+        <p><strong>Fecha:</strong> ${formatearFecha(cita.fecha)} (${escapar(diaSemanaCita(cita.fecha))})</p>
+        <p><strong>Hora:</strong> ${cita.hora ? escapar(cita.hora) : "Pendiente de acordar"}</p>
+        <p><strong>Consulta:</strong> ${escapar(consulta)}</p>
+        <p><strong>Estado:</strong> <strong>${escapar(estado)}</strong></p>
+        <p><strong>Recordatorio:</strong> ${recordatorio === "no" ? "No necesita" : "Pendiente de gestionar por WhatsApp"}</p>
+        <button class="boton whatsapp" onclick="abrirWhatsAppCita(${Number(cita.id)})">💬 ${cita.hora ? "Enviar confirmación / recordatorio" : "Preguntar qué hora le conviene"}</button>
+        <button class="boton azul" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Confirmada')">✅ Confirmada</button>
+        <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Indeciso')">🤔 Sigue indeciso</button>
+        <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Hora pendiente')">🕒 Falta la hora</button>
+        <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Reprogramar')">📅 Reprogramar</button>
+        <button class="boton rojo" onclick="eliminarCita(${Number(cita.id)})">Eliminar</button>
+      </div>
+    `;
+  }).join("");
 }
 
-
-contenedor.innerHTML =
-citas.map(
-cita => `
-
-<div class="item">
-
-<h3>
-👤 ${escapar(cita.paciente)}
-</h3>
-
-<p>
-<strong>
-Teléfono:
-</strong>
-${escapar(cita.telefono)}
-</p>
-
-<p>
-<strong>
-Fecha:
-</strong>
-${formatearFecha(cita.fecha)}
-</p>
-
-<p>
-<strong>
-Hora:
-</strong>
-${cita.hora || "No indicada"}
-</p>
-
-<button
-class="boton whatsapp"
-onclick="abrirWhatsApp(
-'${escaparJS(cita.telefono)}',
-'${escaparJS(cita.paciente)}',
-'${cita.fecha}',
-'${cita.hora}'
-)"
->
-💬 Recordar por WhatsApp
-</button>
-
-<button
-class="boton rojo"
-onclick="eliminarCita(${cita.id})"
->
-Eliminar
-</button>
-
-</div>
-
-`
-).join("");
-
+async function actualizarEstadoCita(id, estado) {
+  const cita = citas.find(item => String(item.id) === String(id));
+  if (!cita) {
+    mostrarMensaje("No se encontró la cita.");
+    return;
+  }
+  const actualizada = { ...cita, estado };
+  await guardarEnBD("citas", actualizada);
+  await cargarDatos();
+  actualizarTodo();
+  mostrarMensaje("Estado actualizado: " + estado + ".");
 }
-
-
 
 async function eliminarCita(id) {
-
-if (
-!confirm(
-"¿Eliminar esta cita?"
-)
-) return;
-
-
-await eliminarDeBD(
-"citas",
-id
-);
-
-await cargarDatos();
-
-actualizarTodo();
-
+  if (!confirm("¿Eliminar esta cita?")) return;
+  await eliminarDeBD("citas", id);
+  await cargarDatos();
+  actualizarTodo();
 }
-
-
 
 /* =========================
-   WHATSAPP
+   WHATSAPP PARA CITAS
 ========================= */
 
-function abrirWhatsApp(
-telefono,
-paciente,
-fecha,
-hora
-) {
-
-const numero =
-telefono.replace(/\D/g,"");
-
-
-if (!numero) {
-
-alert(
-"El número no es válido."
-);
-
-return;
-
+function diaSemanaCita(fecha) {
+  if (!fecha) return "fecha pendiente";
+  const partes = fecha.split("-").map(Number);
+  if (partes.length !== 3) return fecha;
+  const dia = new Date(partes[0], partes[1] - 1, partes[2], 12);
+  return dia.toLocaleDateString("es-PA", { weekday: "long" });
 }
 
+function abrirWhatsAppCita(id) {
+  const cita = citas.find(item => String(item.id) === String(id));
+  if (!cita) {
+    alert("No se encontró la cita.");
+    return;
+  }
 
-let mensaje =
-"Hola " +
-paciente +
-".%0A%0A" +
+  const numero = String(cita.telefono || "").replace(/\\D/g, "");
+  if (!numero) {
+    alert("El número de WhatsApp no es válido.");
+    return;
+  }
 
-"Le recordamos que tiene una cita " +
+  const fechaBonita = diaSemanaCita(cita.fecha) + " " + formatearFecha(cita.fecha);
+  const hora = cita.hora ? " a las " + cita.hora : "";
+  const consulta = cita.consulta ? "\\nMotivo de consulta: " + cita.consulta : "";
+  const estado = cita.estado || (cita.hora ? "Por confirmar" : "Hora pendiente");
+  let mensaje;
 
-"con Javier Quiroz, Mecánico Dental, " +
+  if (estado === "Indeciso") {
+    mensaje = "Hola " + cita.paciente + ", le escribimos de parte de Javier Quiroz, Mecánico Dental.\\n\\nQueríamos consultar si desea coordinar su cita para el " + fechaBonita + (cita.hora ? " a las " + cita.hora : "") + "." + consulta + "\\n\\nCuando pueda, nos confirma si desea agendarla. ¡Con gusto le ayudamos!";
+  } else if (!cita.hora || estado === "Hora pendiente") {
+    mensaje = "Hola " + cita.paciente + ", le escribimos de parte de Javier Quiroz, Mecánico Dental.\\n\\nTenemos como fecha propuesta para su cita el " + fechaBonita + "." + consulta + "\\n\\n¿Qué hora le vendría bien? Puede responder a este mensaje para coordinar la hora. ¡Gracias!";
+  } else {
+    mensaje = "Hola " + cita.paciente + ", le escribimos de parte de Javier Quiroz, Mecánico Dental.\\n\\nQueremos confirmar su cita para el " + fechaBonita + " a las " + cita.hora + "." + consulta + "\\n\\nPor favor, respóndanos confirmando si podrá asistir. Si necesita cambiar la hora o la fecha, avísenos por aquí. ¡Gracias!";
+  }
 
-"el día " +
-
-formatearFecha(fecha);
-
-
-if (hora) {
-
-mensaje +=
-" a las " +
-hora;
-
+  window.open("https://wa.me/" + numero + "?text=" + encodeURIComponent(mensaje), "_blank");
 }
 
-
-mensaje +=
-
-".%0A%0A" +
-
-"Por favor confirme su asistencia.%0A%0A" +
-
-"Gracias.";
-
-
-window.open(
-"https://wa.me/" +
-numero +
-"?text=" +
-mensaje,
-"_blank"
-);
-
+/* Mantener compatibilidad con recordatorios antiguos */
+function abrirWhatsApp(telefono, paciente, fecha, hora) {
+  const numero = String(telefono || "").replace(/\\D/g, "");
+  if (!numero) {
+    alert("El número no es válido.");
+    return;
+  }
+  const mensaje = "Hola " + paciente + ".\\n\\nLe recordamos que tiene una cita con Javier Quiroz, Mecánico Dental, el día " + diaSemanaCita(fecha) + " " + formatearFecha(fecha) + (hora ? " a las " + hora : ". La hora está pendiente de acordar") + ".\\n\\nPor favor confirme su asistencia. Gracias.";
+  window.open("https://wa.me/" + numero + "?text=" + encodeURIComponent(mensaje), "_blank");
 }
-
-
 
 /* =========================
    CITAS DE MAÑANA
@@ -3564,12 +3433,7 @@ ${cita.hora
 
 <button
 class="boton whatsapp"
-onclick="abrirWhatsApp(
-'${escaparJS(cita.telefono)}',
-'${escaparJS(cita.paciente)}',
-'${cita.fecha}',
-'${cita.hora}'
-)"
+onclick="abrirWhatsAppCita(${Number(cita.id)})"
 >
 💬 Enviar recordatorio
 </button>
