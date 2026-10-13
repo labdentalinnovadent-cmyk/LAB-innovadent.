@@ -3446,8 +3446,17 @@ function crearRecordatorioCalendario(id) {
     ";S.description=" + encodeURIComponent(detalles) +
     ";end";
 
-  mostrarMensaje("Abriendo Fossify Calendar con los datos de la cita. Revisa la información y pulsa Guardar.");
-  window.location.href = intentUrl;
+  mostrarMensaje("Intentando abrir Fossify Calendar. Si no se abre, usa el botón Descargar archivo .ics.");
+  // Activar el enlace desde el toque del usuario suele funcionar mejor en Android
+  // que navegar directamente a una URL intent desde una PWA instalada.
+  const enlace = document.createElement("a");
+  enlace.href = intentUrl;
+  enlace.target = "_self";
+  enlace.rel = "noopener";
+  enlace.style.display = "none";
+  document.body.appendChild(enlace);
+  enlace.click();
+  enlace.remove();
 }
 
 function descargarICSCalendario(id) {
