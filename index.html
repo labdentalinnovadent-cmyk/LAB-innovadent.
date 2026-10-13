@@ -3352,7 +3352,7 @@ function mostrarCitas() {
         <p><strong>Estado:</strong> <strong>${escapar(estado)}</strong></p>
         <p><strong>Recordatorio:</strong> ${recordatorio === "no" ? "No necesita" : "Pendiente de gestionar por WhatsApp"}</p>
         <button class="boton whatsapp" onclick="abrirWhatsAppCita(${Number(cita.id)})">💬 ${!cita.fecha ? "Coordinar el día por WhatsApp" : (!cita.hora ? "Preguntar qué hora le conviene" : "Enviar confirmación / recordatorio")}</button>
-        ${cita.fecha ? '<button class="boton azul" onclick="compartirICSCalendario(' + Number(cita.id) + ')">📅 Compartir cita con calendario</button>' : ''}
+        ${cita.fecha ? '<button class="boton azul" onclick="abrirCitaFossify(' + Number(cita.id) + ')">📅 Abrir cita en Fossify Calendar</button>' : ''}
         <button class="boton azul" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Confirmada')">✅ Confirmada</button>
         <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Indeciso')">🤔 Sigue indeciso</button>
         <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Día pendiente')">📅 Falta el día</button>
@@ -3416,75 +3416,42 @@ function diaSemanaCita(fecha) {
   return dia.toLocaleDateString("es-PA", { weekday: "long" });
 }
 
-async function compartirICSCalendario(id) {
+function abrirCitaFossify(id) {
   const cita = citas.find(item => String(item.id) === String(id));
   if (!cita || !cita.fecha) {
-    alert("Primero guarda el día de la cita para descargarla.");
+    alert("Primero guarda el día de la cita.");
     return;
   }
 
-  const partesFecha = cita.fecha.split("-").map(Number);
-  const horaTexto = cita.hora || "09:00";
-  const partesHora = horaTexto.split(":").map(Number);
-  const inicio = new Date(partesFecha[0], partesFecha[1] - 1, partesFecha[2], partesHora[0] || 0, partesHora[1] || 0, 0);
+  const [anio, mes, dia] = cita.fecha.split("-").map(Number);
+  const [hora, minuto] = (cita.hora || "09:00").split(":").map(Number);
+  const inicio = new Date(anio, mes - 1, dia, hora || 0, minuto || 0, 0);
   const fin = new Date(inicio.getTime() + 30 * 60 * 1000);
-  const utc = (fecha) => fecha.getUTCFullYear() +
-    String(fecha.getUTCMonth() + 1).padStart(2, "0") +
-    String(fecha.getUTCDate()).padStart(2, "0") + "T" +
-    String(fecha.getUTCHours()).padStart(2, "0") +
-    String(fecha.getUTCMinutes()).padStart(2, "0") +
-    String(fecha.getUTCSeconds()).padStart(2, "0") + "Z";
-  const escaparICS = (texto) => String(texto || "").replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
-  const contenido = [
-    "BEGIN:VCALENDAR",
-    "VERSION:2.0",
-    "PRODID:-//LAB innovadent//Recordatorios//ES",
-    "CALSCALE:GREGORIAN",
-    "BEGIN:VEVENT",
-    "UID:lab-innovadent-" + cita.id + "@lab-innovadent",
-    "DTSTAMP:" + utc(new Date()),
-    "DTSTART:" + utc(inicio),
-    "DTEND:" + utc(fin),
-    "SUMMARY:" + escaparICS("Cita: " + cita.paciente + " - LAB innovadent"),
-    "DESCRIPTION:" + escaparICS("Cita con Javier Quiroz, Mecánico Dental. Paciente: " + cita.paciente + ". WhatsApp: " + cita.telefono),
-    "BEGIN:VALARM",
-    "TRIGGER:-P1D",
-    "ACTION:DISPLAY",
-    "DESCRIPTION:" + escaparICS("Mañana tiene cita " + cita.paciente + " en LAB innovadent"),
-    "END:VALARM",
-    "END:VEVENT",
-    "END:VCALENDAR"
-  ].join("\r\n");
+  const titulo = "Cita: " + (cita.paciente || "Paciente") + " - LAB innovadent";
+  const descripcion = "Cita con Javier Quiroz, Mecánico Dental. Paciente: " +
+    (cita.paciente || "") + ". WhatsApp: " + (cita.telefono || "") +
+    ". Motivo: " + (cita.consulta || "Cita de atención dental");
 
-  const nombreArchivo = "Cita-LAB-innovadent-" + String(cita.paciente || "paciente").replace(/[^a-z0-9_-]/gi, "-") + ".ics";
-  const archivo = new File([contenido], nombreArchivo, { type: "text/calendar;charset=utf-8" });
+  // Fossify registra una actividad INSERT con MIME de evento. Se usa un intent
+  // sin esquema de datos para que Android resuelva la actividad por su MIME.
+  const intentUrl = "intent:#Intent" +
+    ";action=android.intent.action.INSERT" +
+    ";type=vnd.android.cursor.item/event" +
+    ";package=org.fossify.calendar" +
+    ";S.title=" + encodeURIComponent(titulo) +
+    ";l.beginTime=" + inicio.getTime() +
+    ";l.endTime=" + fin.getTime() +
+    ";S.description=" + encodeURIComponent(descripcion) +
+    ";end";
 
-  // En Android, compartir el archivo abre el menú del sistema para elegir una aplicación.
-  if (navigator.share && navigator.canShare && navigator.canShare({ files: [archivo] })) {
-    try {
-      await navigator.share({
-        title: "Cita de LAB innovadent",
-        text: "Selecciona una aplicación compatible para añadir esta cita al calendario.",
-        files: [archivo]
-      });
-      mostrarMensaje("Se compartió el archivo de la cita. Comprueba en la aplicación elegida si permite importarlo y guardarlo.");
-      return;
-    } catch (error) {
-      if (error && error.name === "AbortError") return;
-      console.warn("No se pudo compartir la cita:", error);
-    }
-  }
-
-  // Si el navegador no permite compartir archivos, descargarlo como alternativa.
-  const url = URL.createObjectURL(archivo);
+  mostrarMensaje("Intentando abrir Fossify Calendar. Si no se abre, la integración no está disponible en este navegador.");
   const enlace = document.createElement("a");
-  enlace.href = url;
-  enlace.download = nombreArchivo;
+  enlace.href = intentUrl;
+  enlace.target = "_self";
+  enlace.style.display = "none";
   document.body.appendChild(enlace);
   enlace.click();
   enlace.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 3000);
-  mostrarMensaje("Tu navegador no permite compartir el archivo directamente. Se descargó; la descarga por sí sola no guarda la cita en el calendario.");
 }
 
 function abrirWhatsAppCita(id) {
