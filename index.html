@@ -1690,6 +1690,11 @@ let trabajos = [];
 
 let citas = [];
 
+// Identificadores de registros que se están editando.
+let editandoClienteId = null;
+let editandoTrabajoId = null;
+let editandoCitaId = null;
+
 
 function abrirBaseDatos() {
 
@@ -2509,7 +2514,7 @@ return;
 
 const cliente = {
 
-id: Date.now(),
+id: editandoClienteId !== null ? editandoClienteId : Date.now(),
 
 clinica:
 clinica,
@@ -2543,9 +2548,10 @@ limpiarCliente();
 
 actualizarTodo();
 
-mostrarMensaje(
-"Cliente guardado correctamente."
-);
+editandoClienteId = null;
+const botonCliente = document.querySelector("#clientes .formulario .boton.verde");
+if (botonCliente) botonCliente.textContent = "Guardar cliente";
+mostrarMensaje("Cliente guardado correctamente.");
 
 }
 
@@ -2631,6 +2637,7 @@ Correo:
 ${escapar(cliente.correo || "-")}
 </p>
 
+<button class="boton azul" onclick="editarCliente(${Number(cliente.id)})">✏️ Editar</button>
 <button
 class="boton rojo"
 onclick="eliminarCliente(${cliente.id})"
@@ -2646,6 +2653,21 @@ Eliminar
 }
 
 
+
+function editarCliente(id) {
+  const cliente = clientes.find(item => String(item.id) === String(id));
+  if (!cliente) { mostrarMensaje("No se encontró el cliente."); return; }
+  editandoClienteId = cliente.id;
+  document.getElementById("clienteClinica").value = cliente.clinica || "";
+  document.getElementById("clienteDoctor").value = cliente.doctor || "";
+  document.getElementById("clienteTelefono").value = cliente.telefono || "";
+  document.getElementById("clienteCorreo").value = cliente.correo || "";
+  const boton = document.querySelector("#clientes .formulario .boton.verde");
+  if (boton) boton.textContent = "💾 Guardar cambios";
+  mostrarSeccion("clientes");
+  document.getElementById("clienteClinica").focus();
+  mostrarMensaje("Edita los datos y pulsa Guardar cambios.");
+}
 
 async function eliminarCliente(id) {
 
@@ -2727,7 +2749,7 @@ return;
 
 const trabajo = {
 
-id: Date.now(),
+id: editandoTrabajoId !== null ? editandoTrabajoId : Date.now(),
 
 clinica:
 (() => {
@@ -2826,9 +2848,10 @@ limpiarTrabajo();
 
 actualizarTodo();
 
-mostrarMensaje(
-"Trabajo guardado correctamente."
-);
+editandoTrabajoId = null;
+const botonTrabajo = document.querySelector("#nuevoTrabajo .formulario .boton.verde");
+if (botonTrabajo) botonTrabajo.textContent = "Guardar trabajo";
+mostrarMensaje("Trabajo guardado correctamente.");
 
 }
 
@@ -3160,11 +3183,38 @@ ${trabajo.datosFacturacion ? `
 <button class="btn-entregado" onclick="cambiarEstadoTrabajo(${trabajo.id}, 'Entregado')">📦 Entregado</button>
 </div>
 <br>
+<button class="boton azul" onclick="editarTrabajo(${Number(trabajo.id)})">✏️ Editar trabajo</button>
 <button class="boton whatsapp" onclick="avisarEstadoWhatsApp(${trabajo.id})">💬 Avisar a la clínica por WhatsApp</button>
 <button class="boton rojo" onclick="eliminarTrabajo(${trabajo.id})">Eliminar</button>
 </div>`).join("");
 }
 
+
+function editarTrabajo(id) {
+  const trabajo = trabajos.find(item => String(item.id) === String(id));
+  if (!trabajo) { mostrarMensaje("No se encontró el trabajo."); return; }
+  editandoTrabajoId = trabajo.id;
+  actualizarSelectClinicasTrabajo();
+  const set = (campo, valor) => { const el = document.getElementById(campo); if (el) el.value = valor == null ? "" : String(valor); };
+  set("trabajoClinica", trabajo.clinicaId || trabajo.clinica || "");
+  set("trabajoDoctor", trabajo.doctor);
+  set("trabajoTelefono", trabajo.telefono);
+  set("trabajoPaciente", trabajo.paciente);
+  set("trabajoTipo", trabajo.tipo);
+  set("fechaLlegada", trabajo.fechaLlegada);
+  set("fechaEntrega", trabajo.fechaEntrega);
+  set("estadoTrabajo", trabajo.estado || "Recibido");
+  set("procesoTrabajo", trabajo.proceso || "No aplica");
+  set("trabajoMonto", trabajo.monto);
+  set("trabajoImpuesto", trabajo.impuesto7 ? "si" : "no");
+  set("trabajoObservaciones", trabajo.observaciones);
+  calcularTotalTrabajo();
+  const boton = document.querySelector("#nuevoTrabajo .formulario .boton.verde");
+  if (boton) boton.textContent = "💾 Guardar cambios";
+  mostrarSeccion("nuevoTrabajo");
+  document.getElementById("trabajoPaciente").focus();
+  mostrarMensaje("Edita los datos y pulsa Guardar cambios.");
+}
 
 async function eliminarTrabajo(id) {
 
@@ -3232,7 +3282,7 @@ async function guardarCita() {
   const estadoFinal = !fecha ? "Día pendiente" : (!hora && estado !== "Indeciso" ? "Hora pendiente" : estado);
 
   const cita = {
-    id: Date.now(),
+    id: editandoCitaId !== null ? editandoCitaId : Date.now(),
     paciente,
     telefono,
     fecha,
@@ -3247,6 +3297,9 @@ async function guardarCita() {
   limpiarCita();
   borrarBorrador(CLAVE_BORRADOR_CITA);
   actualizarTodo();
+  editandoCitaId = null;
+  const botonCita = document.querySelector("#nuevaCita .formulario .boton.verde");
+  if (botonCita) botonCita.textContent = "💾 Guardar cita";
   mostrarMensaje("Cita guardada correctamente.");
 }
 
@@ -3294,10 +3347,30 @@ function mostrarCitas() {
         <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Día pendiente')">📅 Falta el día</button>
         <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Hora pendiente')">🕒 Falta la hora</button>
         <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Reprogramar')">📅 Reprogramar</button>
+        <button class="boton azul" onclick="editarCita(${Number(cita.id)})">✏️ Editar cita</button>
         <button class="boton rojo" onclick="eliminarCita(${Number(cita.id)})">Eliminar</button>
       </div>
     `;
   }).join("");
+}
+
+function editarCita(id) {
+  const cita = citas.find(item => String(item.id) === String(id));
+  if (!cita) { mostrarMensaje("No se encontró la cita."); return; }
+  editandoCitaId = cita.id;
+  const set = (campo, valor) => { const el = document.getElementById(campo); if (el) el.value = valor == null ? "" : String(valor); };
+  set("citaPaciente", cita.paciente);
+  set("citaTelefono", cita.telefono);
+  set("citaFecha", cita.fecha);
+  set("citaHora", cita.hora);
+  set("citaConsulta", cita.consulta);
+  set("citaEstado", cita.estado || "Por confirmar");
+  set("citaRecordatorio", cita.recordatorio || "si");
+  const boton = document.querySelector("#nuevaCita .formulario .boton.verde");
+  if (boton) boton.textContent = "💾 Guardar cambios";
+  mostrarSeccion("nuevaCita");
+  document.getElementById("citaPaciente").focus();
+  mostrarMensaje("Edita los datos y pulsa Guardar cambios.");
 }
 
 async function actualizarEstadoCita(id, estado) {
