@@ -3352,7 +3352,7 @@ function mostrarCitas() {
         <p><strong>Estado:</strong> <strong>${escapar(estado)}</strong></p>
         <p><strong>Recordatorio:</strong> ${recordatorio === "no" ? "No necesita" : "Pendiente de gestionar por WhatsApp"}</p>
         <button class="boton whatsapp" onclick="abrirWhatsAppCita(${Number(cita.id)})">💬 ${!cita.fecha ? "Coordinar el día por WhatsApp" : (!cita.hora ? "Preguntar qué hora le conviene" : "Enviar confirmación / recordatorio")}</button>
-        ${cita.fecha ? '<button class="boton azul" onclick="crearRecordatorioCalendario(' + Number(cita.id) + ')">📅 Añadir cita a Fossify Calendar</button>' + '<button class="boton gris" onclick="descargarICSCalendario(' + Number(cita.id) + ')">📥 Descargar archivo .ics</button>' : ''}
+        ${cita.fecha ? '<button class="boton azul" onclick="compartirICSCalendario(' + Number(cita.id) + ')">📅 Compartir cita con calendario</button>' : ''}
         <button class="boton azul" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Confirmada')">✅ Confirmada</button>
         <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Indeciso')">🤔 Sigue indeciso</button>
         <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Día pendiente')">📅 Falta el día</button>
@@ -3416,50 +3416,7 @@ function diaSemanaCita(fecha) {
   return dia.toLocaleDateString("es-PA", { weekday: "long" });
 }
 
-function crearRecordatorioCalendario(id) {
-  const cita = citas.find(item => String(item.id) === String(id));
-  if (!cita || !cita.fecha) {
-    alert("Primero guarda el día de la cita para añadirla al calendario.");
-    return;
-  }
-
-  // Fossify Calendar admite INSERT de eventos con título, fecha, hora y descripción.
-  // Se dirige a Fossify instalado en Android, no a Google Calendar.
-  const partesFecha = cita.fecha.split("-").map(Number);
-  const horaTexto = cita.hora || "09:00";
-  const partesHora = horaTexto.split(":").map(Number);
-  const inicio = new Date(partesFecha[0], partesFecha[1] - 1, partesFecha[2], partesHora[0] || 0, partesHora[1] || 0, 0);
-  const fin = new Date(inicio.getTime() + 30 * 60 * 1000);
-  const titulo = "Cita: " + (cita.paciente || "Paciente") + " - LAB innovadent";
-  const detalles = "Cita con Javier Quiroz, Mecánico Dental. Paciente: " +
-    (cita.paciente || "") + ". WhatsApp: " + (cita.telefono || "") +
-    ". Motivo: " + (cita.consulta || "Cita de atención dental");
-
-  const intentUrl = "intent://calendar/event#Intent" +
-    ";scheme=content" +
-    ";action=android.intent.action.INSERT" +
-    ";type=vnd.android.cursor.item/event" +
-    ";package=org.fossify.calendar" +
-    ";S.title=" + encodeURIComponent(titulo) +
-    ";l.beginTime=" + inicio.getTime() +
-    ";l.endTime=" + fin.getTime() +
-    ";S.description=" + encodeURIComponent(detalles) +
-    ";end";
-
-  mostrarMensaje("Intentando abrir Fossify Calendar. Si no se abre, usa el botón Descargar archivo .ics.");
-  // Activar el enlace desde el toque del usuario suele funcionar mejor en Android
-  // que navegar directamente a una URL intent desde una PWA instalada.
-  const enlace = document.createElement("a");
-  enlace.href = intentUrl;
-  enlace.target = "_self";
-  enlace.rel = "noopener";
-  enlace.style.display = "none";
-  document.body.appendChild(enlace);
-  enlace.click();
-  enlace.remove();
-}
-
-function descargarICSCalendario(id) {
+async function compartirICSCalendario(id) {
   const cita = citas.find(item => String(item.id) === String(id));
   if (!cita || !cita.fecha) {
     alert("Primero guarda el día de la cita para descargarla.");
@@ -3500,7 +3457,25 @@ function descargarICSCalendario(id) {
   ].join("\r\n");
 
   const nombreArchivo = "Cita-LAB-innovadent-" + String(cita.paciente || "paciente").replace(/[^a-z0-9_-]/gi, "-") + ".ics";
-  const archivo = new Blob([contenido], { type: "text/calendar;charset=utf-8" });
+  const archivo = new File([contenido], nombreArchivo, { type: "text/calendar;charset=utf-8" });
+
+  // En Android, compartir el archivo abre el menú del sistema para elegir una aplicación.
+  if (navigator.share && navigator.canShare && navigator.canShare({ files: [archivo] })) {
+    try {
+      await navigator.share({
+        title: "Cita de LAB innovadent",
+        text: "Selecciona una aplicación compatible para añadir esta cita al calendario.",
+        files: [archivo]
+      });
+      mostrarMensaje("Se compartió el archivo de la cita. Comprueba en la aplicación elegida si permite importarlo y guardarlo.");
+      return;
+    } catch (error) {
+      if (error && error.name === "AbortError") return;
+      console.warn("No se pudo compartir la cita:", error);
+    }
+  }
+
+  // Si el navegador no permite compartir archivos, descargarlo como alternativa.
   const url = URL.createObjectURL(archivo);
   const enlace = document.createElement("a");
   enlace.href = url;
@@ -3509,7 +3484,7 @@ function descargarICSCalendario(id) {
   enlace.click();
   enlace.remove();
   setTimeout(() => URL.revokeObjectURL(url), 3000);
-  mostrarMensaje("Archivo .ics descargado. Esta opción es para una aplicación de calendario que permita importar archivos .ics.");
+  mostrarMensaje("Tu navegador no permite compartir el archivo directamente. Se descargó; la descarga por sí sola no guarda la cita en el calendario.");
 }
 
 function abrirWhatsAppCita(id) {
