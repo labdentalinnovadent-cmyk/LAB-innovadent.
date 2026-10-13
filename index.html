@@ -3196,7 +3196,17 @@ function editarTrabajo(id) {
   editandoTrabajoId = trabajo.id;
   actualizarSelectClinicasTrabajo();
   const set = (campo, valor) => { const el = document.getElementById(campo); if (el) el.value = valor == null ? "" : String(valor); };
-  set("trabajoClinica", trabajo.clinicaId || trabajo.clinica || "");
+  const selectorClinica = document.getElementById("trabajoClinica");
+  if (selectorClinica) {
+    const valorClinica = trabajo.clinicaId ? String(trabajo.clinicaId) : String(trabajo.clinica || "");
+    if (valorClinica && !Array.from(selectorClinica.options).some(opcion => opcion.value === valorClinica)) {
+      const opcion = document.createElement("option");
+      opcion.value = valorClinica;
+      opcion.textContent = valorClinica + " (registro anterior)";
+      selectorClinica.appendChild(opcion);
+    }
+    selectorClinica.value = valorClinica;
+  }
   set("trabajoDoctor", trabajo.doctor);
   set("trabajoTelefono", trabajo.telefono);
   set("trabajoPaciente", trabajo.paciente);
