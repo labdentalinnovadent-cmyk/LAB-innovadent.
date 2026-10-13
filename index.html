@@ -1345,9 +1345,10 @@ class="seccion"
 </div>
 
 <div class="campo">
-<label>Hora de la cita (si ya la sabe)</label>
+<label>Hora de la cita</label>
 <input id="citaHora" type="time">
-<small style="color:#64748b;">Si aún no sabe la hora, déjala vacía y marca “Hora pendiente”.</small>
+<button type="button" class="boton secundario" style="margin-top:8px;" onclick="marcarHoraPendiente()">🕒 Aún no sé la hora / Por confirmar</button>
+<small id="citaHoraAyuda" style="color:#64748b;">Si todavía no sabe la hora, pulsa el botón y quedará marcada como pendiente.</small>
 </div>
 
 <div class="campo">
@@ -3188,7 +3189,17 @@ actualizarTodo();
    CITAS
 ========================= */
 
-async function guardarCita() {
+async function marcarHoraPendiente() {
+  const campoHora = document.getElementById("citaHora");
+  const campoEstado = document.getElementById("citaEstado");
+  if (campoHora) campoHora.value = "";
+  if (campoEstado) campoEstado.value = "Hora pendiente";
+  const ayuda = document.getElementById("citaHoraAyuda");
+  if (ayuda) ayuda.textContent = "La hora quedó marcada como pendiente. Puedes guardar la cita y confirmarla después.";
+  guardarBorrador(CLAVE_BORRADOR_CITA, ["citaPaciente", "citaTelefono", "citaFecha", "citaHora", "citaConsulta", "citaEstado", "citaRecordatorio"]);
+}
+
+function guardarCita() {
   const paciente = document.getElementById("citaPaciente").value.trim();
   const telefono = document.getElementById("citaTelefono").value.trim();
   const fecha = document.getElementById("citaFecha").value;
