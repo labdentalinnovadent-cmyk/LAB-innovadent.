@@ -3352,7 +3352,7 @@ function mostrarCitas() {
         <p><strong>Estado:</strong> <strong>${escapar(estado)}</strong></p>
         <p><strong>Recordatorio:</strong> ${recordatorio === "no" ? "No necesita" : "Pendiente de gestionar por WhatsApp"}</p>
         <button class="boton whatsapp" onclick="abrirWhatsAppCita(${Number(cita.id)})">💬 ${!cita.fecha ? "Coordinar el día por WhatsApp" : (!cita.hora ? "Preguntar qué hora le conviene" : "Enviar confirmación / recordatorio")}</button>
-        ${cita.fecha ? '<button class="boton azul" onclick="crearRecordatorioCalendario(' + Number(cita.id) + ')">📆 Añadir cita al calendario</button>' : ''}
+        ${cita.fecha ? '<button class="boton azul" onclick="crearRecordatorioCalendario( + Number(cita.id) + )">📅 Abrir cita preparada en Google Calendar</button>\n        <button class="boton gris" onclick="descargarICSCalendario( + Number(cita.id) + )">📥 Descargar archivo .ics</button>' : ''}
         <button class="boton azul" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Confirmada')">✅ Confirmada</button>
         <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Indeciso')">🤔 Sigue indeciso</button>
         <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Día pendiente')">📅 Falta el día</button>
@@ -3416,10 +3416,51 @@ function diaSemanaCita(fecha) {
   return dia.toLocaleDateString("es-PA", { weekday: "long" });
 }
 
-async function crearRecordatorioCalendario(id) {
+function crearRecordatorioCalendario(id) {
   const cita = citas.find(item => String(item.id) === String(id));
   if (!cita || !cita.fecha) {
     alert("Primero guarda el día de la cita para añadirla al calendario.");
+    return;
+  }
+
+  // Abre un formulario de Google Calendar con los datos rellenados.
+  // El usuario revisa y confirma Guardar; no se crea ningún evento sin permiso.
+  const partesFecha = cita.fecha.split("-").map(Number);
+  const horaTexto = cita.hora || "09:00";
+  const partesHora = horaTexto.split(":").map(Number);
+  const inicio = new Date(partesFecha[0], partesFecha[1] - 1, partesFecha[2], partesHora[0] || 0, partesHora[1] || 0, 0);
+  const fin = new Date(inicio.getTime() + 30 * 60 * 1000);
+  const fechaCalendar = (fecha) =>
+    fecha.getFullYear() +
+    String(fecha.getMonth() + 1).padStart(2, "0") +
+    String(fecha.getDate()).padStart(2, "0") + "T" +
+    String(fecha.getHours()).padStart(2, "0") +
+    String(fecha.getMinutes()).padStart(2, "0") +
+    String(fecha.getSeconds()).padStart(2, "0");
+
+  const titulo = "Cita: " + (cita.paciente || "Paciente") + " - LAB innovadent";
+  const detalles = "Cita con Javier Quiroz, Mecánico Dental. Paciente: " +
+    (cita.paciente || "") + ". WhatsApp: " + (cita.telefono || "") +
+    ". Recordatorio solicitado: un día antes.";
+  const url = "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+    "&text=" + encodeURIComponent(titulo) +
+    "&dates=" + fechaCalendar(inicio) + "/" + fechaCalendar(fin) +
+    "&details=" + encodeURIComponent(detalles) +
+    "&ctz=America%2FPanama" +
+    "&rem=1440";
+
+  const ventana = window.open(url, "_blank");
+  if (!ventana) {
+    mostrarMensaje("El navegador bloqueó la ventana. Permite abrir ventanas para LAB innovadent o usa el botón de descargar .ics.");
+    return;
+  }
+  mostrarMensaje("Cita preparada en Google Calendar. Revisa los datos y pulsa Guardar para añadirla.");
+}
+
+function descargarICSCalendario(id) {
+  const cita = citas.find(item => String(item.id) === String(id));
+  if (!cita || !cita.fecha) {
+    alert("Primero guarda el día de la cita para descargarla.");
     return;
   }
 
@@ -3435,14 +3476,13 @@ async function crearRecordatorioCalendario(id) {
     String(fecha.getUTCMinutes()).padStart(2, "0") +
     String(fecha.getUTCSeconds()).padStart(2, "0") + "Z";
   const escaparICS = (texto) => String(texto || "").replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/,/g, "\\,").replace(/;/g, "\\;");
-  const uid = "lab-innovadent-" + cita.id + "@lab-innovadent";
   const contenido = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
     "PRODID:-//LAB innovadent//Recordatorios//ES",
     "CALSCALE:GREGORIAN",
     "BEGIN:VEVENT",
-    "UID:" + uid,
+    "UID:lab-innovadent-" + cita.id + "@lab-innovadent",
     "DTSTAMP:" + utc(new Date()),
     "DTSTART:" + utc(inicio),
     "DTEND:" + utc(fin),
@@ -3458,28 +3498,7 @@ async function crearRecordatorioCalendario(id) {
   ].join("\r\n");
 
   const nombreArchivo = "Cita-LAB-innovadent-" + String(cita.paciente || "paciente").replace(/[^a-z0-9_-]/gi, "-") + ".ics";
-  const archivo = new File([contenido], nombreArchivo, { type: "text/calendar;charset=utf-8" });
-
-  // En tabletas compatibles abre el menú Compartir para enviar el evento sin volver a escribir los datos.
-  if (navigator.share && navigator.canShare && navigator.canShare({ files: [archivo] })) {
-    try {
-      await navigator.share({
-        files: [archivo],
-        title: "Cita de " + cita.paciente,
-        text: "Añadir esta cita de LAB innovadent al calendario"
-      });
-      mostrarMensaje("Archivo de la cita compartido. En la aplicación elegida, confirma Guardar o Añadir.");
-      return;
-    } catch (error) {
-      if (error && error.name === "AbortError") {
-        mostrarMensaje("No se compartió la cita. Puedes volver a intentarlo.");
-        return;
-      }
-      console.warn("No se pudo compartir el archivo; se descargará como alternativa.", error);
-    }
-  }
-
-  // Alternativa para navegadores que no permiten compartir archivos.
+  const archivo = new Blob([contenido], { type: "text/calendar;charset=utf-8" });
   const url = URL.createObjectURL(archivo);
   const enlace = document.createElement("a");
   enlace.href = url;
@@ -3488,8 +3507,9 @@ async function crearRecordatorioCalendario(id) {
   enlace.click();
   enlace.remove();
   setTimeout(() => URL.revokeObjectURL(url), 3000);
-  mostrarMensaje("Se descargó la cita. Ábrela y confirma Guardar o Añadir en una aplicación compatible con archivos .ics.");
+  mostrarMensaje("Archivo .ics descargado. Esta opción es para una aplicación de calendario que permita importar archivos .ics.");
 }
+
 function abrirWhatsAppCita(id) {
   const cita = citas.find(item => String(item.id) === String(id));
   if (!cita) {
