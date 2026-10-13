@@ -636,26 +636,40 @@ textarea {
 
 
 
-/* Ajuste compacto solo para el formulario Nueva cita */
-#nuevaCita .dos-columnas {
+/* Diseño ordenado y adaptable para Nueva cita */
+#nuevaCita .cita-formulario { padding: 22px; }
+#nuevaCita .cita-intro { margin: 0 0 20px; color: #64748b; }
+#nuevaCita .cita-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px 24px;
   align-items: start;
-  column-gap: 14px;
-  row-gap: 6px;
 }
-#nuevaCita .campo {
-  margin-bottom: 0;
-  min-width: 0;
-}
-#nuevaCita .campo button {
-  max-width: 100%;
-  box-sizing: border-box;
-}
-#nuevaCita .campo small {
+#nuevaCita .cita-grid .campo { min-width: 0; margin: 0; }
+#nuevaCita .cita-grid label { margin-bottom: 8px; }
+#nuevaCita .cita-grid input,
+#nuevaCita .cita-grid select { width: 100%; box-sizing: border-box; }
+#nuevaCita .cita-pendiente {
   display: block;
-  margin-top: 4px;
-  line-height: 1.3;
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
 }
-
+#nuevaCita .cita-ayuda {
+  display: block;
+  margin-top: 7px;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.45;
+}
+#nuevaCita .cita-guardar { margin-top: 24px; min-width: 190px; }
+#nuevaCita .cita-nota { margin: 12px 0 0; color: #64748b; line-height: 1.5; }
+@media (max-width: 640px) {
+  #nuevaCita .cita-formulario { padding: 16px; }
+  #nuevaCita .cita-grid { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  #nuevaCita .cita-guardar { width: 100%; }
+}
 </style>
 
 </head>
@@ -1340,71 +1354,64 @@ id="nuevaCita"
 class="seccion"
 >
 
-<h2>
-➕ Nueva cita
-</h2>
+<h2>➕ Nueva cita</h2>
 
+<div class="formulario cita-formulario">
+  <p class="cita-intro">Las citas son directamente con Javier Quiroz, Mecánico Dental.</p>
 
-<div class="formulario">
+  <div class="cita-grid">
+    <div class="campo">
+      <label for="citaPaciente">Nombre del paciente</label>
+      <input id="citaPaciente" placeholder="Nombre completo">
+    </div>
 
+    <div class="campo">
+      <label for="citaTelefono">Número de WhatsApp</label>
+      <input id="citaTelefono" type="tel" placeholder="Ejemplo: 50761234567">
+    </div>
 
-<div class="dos-columnas">
+    <div class="campo">
+      <label for="citaFecha">Fecha propuesta</label>
+      <input id="citaFecha" type="date">
+      <button type="button" class="boton secundario cita-pendiente" onclick="marcarDiaPendiente()">📅 Día pendiente</button>
+      <small id="citaFechaAyuda" class="cita-ayuda">Si aún no sabe el día, puedes dejarlo pendiente.</small>
+    </div>
 
-<div class="campo">
-<label>Nombre del paciente</label>
-<input id="citaPaciente" placeholder="Nombre completo">
-</div>
+    <div class="campo">
+      <label for="citaHora">Hora de la cita</label>
+      <input id="citaHora" type="time">
+      <button type="button" class="boton secundario cita-pendiente" onclick="marcarHoraPendiente()">🕒 Hora pendiente</button>
+      <small id="citaHoraAyuda" class="cita-ayuda">Si aún no sabe la hora, puedes dejarla pendiente.</small>
+    </div>
 
-<div class="campo">
-<label>Número de WhatsApp</label>
-<input id="citaTelefono" type="tel" placeholder="Ejemplo: 50761234567">
-</div>
+    <div class="campo">
+      <label for="citaConsulta">Motivo de consulta</label>
+      <input id="citaConsulta" placeholder="Ej. evaluación, ajuste, reparación...">
+    </div>
 
-<div class="campo">
-<label>Fecha propuesta de la cita</label>
-<input id="citaFecha" type="date">
-<button type="button" class="boton secundario" style="margin-top:8px;" onclick="marcarDiaPendiente()">📅 Aún no sé el día / Día pendiente</button>
-<small id="citaFechaAyuda" style="color:#64748b;">Si todavía no sabe qué día puede venir, pulsa el botón y quedará marcada como pendiente.</small>
-</div>
+    <div class="campo">
+      <label for="citaEstado">Estado de la cita</label>
+      <select id="citaEstado">
+        <option value="Por confirmar">Por confirmar</option>
+        <option value="Confirmada">Confirmada</option>
+        <option value="Indeciso">Paciente indeciso</option>
+        <option value="Día pendiente">Día pendiente</option>
+        <option value="Hora pendiente">Hora pendiente</option>
+        <option value="Reprogramar">Necesita reprogramar</option>
+      </select>
+    </div>
 
-<div class="campo">
-<label>Hora de la cita</label>
-<input id="citaHora" type="time">
-<button type="button" class="boton secundario" style="margin-top:8px;" onclick="marcarHoraPendiente()">🕒 Aún no sé la hora / Por confirmar</button>
-<small id="citaHoraAyuda" style="color:#64748b;">Si todavía no sabe la hora, pulsa el botón y quedará marcada como pendiente.</small>
-</div>
+    <div class="campo cita-recordatorio">
+      <label for="citaRecordatorio">¿Necesita recordatorio por WhatsApp?</label>
+      <select id="citaRecordatorio">
+        <option value="si">Sí, recordar por WhatsApp</option>
+        <option value="no">No necesita recordatorio</option>
+      </select>
+    </div>
+  </div>
 
-<div class="campo">
-<label>Motivo de consulta</label>
-<input id="citaConsulta" placeholder="Ej. evaluación, ajuste, reparación...">
-</div>
-
-<div class="campo">
-<label>Estado de la cita</label>
-<select id="citaEstado">
-<option value="Por confirmar">Por confirmar</option>
-<option value="Confirmada">Confirmada</option>
-<option value="Indeciso">Paciente indeciso</option>
-<option value="Día pendiente">Día pendiente</option>
-<option value="Hora pendiente">Hora pendiente</option>
-<option value="Reprogramar">Necesita reprogramar</option>
-</select>
-</div>
-
-<div class="campo">
-<label>¿Necesita recordatorio por WhatsApp?</label>
-<select id="citaRecordatorio">
-<option value="si">Sí, recordar por WhatsApp</option>
-<option value="no">No necesita recordatorio</option>
-</select>
-</div>
-
-</div>
-
-<button class="boton verde" onclick="guardarCita()">💾 Guardar cita</button>
-<p style="color:#64748b;">Guardar no envía mensajes automáticamente. Podrás abrir WhatsApp y revisar el texto antes de enviarlo.</p>
-
-
+  <button class="boton verde cita-guardar" onclick="guardarCita()">💾 Guardar cita</button>
+  <p class="cita-nota">Guardar no envía mensajes automáticamente. Podrás revisar el mensaje antes de enviarlo por WhatsApp.</p>
 </div>
 
 </section>
