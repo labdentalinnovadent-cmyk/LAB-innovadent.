@@ -3199,7 +3199,7 @@ async function marcarHoraPendiente() {
   guardarBorrador(CLAVE_BORRADOR_CITA, ["citaPaciente", "citaTelefono", "citaFecha", "citaHora", "citaConsulta", "citaEstado", "citaRecordatorio"]);
 }
 
-function guardarCita() {
+async function guardarCita() {
   const paciente = document.getElementById("citaPaciente").value.trim();
   const telefono = document.getElementById("citaTelefono").value.trim();
   const fecha = document.getElementById("citaFecha").value;
