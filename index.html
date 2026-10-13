@@ -3949,7 +3949,8 @@ window.addEventListener(
 function() {
 
 navigator.serviceWorker
-.register("./sw.js")
+.register("./sw.js", { updateViaCache: "none" })
+.then(registro => registro.update().then(() => registro))
 .then(
 function() {
 
