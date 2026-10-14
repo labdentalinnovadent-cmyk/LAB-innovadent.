@@ -3376,7 +3376,7 @@ function mostrarCitas() {
         <h3>👤 ${escapar(cita.paciente)}</h3>
         <p><strong>WhatsApp:</strong> ${escapar(cita.telefono)}</p>
         <p><strong>Fecha:</strong> ${cita.fecha ? formatearFecha(cita.fecha) + " (" + escapar(diaSemanaCita(cita.fecha)) + ")" : "Pendiente de coordinar"}</p>
-        <p><strong>Hora:</strong> ${cita.hora ? escapar(cita.hora) : "Pendiente de acordar"}</p>
+        <p><strong>Hora:</strong> ${cita.hora ? escapar(formatearHora12(cita.hora)) : "Pendiente de acordar"}</p>
         <p><strong>Estado:</strong> <strong>${escapar(estado)}</strong></p>
         <p><strong>Recordatorio:</strong> ${recordatorio === "no" ? "No necesita" : "Pendiente de gestionar por WhatsApp"}</p>
         <button class="boton whatsapp" onclick="abrirWhatsAppCita(${Number(cita.id)})">💬 ${!cita.fecha ? "Coordinar el día por WhatsApp" : (!cita.hora ? "Preguntar qué hora le conviene" : "Enviar confirmación / recordatorio")}</button>
@@ -4029,6 +4029,18 @@ elemento.style.display =
 /* =========================
    FUNCIONES AUXILIARES
 ========================= */
+
+function formatearHora12(hora) {
+  if (!hora) return "";
+  const partes = String(hora).split(":");
+  if (partes.length < 2) return hora;
+  let horas = Number(partes[0]);
+  const minutos = partes[1];
+  if (!Number.isFinite(horas) || horas < 0 || horas > 23) return hora;
+  const periodo = horas >= 12 ? "pm" : "am";
+  horas = horas % 12 || 12;
+  return horas + ":" + minutos + " " + periodo;
+}
 
 function formatearFecha(fecha) {
 
