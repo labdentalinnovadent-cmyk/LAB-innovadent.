@@ -3517,7 +3517,7 @@ function abrirWhatsAppCita(id) {
   } else if (!cita.hora || estado === "Hora pendiente") {
     mensaje = saludo + "Le escribimos para coordinar la hora de su cita para el día " + fechaBonita + ".\n\n¿Podría indicarnos qué hora le conviene?\n\nMuchas gracias. Quedamos atentos a su respuesta. 🌷";
   } else {
-    mensaje = saludo + "Le escribimos para recordarle su cita programada para el día " + fechaBonita + " a las " + cita.hora + ".\n\n¿Nos confirma, por favor, si podrá asistir? Si necesita cambiar la hora o la fecha, puede avisarnos por aquí.\n\nMuchas gracias. Quedamos atentos a su confirmación. 🌷";
+    mensaje = saludo + "🦷 Le recordamos que tiene una cita en LAB innovadent el día " + fechaBonita + " a las " + formatearHora12(cita.hora) + ".\n\n¿Nos confirma, por favor, si podrá asistir?\n\nSi necesita cambiar el día o la hora, puede avisarnos por este medio.\n\nMuchas gracias. ¡Quedamos atentos a su confirmación! 🌷";
   }
 
   window.open("https://wa.me/" + numero + "?text=" + encodeURIComponent(mensaje), "_blank");
