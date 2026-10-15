@@ -3511,9 +3511,9 @@ function abrirWhatsAppCita(id) {
   let mensaje;
 
   if (estado === "Indeciso") {
-    mensaje = saludo + "Nos gustaría coordinar su cita con Javier Quiroz, Mecánico Dental.\n\n¿Podría indicarnos qué día le conviene para agendarla?\n\nMuchas gracias. Quedamos atentos a su respuesta. 🌷";
+    mensaje = saludo + "Nos gustaría coordinar su cita en LAB innovadent.\n\n¿Podría indicarnos qué día le conviene para agendarla?\n\nMuchas gracias. Quedamos atentos a su respuesta. 🌷";
   } else if (!cita.fecha || estado === "Día pendiente") {
-    mensaje = saludo + "Nos gustaría coordinar su cita con Javier Quiroz, Mecánico Dental.\n\n¿Podría indicarnos qué día le conviene para agendarla?\n\nMuchas gracias. Quedamos atentos a su respuesta. 🌷";
+    mensaje = saludo + "Nos gustaría coordinar su cita en LAB innovadent.\n\n¿Podría indicarnos qué día le conviene para agendarla?\n\nMuchas gracias. Quedamos atentos a su respuesta. 🌷";
   } else if (!cita.hora || estado === "Hora pendiente") {
     mensaje = saludo + "Le escribimos para coordinar la hora de su cita para el día " + fechaBonita + ".\n\n¿Podría indicarnos qué hora le conviene?\n\nMuchas gracias. Quedamos atentos a su respuesta. 🌷";
   } else {
@@ -3530,7 +3530,7 @@ function abrirWhatsApp(telefono, paciente, fecha, hora) {
     alert("El número no es válido.");
     return;
   }
-  const mensaje = "Hola, " + paciente + ". 😊\n\nLe saluda Yasireth, asistente de LAB innovadent.\n\nLe recordamos que tiene una cita con Javier Quiroz, Mecánico Dental, el día " + diaSemanaCita(fecha) + " " + formatearFecha(fecha) + (hora ? " a las " + hora : ". La hora está pendiente de acordar") + ".\n\n¿Nos confirma, por favor, si podrá asistir? Muchas gracias. 🌷";
+  const mensaje = "Hola, " + paciente + ". 😊\n\nLe saluda Yasireth, asistente de LAB innovadent.\n\nLe recordamos que tiene una cita en LAB innovadent el día " + diaSemanaCita(fecha) + " " + formatearFecha(fecha) + (hora ? " a las " + formatearHora12(hora) : ". La hora está pendiente de acordar") + ".\n\n¿Nos confirma, por favor, si podrá asistir? Muchas gracias. 🌷";
   window.open("https://wa.me/" + numero + "?text=" + encodeURIComponent(mensaje), "_blank");
 }
 
