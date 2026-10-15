@@ -3643,7 +3643,7 @@ async function activarAvisosCitas() {
     mostrarMensaje("Notificaciones activadas. La tablet debe permitir las notificaciones de Chrome.");
   } catch (error) {
     console.error("No se pudieron activar las notificaciones:", error);
-    alert("Chrome permitió revisar el permiso, pero no se pudo mostrar la notificación. No se borró ningún dato. Comprueba también los permisos de notificación de la aplicación Chrome en los ajustes de la tablet.");
+    alert("No se pudo mostrar la notificación. Detalle técnico: " + (error && error.name ? error.name + ": " : "") + (error && error.message ? error.message : String(error)) + ". No se borró ningún dato.");
   }
 }
 
