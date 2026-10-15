@@ -1,4 +1,4 @@
-const CACHE_NAME = "lab-innovadent-v38";
+const CACHE_NAME = "lab-innovadent-v39";
 
 const ARCHIVOS = [
   "./",
