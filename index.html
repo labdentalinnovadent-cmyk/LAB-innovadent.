@@ -3593,6 +3593,28 @@ dia
 
 
 
+async function enviarNotificacionCompatible(titulo, opciones) {
+  if (!("Notification" in window) || Notification.permission !== "granted") {
+    throw new Error("El permiso de notificaciones no está concedido.");
+  }
+
+  if ("serviceWorker" in navigator) {
+    const registro = await navigator.serviceWorker.ready;
+    if (registro && registro.showNotification) {
+      await registro.showNotification(titulo, opciones);
+      return;
+    }
+  }
+
+  // Respaldo para navegadores de escritorio que admiten el constructor Notification.
+  if (!/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    new Notification(titulo, opciones);
+    return;
+  }
+
+  throw new Error("Este navegador necesita mostrar la notificación mediante el service worker.");
+}
+
 async function activarAvisosCitas() {
   if (!("Notification" in window)) {
     alert("Este navegador no permite notificaciones. Puedes ver las citas de mañana en la página de inicio cuando abras LAB innovadent.");
@@ -3601,26 +3623,27 @@ async function activarAvisosCitas() {
   try {
     const permiso = await Notification.requestPermission();
     if (permiso !== "granted") {
-      alert("Las notificaciones no se activaron. Revisa los permisos de notificación de Chrome para LAB innovadent.");
+      alert("Chrome no concedió el permiso de notificaciones. Revisa los permisos del sitio y las notificaciones de Chrome en los ajustes de la tablet.");
       return;
     }
+
     localStorage.setItem("labInnovadentAvisosActivos", "si");
     const manana = fechaManana();
     const citasManana = citas.filter(cita => cita.fecha === manana);
-    if (citasManana.length) {
-      new Notification("LAB innovadent: citas de mañana", {
-        body: citasManana.length === 1
-          ? "Tienes 1 cita mañana: " + (citasManana[0].paciente || "paciente") + (citasManana[0].hora ? " a las " + formatearHora12(citasManana[0].hora) : "") + "."
-          : "Tienes " + citasManana.length + " citas programadas para mañana.",
-        icon: "./logo-innovadent-app.png"
-      });
-    } else {
-      new Notification("LAB innovadent", { body: "Avisos activados. Te avisaremos al abrir la aplicación si hay citas para mañana.", icon: "./logo-innovadent-app.png" });
-    }
-    mostrarMensaje("Notificaciones activadas para los avisos al abrir la aplicación.");
+    const opciones = {
+      body: citasManana.length === 1
+        ? "Tienes 1 cita mañana: " + (citasManana[0].paciente || "paciente") + (citasManana[0].hora ? " a las " + formatearHora12(citasManana[0].hora) : "") + "."
+        : citasManana.length > 1
+          ? "Tienes " + citasManana.length + " citas programadas para mañana."
+          : "Avisos activados. Recuerda abrir LAB innovadent para revisar las citas de mañana.",
+      icon: "./logo-innovadent-app.png"
+    };
+
+    await enviarNotificacionCompatible(citasManana.length ? "LAB innovadent: citas de mañana" : "LAB innovadent", opciones);
+    mostrarMensaje("Notificaciones activadas. La tablet debe permitir las notificaciones de Chrome.");
   } catch (error) {
     console.error("No se pudieron activar las notificaciones:", error);
-    alert("No se pudieron activar las notificaciones. Revisa los permisos de Chrome.");
+    alert("Chrome permitió revisar el permiso, pero no se pudo mostrar la notificación. No se borró ningún dato. Comprueba también los permisos de notificación de la aplicación Chrome en los ajustes de la tablet.");
   }
 }
 
@@ -3632,13 +3655,17 @@ function avisarCitasMananaAlAbrir() {
   const manana = fechaManana();
   const citasManana = citas.filter(cita => cita.fecha === manana);
   if (!citasManana.length) return;
-  new Notification("LAB innovadent: citas de mañana", {
+
+  const opciones = {
     body: citasManana.length === 1
       ? "Tienes 1 cita mañana: " + (citasManana[0].paciente || "paciente") + (citasManana[0].hora ? " a las " + formatearHora12(citasManana[0].hora) : "") + "."
       : "Tienes " + citasManana.length + " citas programadas para mañana.",
     icon: "./logo-innovadent-app.png"
-  });
-  localStorage.setItem("labInnovadentUltimoAviso", claveHoy);
+  };
+
+  enviarNotificacionCompatible("LAB innovadent: citas de mañana", opciones)
+    .then(() => localStorage.setItem("labInnovadentUltimoAviso", claveHoy))
+    .catch(error => console.error("No se pudo mostrar el aviso de citas:", error));
 }
 
 function mostrarAvisosCitas() {
