@@ -1397,7 +1397,7 @@ class="seccion"
         <option value="Indeciso">Paciente indeciso</option>
         <option value="Día pendiente">Día pendiente</option>
         <option value="Hora pendiente">Hora pendiente</option>
-        <option value="Reprogramar">Necesita reprogramar</option>
+        
       </select>
     </div>
 
@@ -3361,7 +3361,7 @@ function mostrarCitas() {
     return;
   }
 
-  const prioridad = { "Indeciso": 0, "Día pendiente": 1, "Hora pendiente": 2, "Por confirmar": 3, "Reprogramar": 4, "Confirmada": 5 };
+  const prioridad = { "Indeciso": 0, "Día pendiente": 1, "Hora pendiente": 2, "Por confirmar": 3, "Confirmada": 4 };
   const lista = [...citas].sort((a, b) => {
     const pa = prioridad[a.estado || (a.hora ? "Por confirmar" : "Hora pendiente")] ?? 5;
     const pb = prioridad[b.estado || (b.hora ? "Por confirmar" : "Hora pendiente")] ?? 5;
@@ -3377,16 +3377,13 @@ function mostrarCitas() {
         <p><strong>WhatsApp:</strong> ${escapar(cita.telefono)}</p>
         <p><strong>Fecha:</strong> ${cita.fecha ? formatearFecha(cita.fecha) + " (" + escapar(diaSemanaCita(cita.fecha)) + ")" : "Pendiente de coordinar"}</p>
         <p><strong>Hora:</strong> ${cita.hora ? escapar(formatearHora12(cita.hora)) : "Pendiente de acordar"}</p>
+        <p><strong>Motivo:</strong> ${escapar(cita.consulta || "No especificado")}</p>
         <p><strong>Estado:</strong> <strong>${escapar(estado)}</strong></p>
         <p><strong>Recordatorio:</strong> ${recordatorio === "no" ? "No necesita" : "Pendiente de gestionar por WhatsApp"}</p>
         <button class="boton whatsapp" onclick="abrirWhatsAppCita(${Number(cita.id)})">💬 ${!cita.fecha ? "Coordinar el día por WhatsApp" : (!cita.hora ? "Preguntar qué hora le conviene" : "Enviar confirmación / recordatorio")}</button>
-        ${cita.fecha ? '<button class="boton azul" onclick="abrirCitaFossify(' + Number(cita.id) + ')">📅 Preparar cita para Fossify</button>' : ''}
         <button class="boton azul" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Confirmada')">✅ Confirmada</button>
         <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Indeciso')">🤔 Sigue indeciso</button>
-        <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Día pendiente')">📅 Falta el día</button>
-        <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Hora pendiente')">🕒 Falta la hora</button>
-        <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Reprogramar')">📅 Reprogramar</button>
-        <button class="boton azul" onclick="editarCita(${Number(cita.id)})">✏️ Editar cita</button>
+        <button class="boton azul" onclick="editarCita(${Number(cita.id)})">🗓️ Cambiar día u hora</button>
         <button class="boton rojo" onclick="eliminarCita(${Number(cita.id)})">Eliminar</button>
       </div>
     `;
