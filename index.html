@@ -2615,11 +2615,9 @@ actualizarCampoDoctorCita();
 
 catch(error) {
 
-console.error(error);
-
-mostrarMensaje(
-"Error al abrir la base de datos."
-);
+console.error("Error al iniciar LAB innovadent:", error);
+const detalle = error && error.message ? error.message : String(error || "Error desconocido");
+mostrarMensaje("No se pudo iniciar LAB innovadent. Detalle: " + detalle + ". Tus datos no se han borrado. No desinstales la app ni borres los datos del navegador.");
 
 }
 
