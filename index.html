@@ -1381,11 +1381,17 @@ class="seccion"
   <div class="cita-grid">
     <div class="campo">
       <label for="citaTipoAtencion">Tipo de cita</label>
-      <select id="citaTipoAtencion">
+      <select id="citaTipoAtencion" onchange="actualizarCampoDoctorCita()">
         <option value="clinica">Atención en clínica</option>
         <option value="laboratorio" selected>Atención en el laboratorio</option>
       </select>
       <small class="cita-ayuda">Elige dónde se atenderá al paciente.</small>
+    </div>
+
+    <div class="campo" id="campoDoctorCita" hidden>
+      <label for="citaDoctor">Dr. o Dra. de la clínica</label>
+      <input id="citaDoctor" placeholder="Nombre del Dr. o Dra.">
+      <small class="cita-ayuda">Solo para citas de pacientes atendidos en una clínica.</small>
     </div>
 
     <div class="campo">
@@ -1700,7 +1706,7 @@ function configurarBorradoresAutomaticos() {
     },
     {
       clave: CLAVE_BORRADOR_CITA,
-      ids: ["citaTipoAtencion", "citaPaciente", "citaTelefono", "citaFecha", "citaHora", "citaConsulta", "citaEstado", "citaRecordatorio"]
+      ids: ["citaTipoAtencion", "citaDoctor", "citaPaciente", "citaTelefono", "citaFecha", "citaHora", "citaConsulta", "citaEstado", "citaRecordatorio"]
     },
   ];
 
@@ -2491,6 +2497,7 @@ cambioProvinciaFactura(true, document.getElementById("facturaDistrito").value, d
 cargarDatosFacturacion();
 actualizarSelectClinicasTrabajo();
 actualizarSelectPreciosTrabajo();
+actualizarCampoDoctorCita();
 
 }
 
@@ -3308,6 +3315,13 @@ actualizarTodo();
    CITAS
 ========================= */
 
+function actualizarCampoDoctorCita() {
+  const tipo = document.getElementById("citaTipoAtencion");
+  const campo = document.getElementById("campoDoctorCita");
+  if (!tipo || !campo) return;
+  campo.hidden = tipo.value !== "clinica";
+}
+
 async function marcarDiaPendiente() {
   const campoFecha = document.getElementById("citaFecha");
   const campoHora = document.getElementById("citaHora");
@@ -3319,7 +3333,7 @@ async function marcarDiaPendiente() {
   if (ayudaFecha) ayudaFecha.textContent = "El día quedó pendiente. Puedes guardar la cita y coordinarlo por WhatsApp después.";
   const ayudaHora = document.getElementById("citaHoraAyuda");
   if (ayudaHora) ayudaHora.textContent = "Primero coordinaremos el día; la hora también queda pendiente.";
-  guardarBorrador(CLAVE_BORRADOR_CITA, ["citaTipoAtencion", "citaPaciente", "citaTelefono", "citaFecha", "citaHora", "citaConsulta", "citaEstado", "citaRecordatorio"]);
+  guardarBorrador(CLAVE_BORRADOR_CITA, ["citaTipoAtencion", "citaDoctor", "citaPaciente", "citaTelefono", "citaFecha", "citaHora", "citaConsulta", "citaEstado", "citaRecordatorio"]);
 }
 
 async function marcarHoraPendiente() {
@@ -3334,6 +3348,7 @@ async function marcarHoraPendiente() {
 
 async function guardarCita() {
   const tipoAtencion = document.getElementById("citaTipoAtencion").value || "laboratorio";
+  const doctor = document.getElementById("citaDoctor").value.trim();
   const paciente = document.getElementById("citaPaciente").value.trim();
   const telefono = document.getElementById("citaTelefono").value.trim();
   const fecha = document.getElementById("citaFecha").value;
@@ -3351,6 +3366,7 @@ async function guardarCita() {
   const cita = {
     id: editandoCitaId !== null ? editandoCitaId : Date.now(),
     tipoAtencion,
+    doctor: tipoAtencion === "clinica" ? doctor : "",
     paciente,
     telefono,
     fecha,
@@ -3372,11 +3388,12 @@ async function guardarCita() {
 }
 
 function limpiarCita() {
-  ["citaPaciente", "citaTelefono", "citaFecha", "citaHora", "citaConsulta"].forEach(id => {
+  ["citaDoctor", "citaPaciente", "citaTelefono", "citaFecha", "citaHora", "citaConsulta"].forEach(id => {
     const elemento = document.getElementById(id);
     if (elemento) elemento.value = "";
   });
   document.getElementById("citaTipoAtencion").value = "laboratorio";
+  actualizarCampoDoctorCita();
   document.getElementById("citaEstado").value = "Por confirmar";
   document.getElementById("citaRecordatorio").value = "si";
   const ayudaFecha = document.getElementById("citaFechaAyuda");
@@ -3407,6 +3424,7 @@ function mostrarCitas() {
       <div class="item">
         <h3>👤 ${escapar(cita.paciente)}</h3>
         <p><strong>Tipo:</strong> ${tipo}</p>
+        ${(cita.tipoAtencion || "laboratorio") === "clinica" && cita.doctor ? `<p><strong>Dr./Dra.:</strong> ${escapar(cita.doctor)}</p>` : ""}
         <p><strong>WhatsApp:</strong> ${escapar(cita.telefono)}</p>
         <p><strong>Fecha:</strong> ${cita.fecha ? formatearFecha(cita.fecha) + " (" + escapar(diaSemanaCita(cita.fecha)) + ")" : "Pendiente de coordinar"}</p>
         <p><strong>Hora:</strong> ${cita.hora ? escapar(formatearHora12(cita.hora)) : "Pendiente de acordar"}</p>
@@ -3455,6 +3473,8 @@ function editarCita(id) {
   editandoCitaId = cita.id;
   const set = (campo, valor) => { const el = document.getElementById(campo); if (el) el.value = valor == null ? "" : String(valor); };
   set("citaTipoAtencion", cita.tipoAtencion || "laboratorio");
+  set("citaDoctor", cita.doctor || "");
+  actualizarCampoDoctorCita();
   set("citaPaciente", cita.paciente);
   set("citaTelefono", cita.telefono);
   set("citaFecha", cita.fecha);
