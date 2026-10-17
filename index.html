@@ -3414,7 +3414,7 @@ function mostrarCitas() {
     return;
   }
 
-  const prioridad = { "Indeciso": 0, "Día pendiente": 1, "Hora pendiente": 2, "Por confirmar": 3, "Confirmada": 4 };
+  const prioridad = { "Indeciso": 0, "Día pendiente": 1, "Hora pendiente": 2, "Por confirmar": 3, "En proceso": 4, "Confirmada": 5 };
   const ordenar = (a, b) => {
     const pa = prioridad[a.estado || (a.hora ? "Por confirmar" : "Hora pendiente")] ?? 5;
     const pb = prioridad[b.estado || (b.hora ? "Por confirmar" : "Hora pendiente")] ?? 5;
@@ -3444,6 +3444,7 @@ function mostrarCitas() {
         <button class="boton whatsapp" onclick="abrirWhatsAppCita(${Number(cita.id)})">💬 ${!cita.fecha ? "Coordinar el día por WhatsApp" : (!cita.hora ? "Preguntar qué hora le conviene" : "Enviar confirmación / recordatorio")}</button>
         ${estado !== "Confirmada" ? `<button class="boton azul" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Confirmada')">✅ Confirmar cita</button>` : `<button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Por confirmar')">↩️ Volver a pendiente</button>`}
         <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Indeciso')">🤔 Sigue indeciso</button>
+        ${estado === "En proceso" ? `<button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Por confirmar')">↩️ Volver a pendientes</button>` : `<button class="boton azul" onclick="actualizarEstadoCita(${Number(cita.id)}, 'En proceso')">⚙️ Marcar en proceso</button>`}
         ${["Cancelada", "Pospuesta"].includes(estado) ? `<button class="boton azul" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Por confirmar')">↩️ Volver a pendientes</button>` : `
           <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Pospuesta')">🕒 Posponer cita</button>
           <button class="boton rojo" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Cancelada')">✖️ Cancelar cita</button>
@@ -3466,7 +3467,8 @@ function mostrarCitas() {
 
   const archivadas = citas.filter(cita => ["Cancelada", "Pospuesta"].includes(cita.estado)).sort(ordenar);
   const confirmadas = citas.filter(cita => cita.estado === "Confirmada").sort(ordenar);
-  const pendientes = citas.filter(cita => cita.estado !== "Confirmada" && !["Cancelada", "Pospuesta"].includes(cita.estado)).sort(ordenar);
+  const enProceso = citas.filter(cita => cita.estado === "En proceso").sort(ordenar);
+  const pendientes = citas.filter(cita => cita.estado !== "Confirmada" && cita.estado !== "En proceso" && !["Cancelada", "Pospuesta"].includes(cita.estado)).sort(ordenar);
 
   const pendientesClinica = pendientes.filter(cita => (cita.tipoAtencion || "laboratorio") === "clinica").sort(ordenar);
   const pendientesLaboratorio = pendientes.filter(cita => (cita.tipoAtencion || "laboratorio") === "laboratorio").sort(ordenar);
@@ -3476,6 +3478,11 @@ function mostrarCitas() {
       <h3>✅ Citas confirmadas (${confirmadas.length})</h3>
       <p>Estas son las citas cuya asistencia ya está confirmada.</p>
       ${renderLista(confirmadas)}
+    </section>
+    <section class="grupo-citas">
+      <h3>⚙️ Citas en proceso (${enProceso.length})</h3>
+      <p>Aquí aparecen las citas que marques como en proceso.</p>
+      ${renderLista(enProceso)}
     </section>
     <section class="grupo-citas">
       <h3>🏥 Pacientes de clínica pendientes de confirmar (${pendientesClinica.length})</h3>
