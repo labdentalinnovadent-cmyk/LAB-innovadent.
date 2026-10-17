@@ -3423,14 +3423,18 @@ function mostrarCitas() {
     return `
       <div class="item">
         <h3>👤 ${escapar(cita.paciente)}</h3>
-        <p><strong>Tipo:</strong> ${tipo}</p>
-        ${(cita.tipoAtencion || "laboratorio") === "clinica" && cita.doctor ? `<p><strong>Dr./Dra.:</strong> ${escapar(cita.doctor)}</p>` : ""}
-        <p><strong>WhatsApp:</strong> ${escapar(cita.telefono)}</p>
-        <p><strong>Fecha:</strong> ${cita.fecha ? formatearFecha(cita.fecha) + " (" + escapar(diaSemanaCita(cita.fecha)) + ")" : "Pendiente de coordinar"}</p>
-        <p><strong>Hora:</strong> ${cita.hora ? escapar(formatearHora12(cita.hora)) : "Pendiente de acordar"}</p>
-        <p><strong>Motivo:</strong> ${escapar(cita.consulta || "No especificado")}</p>
-        <p><strong>Estado:</strong> <strong>${escapar(estado)}</strong></p>
-        <p><strong>Recordatorio:</strong> ${recordatorio === "no" ? "No necesita" : "Pendiente de gestionar por WhatsApp"}</p>
+        ${(cita.tipoAtencion || "laboratorio") === "clinica" ? `
+          <p><strong>Hora:</strong> ${cita.hora ? escapar(formatearHora12(cita.hora)) : "Pendiente de acordar"}</p>
+          <p><strong>Dr./Dra.:</strong> ${escapar(cita.doctor || "Sin asignar")}</p>
+        ` : `
+          <p><strong>Tipo:</strong> ${tipo}</p>
+          <p><strong>WhatsApp:</strong> ${escapar(cita.telefono)}</p>
+          <p><strong>Fecha:</strong> ${cita.fecha ? formatearFecha(cita.fecha) + " (" + escapar(diaSemanaCita(cita.fecha)) + ")" : "Pendiente de coordinar"}</p>
+          <p><strong>Hora:</strong> ${cita.hora ? escapar(formatearHora12(cita.hora)) : "Pendiente de acordar"}</p>
+          <p><strong>Motivo:</strong> ${escapar(cita.consulta || "No especificado")}</p>
+          <p><strong>Estado:</strong> <strong>${escapar(estado)}</strong></p>
+          <p><strong>Recordatorio:</strong> ${recordatorio === "no" ? "No necesita" : "Pendiente de gestionar por WhatsApp"}</p>
+        `}
         <button class="boton whatsapp" onclick="abrirWhatsAppCita(${Number(cita.id)})">💬 ${!cita.fecha ? "Coordinar el día por WhatsApp" : (!cita.hora ? "Preguntar qué hora le conviene" : "Enviar confirmación / recordatorio")}</button>
         ${estado !== "Confirmada" ? `<button class="boton azul" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Confirmada')">✅ Confirmar cita</button>` : `<button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Por confirmar')">↩️ Volver a pendiente</button>`}
         <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Indeciso')">🤔 Sigue indeciso</button>
