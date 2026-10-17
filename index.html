@@ -516,71 +516,6 @@ textarea {
 
 
 
-/* =========================
-   REGISTRO DE ENTREGAS
-========================= */
-function fechaLocalISO() {
-  const ahora = new Date();
-  return ahora.getFullYear() + "-" + String(ahora.getMonth()+1).padStart(2,"0") + "-" + String(ahora.getDate()).padStart(2,"0");
-}
-
-async function guardarEntrega() {
-  const fecha = document.getElementById("entregaFecha").value;
-  const paciente = document.getElementById("entregaPaciente").value.trim();
-  const tipo = document.getElementById("entregaTipo").value.trim();
-  const montoTexto = document.getElementById("entregaMonto").value;
-  const monto = Number(montoTexto);
-  if (!fecha || !paciente || !tipo || montoTexto === "" || !Number.isFinite(monto) || monto < 0) {
-    mostrarMensaje("Completa la fecha, el paciente, la prótesis o caso y un costo válido.");
-    return;
-  }
-  const entrega = {id: Date.now(), fecha, paciente, tipo, atencion: document.getElementById("entregaAtencion").value, monto: Math.round(monto * 100) / 100, notas: document.getElementById("entregaNotas").value.trim()};
-  try {
-    await guardarEnBD("entregas", entrega);
-    entregas.push(entrega);
-    document.getElementById("entregaFecha").value = fechaLocalISO();
-    document.getElementById("entregaPaciente").value = "";
-    document.getElementById("entregaTipo").value = "";
-    document.getElementById("entregaMonto").value = "";
-    document.getElementById("entregaNotas").value = "";
-    const mes = document.getElementById("mesEntregas");
-    if (mes && !mes.value) mes.value = fecha.slice(0,7);
-    mostrarEntregas();
-    mostrarMensaje("Entrega guardada correctamente.");
-  } catch (error) { console.error(error); mostrarMensaje("No se pudo guardar la entrega. Inténtalo de nuevo."); }
-}
-
-function mostrarEntregas() {
-  const lista = document.getElementById("listaEntregas");
-  const resumen = document.getElementById("resumenMensualEntregas");
-  if (!lista || !resumen) return;
-  const selector = document.getElementById("mesEntregas");
-  if (selector && !selector.value) selector.value = fechaLocalISO().slice(0,7);
-  const mes = selector ? selector.value : fechaLocalISO().slice(0,7);
-  const delMes = entregas.filter(e => String(e.fecha || "").slice(0,7) === mes).sort((a,b) => String(b.fecha || "").localeCompare(String(a.fecha || "")));
-  const total = delMes.reduce((s,e) => s + (Number(e.monto) || 0), 0);
-  resumen.innerHTML = `<p><strong>Mes:</strong> ${escapar(mes || "Sin seleccionar")}</p><p><strong>Casos entregados:</strong> ${delMes.length}</p><p><strong>Total del mes:</strong> ${total.toLocaleString("es-PA",{style:"currency",currency:"USD"})}</p>`;
-  lista.innerHTML = entregas.length ? entregas.slice().sort((a,b) => String(b.fecha || "").localeCompare(String(a.fecha || ""))).map(e => `
-    <div class="item">
-      <h3>🦷 ${escapar(e.paciente)}</h3>
-      <p><strong>Fecha:</strong> ${e.fecha ? formatearFecha(e.fecha) : "-"}</p>
-      <p><strong>Prótesis/caso:</strong> ${escapar(e.tipo)}</p>
-      <p><strong>Atención:</strong> ${e.atencion === "clinica" ? "Clínica" : "Laboratorio"}</p>
-      <p><strong>Costo:</strong> ${(Number(e.monto)||0).toLocaleString("es-PA",{style:"currency",currency:"USD"})}</p>
-      ${e.notas ? `<p><strong>Notas:</strong> ${escapar(e.notas)}</p>` : ""}
-      <button class="boton rojo" onclick="eliminarEntrega(${Number(e.id)})">Eliminar registro</button>
-    </div>`).join("") : '<div class="vacio">Todavía no hay entregas registradas.</div>';
-}
-
-async function eliminarEntrega(id) {
-  if (!confirm("¿Deseas eliminar este registro de entrega?")) return;
-  try {
-    await eliminarDeBD("entregas", id);
-    entregas = entregas.filter(e => String(e.id) !== String(id));
-    mostrarEntregas();
-    mostrarMensaje("Registro eliminado.");
-  } catch (error) { console.error(error); mostrarMensaje("No se pudo eliminar el registro."); }
-}
 
 /* =========================
    RESPALDO
@@ -1726,6 +1661,71 @@ onclick="guardarPrecioCatalogo()"
 
 <script>
 
+/* =========================
+   REGISTRO DE ENTREGAS
+========================= */
+function fechaLocalISO() {
+  const ahora = new Date();
+  return ahora.getFullYear() + "-" + String(ahora.getMonth()+1).padStart(2,"0") + "-" + String(ahora.getDate()).padStart(2,"0");
+}
+
+async function guardarEntrega() {
+  const fecha = document.getElementById("entregaFecha").value;
+  const paciente = document.getElementById("entregaPaciente").value.trim();
+  const tipo = document.getElementById("entregaTipo").value.trim();
+  const montoTexto = document.getElementById("entregaMonto").value;
+  const monto = Number(montoTexto);
+  if (!fecha || !paciente || !tipo || montoTexto === "" || !Number.isFinite(monto) || monto < 0) {
+    mostrarMensaje("Completa la fecha, el paciente, la prótesis o caso y un costo válido.");
+    return;
+  }
+  const entrega = {id: Date.now(), fecha, paciente, tipo, atencion: document.getElementById("entregaAtencion").value, monto: Math.round(monto * 100) / 100, notas: document.getElementById("entregaNotas").value.trim()};
+  try {
+    await guardarEnBD("entregas", entrega);
+    entregas.push(entrega);
+    document.getElementById("entregaFecha").value = fechaLocalISO();
+    document.getElementById("entregaPaciente").value = "";
+    document.getElementById("entregaTipo").value = "";
+    document.getElementById("entregaMonto").value = "";
+    document.getElementById("entregaNotas").value = "";
+    const mes = document.getElementById("mesEntregas");
+    if (mes && !mes.value) mes.value = fecha.slice(0,7);
+    mostrarEntregas();
+    mostrarMensaje("Entrega guardada correctamente.");
+  } catch (error) { console.error(error); mostrarMensaje("No se pudo guardar la entrega. Inténtalo de nuevo."); }
+}
+
+function mostrarEntregas() {
+  const lista = document.getElementById("listaEntregas");
+  const resumen = document.getElementById("resumenMensualEntregas");
+  if (!lista || !resumen) return;
+  const selector = document.getElementById("mesEntregas");
+  if (selector && !selector.value) selector.value = fechaLocalISO().slice(0,7);
+  const mes = selector ? selector.value : fechaLocalISO().slice(0,7);
+  const delMes = entregas.filter(e => String(e.fecha || "").slice(0,7) === mes).sort((a,b) => String(b.fecha || "").localeCompare(String(a.fecha || "")));
+  const total = delMes.reduce((s,e) => s + (Number(e.monto) || 0), 0);
+  resumen.innerHTML = `<p><strong>Mes:</strong> ${escapar(mes || "Sin seleccionar")}</p><p><strong>Casos entregados:</strong> ${delMes.length}</p><p><strong>Total del mes:</strong> ${total.toLocaleString("es-PA",{style:"currency",currency:"USD"})}</p>`;
+  lista.innerHTML = entregas.length ? entregas.slice().sort((a,b) => String(b.fecha || "").localeCompare(String(a.fecha || ""))).map(e => `
+    <div class="item">
+      <h3>🦷 ${escapar(e.paciente)}</h3>
+      <p><strong>Fecha:</strong> ${e.fecha ? formatearFecha(e.fecha) : "-"}</p>
+      <p><strong>Prótesis/caso:</strong> ${escapar(e.tipo)}</p>
+      <p><strong>Atención:</strong> ${e.atencion === "clinica" ? "Clínica" : "Laboratorio"}</p>
+      <p><strong>Costo:</strong> ${(Number(e.monto)||0).toLocaleString("es-PA",{style:"currency",currency:"USD"})}</p>
+      ${e.notas ? `<p><strong>Notas:</strong> ${escapar(e.notas)}</p>` : ""}
+      <button class="boton rojo" onclick="eliminarEntrega(${Number(e.id)})">Eliminar registro</button>
+    </div>`).join("") : '<div class="vacio">Todavía no hay entregas registradas.</div>';
+}
+
+async function eliminarEntrega(id) {
+  if (!confirm("¿Deseas eliminar este registro de entrega?")) return;
+  try {
+    await eliminarDeBD("entregas", id);
+    entregas = entregas.filter(e => String(e.id) !== String(id));
+    mostrarEntregas();
+    mostrarMensaje("Registro eliminado.");
+  } catch (error) { console.error(error); mostrarMensaje("No se pudo eliminar el registro."); }
+}
 
 /* =========================
    BASE DE DATOS
