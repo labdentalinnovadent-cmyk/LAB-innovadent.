@@ -3430,6 +3430,7 @@ function mostrarCitas() {
         <h3>👤 ${escapar(cita.paciente)}</h3>
         ${(cita.tipoAtencion || "laboratorio") === "clinica" ? `
           <p><strong>Hora:</strong> ${cita.hora ? escapar(formatearHora12(cita.hora)) : "Pendiente de acordar"}</p>
+          <p><strong>Tipo:</strong> Atención en clínica</p>
           <p><strong>Dr./Dra.:</strong> ${escapar(cita.doctor || "Sin asignar")}</p>
         ` : `
           <p><strong>Tipo:</strong> ${tipo}</p>
