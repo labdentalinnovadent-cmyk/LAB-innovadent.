@@ -3438,6 +3438,10 @@ function mostrarCitas() {
         <button class="boton whatsapp" onclick="abrirWhatsAppCita(${Number(cita.id)})">💬 ${!cita.fecha ? "Coordinar el día por WhatsApp" : (!cita.hora ? "Preguntar qué hora le conviene" : "Enviar confirmación / recordatorio")}</button>
         ${estado !== "Confirmada" ? `<button class="boton azul" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Confirmada')">✅ Confirmar cita</button>` : `<button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Por confirmar')">↩️ Volver a pendiente</button>`}
         <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Indeciso')">🤔 Sigue indeciso</button>
+        ${["Cancelada", "Pospuesta"].includes(estado) ? `<button class="boton azul" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Por confirmar')">↩️ Volver a pendientes</button>` : `
+          <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Pospuesta')">🕒 Posponer cita</button>
+          <button class="boton rojo" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Cancelada')">✖️ Cancelar cita</button>
+        `}
         <button class="boton azul" onclick="editarCita(${Number(cita.id)})">✏️ Editar cita</button>
         <button class="boton rojo" onclick="eliminarCita(${Number(cita.id)})">Eliminar</button>
       </div>
