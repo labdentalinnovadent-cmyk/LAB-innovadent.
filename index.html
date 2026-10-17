@@ -3453,6 +3453,9 @@ function mostrarCitas() {
   const confirmadas = citas.filter(cita => cita.estado === "Confirmada").sort(ordenar);
   const pendientes = citas.filter(cita => cita.estado !== "Confirmada").sort(ordenar);
 
+  const pendientesClinica = pendientes.filter(cita => (cita.tipoAtencion || "laboratorio") === "clinica").sort(ordenar);
+  const pendientesLaboratorio = pendientes.filter(cita => (cita.tipoAtencion || "laboratorio") === "laboratorio").sort(ordenar);
+
   contenedor.innerHTML = `
     <section class="grupo-citas">
       <h3>✅ Citas confirmadas (${confirmadas.length})</h3>
@@ -3460,9 +3463,12 @@ function mostrarCitas() {
       ${renderLista(confirmadas)}
     </section>
     <section class="grupo-citas">
-      <h3>📋 Citas pendientes de confirmar (${pendientes.length})</h3>
-      ${renderGrupo("clinica", "Pacientes para atender en clínica", "🏥", pendientes)}
-      ${renderGrupo("laboratorio", "Pacientes del laboratorio", "🦷", pendientes)}
+      <h3>🏥 Pacientes de clínica pendientes de confirmar (${pendientesClinica.length})</h3>
+      ${renderLista(pendientesClinica)}
+    </section>
+    <section class="grupo-citas">
+      <h3>🦷 Pacientes del laboratorio pendientes de confirmar (${pendientesLaboratorio.length})</h3>
+      ${renderLista(pendientesLaboratorio)}
     </section>
   `;
 }
