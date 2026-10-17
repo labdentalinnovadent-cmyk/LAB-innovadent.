@@ -1380,6 +1380,15 @@ class="seccion"
 
   <div class="cita-grid">
     <div class="campo">
+      <label for="citaTipoAtencion">Tipo de cita</label>
+      <select id="citaTipoAtencion">
+        <option value="clinica">Atención en clínica</option>
+        <option value="laboratorio" selected>Atención en el laboratorio</option>
+      </select>
+      <small class="cita-ayuda">Elige dónde se atenderá al paciente.</small>
+    </div>
+
+    <div class="campo">
       <label for="citaPaciente">Nombre del paciente</label>
       <input id="citaPaciente" placeholder="Nombre completo">
     </div>
@@ -1691,7 +1700,7 @@ function configurarBorradoresAutomaticos() {
     },
     {
       clave: CLAVE_BORRADOR_CITA,
-      ids: ["citaPaciente", "citaTelefono", "citaFecha", "citaHora", "citaConsulta", "citaEstado", "citaRecordatorio"]
+      ids: ["citaTipoAtencion", "citaPaciente", "citaTelefono", "citaFecha", "citaHora", "citaConsulta", "citaEstado", "citaRecordatorio"]
     },
   ];
 
@@ -3310,7 +3319,7 @@ async function marcarDiaPendiente() {
   if (ayudaFecha) ayudaFecha.textContent = "El día quedó pendiente. Puedes guardar la cita y coordinarlo por WhatsApp después.";
   const ayudaHora = document.getElementById("citaHoraAyuda");
   if (ayudaHora) ayudaHora.textContent = "Primero coordinaremos el día; la hora también queda pendiente.";
-  guardarBorrador(CLAVE_BORRADOR_CITA, ["citaPaciente", "citaTelefono", "citaFecha", "citaHora", "citaConsulta", "citaEstado", "citaRecordatorio"]);
+  guardarBorrador(CLAVE_BORRADOR_CITA, ["citaTipoAtencion", "citaPaciente", "citaTelefono", "citaFecha", "citaHora", "citaConsulta", "citaEstado", "citaRecordatorio"]);
 }
 
 async function marcarHoraPendiente() {
@@ -3320,10 +3329,11 @@ async function marcarHoraPendiente() {
   if (campoEstado) campoEstado.value = "Hora pendiente";
   const ayuda = document.getElementById("citaHoraAyuda");
   if (ayuda) ayuda.textContent = "La hora quedó marcada como pendiente. Puedes guardar la cita y confirmarla después.";
-  guardarBorrador(CLAVE_BORRADOR_CITA, ["citaPaciente", "citaTelefono", "citaFecha", "citaHora", "citaConsulta", "citaEstado", "citaRecordatorio"]);
+  guardarBorrador(CLAVE_BORRADOR_CITA, ["citaTipoAtencion", "citaPaciente", "citaTelefono", "citaFecha", "citaHora", "citaConsulta", "citaEstado", "citaRecordatorio"]);
 }
 
 async function guardarCita() {
+  const tipoAtencion = document.getElementById("citaTipoAtencion").value || "laboratorio";
   const paciente = document.getElementById("citaPaciente").value.trim();
   const telefono = document.getElementById("citaTelefono").value.trim();
   const fecha = document.getElementById("citaFecha").value;
@@ -3340,6 +3350,7 @@ async function guardarCita() {
 
   const cita = {
     id: editandoCitaId !== null ? editandoCitaId : Date.now(),
+    tipoAtencion,
     paciente,
     telefono,
     fecha,
@@ -3365,6 +3376,7 @@ function limpiarCita() {
     const elemento = document.getElementById(id);
     if (elemento) elemento.value = "";
   });
+  document.getElementById("citaTipoAtencion").value = "laboratorio";
   document.getElementById("citaEstado").value = "Por confirmar";
   document.getElementById("citaRecordatorio").value = "si";
   const ayudaFecha = document.getElementById("citaFechaAyuda");
@@ -3381,32 +3393,47 @@ function mostrarCitas() {
   }
 
   const prioridad = { "Indeciso": 0, "Día pendiente": 1, "Hora pendiente": 2, "Por confirmar": 3, "Confirmada": 4 };
-  const lista = [...citas].sort((a, b) => {
+  const ordenar = (a, b) => {
     const pa = prioridad[a.estado || (a.hora ? "Por confirmar" : "Hora pendiente")] ?? 5;
     const pb = prioridad[b.estado || (b.hora ? "Por confirmar" : "Hora pendiente")] ?? 5;
     return pa - pb || String(a.fecha || "").localeCompare(String(b.fecha || ""));
-  });
+  };
 
-  contenedor.innerHTML = lista.map(cita => {
-    const estado = cita.estado || (cita.hora ? "Por confirmar" : (cita.fecha ? "Hora pendiente" : "Día pendiente"));
-    const recordatorio = cita.recordatorio || "si";
+  const renderGrupo = (tipo, titulo, emoji) => {
+    const lista = citas
+      .filter(cita => (cita.tipoAtencion || "laboratorio") === tipo)
+      .sort(ordenar);
+
     return `
-      <div class="item">
-        <h3>👤 ${escapar(cita.paciente)}</h3>
-        <p><strong>WhatsApp:</strong> ${escapar(cita.telefono)}</p>
-        <p><strong>Fecha:</strong> ${cita.fecha ? formatearFecha(cita.fecha) + " (" + escapar(diaSemanaCita(cita.fecha)) + ")" : "Pendiente de coordinar"}</p>
-        <p><strong>Hora:</strong> ${cita.hora ? escapar(formatearHora12(cita.hora)) : "Pendiente de acordar"}</p>
-        <p><strong>Motivo:</strong> ${escapar(cita.consulta || "No especificado")}</p>
-        <p><strong>Estado:</strong> <strong>${escapar(estado)}</strong></p>
-        <p><strong>Recordatorio:</strong> ${recordatorio === "no" ? "No necesita" : "Pendiente de gestionar por WhatsApp"}</p>
-        <button class="boton whatsapp" onclick="abrirWhatsAppCita(${Number(cita.id)})">💬 ${!cita.fecha ? "Coordinar el día por WhatsApp" : (!cita.hora ? "Preguntar qué hora le conviene" : "Enviar confirmación / recordatorio")}</button>
-        <button class="boton azul" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Confirmada')">✅ Confirmada</button>
-        <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Indeciso')">🤔 Sigue indeciso</button>
-        <button class="boton azul" onclick="editarCita(${Number(cita.id)})">✏️ Editar cita</button>
-        <button class="boton rojo" onclick="eliminarCita(${Number(cita.id)})">Eliminar</button>
-      </div>
+      <section class="grupo-citas">
+        <h3>${emoji} ${titulo} (${lista.length})</h3>
+        ${lista.length ? lista.map(cita => {
+          const estado = cita.estado || (cita.hora ? "Por confirmar" : (cita.fecha ? "Hora pendiente" : "Día pendiente"));
+          const recordatorio = cita.recordatorio || "si";
+          return `
+            <div class="item">
+              <h3>👤 ${escapar(cita.paciente)}</h3>
+              <p><strong>WhatsApp:</strong> ${escapar(cita.telefono)}</p>
+              <p><strong>Fecha:</strong> ${cita.fecha ? formatearFecha(cita.fecha) + " (" + escapar(diaSemanaCita(cita.fecha)) + ")" : "Pendiente de coordinar"}</p>
+              <p><strong>Hora:</strong> ${cita.hora ? escapar(formatearHora12(cita.hora)) : "Pendiente de acordar"}</p>
+              <p><strong>Motivo:</strong> ${escapar(cita.consulta || "No especificado")}</p>
+              <p><strong>Estado:</strong> <strong>${escapar(estado)}</strong></p>
+              <p><strong>Recordatorio:</strong> ${recordatorio === "no" ? "No necesita" : "Pendiente de gestionar por WhatsApp"}</p>
+              <button class="boton whatsapp" onclick="abrirWhatsAppCita(${Number(cita.id)})">💬 ${!cita.fecha ? "Coordinar el día por WhatsApp" : (!cita.hora ? "Preguntar qué hora le conviene" : "Enviar confirmación / recordatorio")}</button>
+              <button class="boton azul" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Confirmada')">✅ Confirmada</button>
+              <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Indeciso')">🤔 Sigue indeciso</button>
+              <button class="boton azul" onclick="editarCita(${Number(cita.id)})">✏️ Editar cita</button>
+              <button class="boton rojo" onclick="eliminarCita(${Number(cita.id)})">Eliminar</button>
+            </div>
+          `;
+        }).join("") : '<div class="vacio">No hay citas en esta categoría.</div>'}
+      </section>
     `;
-  }).join("");
+  };
+
+  contenedor.innerHTML =
+    renderGrupo("clinica", "Pacientes para atender en clínica", "🏥") +
+    renderGrupo("laboratorio", "Pacientes del laboratorio", "🦷");
 }
 
 function editarCita(id) {
@@ -3414,6 +3441,7 @@ function editarCita(id) {
   if (!cita) { mostrarMensaje("No se encontró la cita."); return; }
   editandoCitaId = cita.id;
   const set = (campo, valor) => { const el = document.getElementById(campo); if (el) el.value = valor == null ? "" : String(valor); };
+  set("citaTipoAtencion", cita.tipoAtencion || "laboratorio");
   set("citaPaciente", cita.paciente);
   set("citaTelefono", cita.telefono);
   set("citaFecha", cita.fecha);
@@ -3669,70 +3697,37 @@ function avisarCitasMananaAlAbrir() {
 }
 
 function mostrarAvisosCitas() {
+  const contenedor = document.getElementById("avisosCitas");
+  const manana = fechaManana();
+  const citasManana = citas.filter(cita => cita.fecha === manana);
 
-const contenedor =
-document.getElementById(
-"avisosCitas"
-);
+  if (!citasManana.length) {
+    contenedor.innerHTML = '<div class="vacio">No hay citas para mañana.</div>';
+    return;
+  }
 
+  const renderGrupoAvisos = (tipo, titulo, emoji) => {
+    const lista = citasManana.filter(cita => (cita.tipoAtencion || "laboratorio") === tipo);
+    return `
+      <section class="grupo-citas">
+        <h3>${emoji} ${titulo} (${lista.length})</h3>
+        ${lista.length ? lista.map(cita => `
+          <div class="aviso">
+            <strong>📅 ${escapar(cita.paciente)}</strong>
+            <br><br>
+            Mañana tiene cita${cita.hora ? " a las " + escapar(formatearHora12(cita.hora)) : ""}.
+            <br><br>
+            <button class="boton whatsapp" onclick="abrirWhatsAppCita(${Number(cita.id)})">💬 Enviar recordatorio</button>
+          </div>
+        `).join("") : '<div class="vacio">No hay citas para mañana en esta categoría.</div>'}
+      </section>
+    `;
+  };
 
-const manana =
-fechaManana();
-
-
-const citasManana =
-citas.filter(
-cita =>
-cita.fecha === manana
-);
-
-
-if (
-citasManana.length === 0
-) {
-
-contenedor.innerHTML =
-'<div class="vacio">No hay citas para mañana.</div>';
-
-return;
-
+  contenedor.innerHTML =
+    renderGrupoAvisos("clinica", "Pacientes para atender en clínica", "🏥") +
+    renderGrupoAvisos("laboratorio", "Pacientes del laboratorio", "🦷");
 }
-
-
-contenedor.innerHTML =
-citasManana.map(
-cita => `
-
-<div class="aviso">
-
-<strong>
-📅 ${escapar(cita.paciente)}
-</strong>
-
-<br><br>
-
-Mañana tiene cita
-${cita.hora
-? " a las " + cita.hora
-: ""}.
-
-<br><br>
-
-<button
-class="boton whatsapp"
-onclick="abrirWhatsAppCita(${Number(cita.id)})"
->
-💬 Enviar recordatorio
-</button>
-
-</div>
-
-`
-).join("");
-
-}
-
-
 
 /* =========================
    RESPALDO
