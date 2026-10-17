@@ -3399,41 +3399,54 @@ function mostrarCitas() {
     return pa - pb || String(a.fecha || "").localeCompare(String(b.fecha || ""));
   };
 
-  const renderGrupo = (tipo, titulo, emoji) => {
-    const lista = citas
-      .filter(cita => (cita.tipoAtencion || "laboratorio") === tipo)
-      .sort(ordenar);
+  const renderLista = (lista) => lista.length ? lista.map(cita => {
+    const estado = cita.estado || (cita.hora ? "Por confirmar" : (cita.fecha ? "Hora pendiente" : "Día pendiente"));
+    const recordatorio = cita.recordatorio || "si";
+    const tipo = (cita.tipoAtencion || "laboratorio") === "clinica" ? "Atención en clínica" : "Paciente del laboratorio";
+    return `
+      <div class="item">
+        <h3>👤 ${escapar(cita.paciente)}</h3>
+        <p><strong>Tipo:</strong> ${tipo}</p>
+        <p><strong>WhatsApp:</strong> ${escapar(cita.telefono)}</p>
+        <p><strong>Fecha:</strong> ${cita.fecha ? formatearFecha(cita.fecha) + " (" + escapar(diaSemanaCita(cita.fecha)) + ")" : "Pendiente de coordinar"}</p>
+        <p><strong>Hora:</strong> ${cita.hora ? escapar(formatearHora12(cita.hora)) : "Pendiente de acordar"}</p>
+        <p><strong>Motivo:</strong> ${escapar(cita.consulta || "No especificado")}</p>
+        <p><strong>Estado:</strong> <strong>${escapar(estado)}</strong></p>
+        <p><strong>Recordatorio:</strong> ${recordatorio === "no" ? "No necesita" : "Pendiente de gestionar por WhatsApp"}</p>
+        <button class="boton whatsapp" onclick="abrirWhatsAppCita(${Number(cita.id)})">💬 ${!cita.fecha ? "Coordinar el día por WhatsApp" : (!cita.hora ? "Preguntar qué hora le conviene" : "Enviar confirmación / recordatorio")}</button>
+        ${estado !== "Confirmada" ? `<button class="boton azul" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Confirmada')">✅ Confirmar cita</button>` : `<button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Por confirmar')">↩️ Volver a pendiente</button>`}
+        <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Indeciso')">🤔 Sigue indeciso</button>
+        <button class="boton azul" onclick="editarCita(${Number(cita.id)})">✏️ Editar cita</button>
+        <button class="boton rojo" onclick="eliminarCita(${Number(cita.id)})">Eliminar</button>
+      </div>
+    `;
+  }).join("") : '<div class="vacio">No hay citas en esta categoría.</div>';
 
+  const renderGrupo = (tipo, titulo, emoji, lista) => {
+    const deTipo = lista.filter(cita => (cita.tipoAtencion || "laboratorio") === tipo).sort(ordenar);
     return `
       <section class="grupo-citas">
-        <h3>${emoji} ${titulo} (${lista.length})</h3>
-        ${lista.length ? lista.map(cita => {
-          const estado = cita.estado || (cita.hora ? "Por confirmar" : (cita.fecha ? "Hora pendiente" : "Día pendiente"));
-          const recordatorio = cita.recordatorio || "si";
-          return `
-            <div class="item">
-              <h3>👤 ${escapar(cita.paciente)}</h3>
-              <p><strong>WhatsApp:</strong> ${escapar(cita.telefono)}</p>
-              <p><strong>Fecha:</strong> ${cita.fecha ? formatearFecha(cita.fecha) + " (" + escapar(diaSemanaCita(cita.fecha)) + ")" : "Pendiente de coordinar"}</p>
-              <p><strong>Hora:</strong> ${cita.hora ? escapar(formatearHora12(cita.hora)) : "Pendiente de acordar"}</p>
-              <p><strong>Motivo:</strong> ${escapar(cita.consulta || "No especificado")}</p>
-              <p><strong>Estado:</strong> <strong>${escapar(estado)}</strong></p>
-              <p><strong>Recordatorio:</strong> ${recordatorio === "no" ? "No necesita" : "Pendiente de gestionar por WhatsApp"}</p>
-              <button class="boton whatsapp" onclick="abrirWhatsAppCita(${Number(cita.id)})">💬 ${!cita.fecha ? "Coordinar el día por WhatsApp" : (!cita.hora ? "Preguntar qué hora le conviene" : "Enviar confirmación / recordatorio")}</button>
-              <button class="boton azul" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Confirmada')">✅ Confirmada</button>
-              <button class="boton gris" onclick="actualizarEstadoCita(${Number(cita.id)}, 'Indeciso')">🤔 Sigue indeciso</button>
-              <button class="boton azul" onclick="editarCita(${Number(cita.id)})">✏️ Editar cita</button>
-              <button class="boton rojo" onclick="eliminarCita(${Number(cita.id)})">Eliminar</button>
-            </div>
-          `;
-        }).join("") : '<div class="vacio">No hay citas en esta categoría.</div>'}
+        <h3>${emoji} ${titulo} (${deTipo.length})</h3>
+        ${renderLista(deTipo)}
       </section>
     `;
   };
 
-  contenedor.innerHTML =
-    renderGrupo("clinica", "Pacientes para atender en clínica", "🏥") +
-    renderGrupo("laboratorio", "Pacientes del laboratorio", "🦷");
+  const confirmadas = citas.filter(cita => cita.estado === "Confirmada").sort(ordenar);
+  const pendientes = citas.filter(cita => cita.estado !== "Confirmada").sort(ordenar);
+
+  contenedor.innerHTML = `
+    <section class="grupo-citas">
+      <h3>✅ Citas confirmadas (${confirmadas.length})</h3>
+      <p>Estas son las citas cuya asistencia ya está confirmada.</p>
+      ${renderLista(confirmadas)}
+    </section>
+    <section class="grupo-citas">
+      <h3>📋 Citas pendientes de confirmar (${pendientes.length})</h3>
+      ${renderGrupo("clinica", "Pacientes para atender en clínica", "🏥", pendientes)}
+      ${renderGrupo("laboratorio", "Pacientes del laboratorio", "🦷", pendientes)}
+    </section>
+  `;
 }
 
 function editarCita(id) {
