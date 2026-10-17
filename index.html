@@ -3343,7 +3343,7 @@ async function marcarHoraPendiente() {
   if (campoEstado) campoEstado.value = "Hora pendiente";
   const ayuda = document.getElementById("citaHoraAyuda");
   if (ayuda) ayuda.textContent = "La hora quedó marcada como pendiente. Puedes guardar la cita y confirmarla después.";
-  guardarBorrador(CLAVE_BORRADOR_CITA, ["citaTipoAtencion", "citaPaciente", "citaTelefono", "citaFecha", "citaHora", "citaConsulta", "citaEstado", "citaRecordatorio"]);
+  guardarBorrador(CLAVE_BORRADOR_CITA, ["citaTipoAtencion", "citaDoctor", "citaPaciente", "citaTelefono", "citaFecha", "citaHora", "citaConsulta", "citaEstado", "citaRecordatorio"]);
 }
 
 async function guardarCita() {
