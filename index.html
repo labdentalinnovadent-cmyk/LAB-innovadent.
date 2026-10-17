@@ -3454,8 +3454,9 @@ function mostrarCitas() {
     `;
   };
 
+  const archivadas = citas.filter(cita => ["Cancelada", "Pospuesta"].includes(cita.estado)).sort(ordenar);
   const confirmadas = citas.filter(cita => cita.estado === "Confirmada").sort(ordenar);
-  const pendientes = citas.filter(cita => cita.estado !== "Confirmada").sort(ordenar);
+  const pendientes = citas.filter(cita => cita.estado !== "Confirmada" && !["Cancelada", "Pospuesta"].includes(cita.estado)).sort(ordenar);
 
   const pendientesClinica = pendientes.filter(cita => (cita.tipoAtencion || "laboratorio") === "clinica").sort(ordenar);
   const pendientesLaboratorio = pendientes.filter(cita => (cita.tipoAtencion || "laboratorio") === "laboratorio").sort(ordenar);
@@ -3473,6 +3474,11 @@ function mostrarCitas() {
     <section class="grupo-citas">
       <h3>🦷 Pacientes del laboratorio pendientes de confirmar (${pendientesLaboratorio.length})</h3>
       ${renderLista(pendientesLaboratorio)}
+    </section>
+    <section class="grupo-citas">
+      <h3>📁 Citas canceladas o pospuestas (${archivadas.length})</h3>
+      <p>Los datos de estas citas se conservan aquí.</p>
+      ${renderLista(archivadas)}
     </section>
   `;
 }
