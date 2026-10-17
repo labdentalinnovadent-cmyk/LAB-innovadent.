@@ -1377,8 +1377,10 @@ class="lista"
   <div class="formulario">
     <h3>Registrar entrega</h3>
     <div class="cita-grid">
-      <div class="campo"><label for="entregaFecha">Fecha de entrega</label><input id="entregaFecha" type="date"></div>
+      <div class="campo"><label for="entregaOrigen">Traer datos de un registro existente</label><select id="entregaOrigen" onchange="autocompletarEntregaDesdeRegistro()"><option value="">Registro manual (llenar yo)</option></select><small style="color:#64748b">Elige un trabajo o una cita guardada para completar los datos automáticamente.</small></div>
+      <div class="campo"><label for="entregaFecha">Fecha de entrega / atención</label><input id="entregaFecha" type="date"></div>
       <div class="campo"><label for="entregaPaciente">Nombre del paciente</label><input id="entregaPaciente" placeholder="Nombre del paciente"></div>
+      <div class="campo"><label for="entregaClinica">Clínica (si corresponde)</label><input id="entregaClinica" placeholder="Nombre de la clínica"></div>
       <div class="campo"><label for="entregaTipo">Prótesis o caso entregado</label><input id="entregaTipo" placeholder="Ej. prótesis flexible, reparación, ajuste"></div>
       <div class="campo"><label for="entregaAtencion">Dónde se atendió</label><select id="entregaAtencion"><option value="laboratorio">Laboratorio</option><option value="clinica">Clínica</option></select></div>
       <div class="campo"><label for="entregaMonto">Costo cobrado ($)</label><input id="entregaMonto" type="number" min="0" step="0.01" placeholder="0.00"></div>
@@ -1672,27 +1674,90 @@ function fechaLocalISO() {
 async function guardarEntrega() {
   const fecha = document.getElementById("entregaFecha").value;
   const paciente = document.getElementById("entregaPaciente").value.trim();
+  const clinica = document.getElementById("entregaClinica").value.trim();
   const tipo = document.getElementById("entregaTipo").value.trim();
   const montoTexto = document.getElementById("entregaMonto").value;
   const monto = Number(montoTexto);
+  const origen = document.getElementById("entregaOrigen").value;
+  const partesOrigen = origen ? origen.split(":") : [];
+  const origenTipo = partesOrigen[0] || "";
+  const origenId = partesOrigen[1] || "";
   if (!fecha || !paciente || !tipo || montoTexto === "" || !Number.isFinite(monto) || monto < 0) {
     mostrarMensaje("Completa la fecha, el paciente, la prótesis o caso y un costo válido.");
     return;
   }
-  const entrega = {id: Date.now(), fecha, paciente, tipo, atencion: document.getElementById("entregaAtencion").value, monto: Math.round(monto * 100) / 100, notas: document.getElementById("entregaNotas").value.trim()};
+  if (origenTipo && origenId && entregas.some(e => e.origenTipo === origenTipo && String(e.origenId) === String(origenId))) {
+    mostrarMensaje("Ese registro ya se agregó a Entregas. Elige otro o registra uno manual.");
+    return;
+  }
+  const entrega = {id: Date.now(), fecha, paciente, clinica, tipo, atencion: document.getElementById("entregaAtencion").value, monto: Math.round(monto * 100) / 100, notas: document.getElementById("entregaNotas").value.trim(), origenTipo, origenId};
   try {
     await guardarEnBD("entregas", entrega);
     entregas.push(entrega);
+    document.getElementById("entregaOrigen").value = "";
     document.getElementById("entregaFecha").value = fechaLocalISO();
     document.getElementById("entregaPaciente").value = "";
+    document.getElementById("entregaClinica").value = "";
     document.getElementById("entregaTipo").value = "";
     document.getElementById("entregaMonto").value = "";
     document.getElementById("entregaNotas").value = "";
+    document.getElementById("entregaAtencion").value = "laboratorio";
+    actualizarSelectorOrigenEntrega();
     const mes = document.getElementById("mesEntregas");
     if (mes && !mes.value) mes.value = fecha.slice(0,7);
     mostrarEntregas();
     mostrarMensaje("Entrega guardada correctamente.");
   } catch (error) { console.error(error); mostrarMensaje("No se pudo guardar la entrega. Inténtalo de nuevo."); }
+}
+
+function actualizarSelectorOrigenEntrega() {
+  const select = document.getElementById("entregaOrigen");
+  if (!select) return;
+  const valorActual = select.value;
+  const opciones = ['<option value="">Registro manual (llenar yo)</option>'];
+  trabajos.slice().sort((a,b) => String(b.fechaEntrega || b.fechaLlegada || "").localeCompare(String(a.fechaEntrega || a.fechaLlegada || ""))).forEach(t => {
+    const clave = "trabajo:" + t.id;
+    if (entregas.some(e => e.origenTipo === "trabajo" && String(e.origenId) === String(t.id))) return;
+    opciones.push('<option value="' + escapar(clave) + '">Trabajo · ' + escapar(t.paciente || "Sin paciente") + ' · ' + escapar(t.tipo || "Sin tipo") + (t.clinica ? ' · ' + escapar(t.clinica) : '') + '</option>');
+  });
+  citas.slice().sort((a,b) => String(b.fecha || "").localeCompare(String(a.fecha || ""))).forEach(ci => {
+    const clave = "cita:" + ci.id;
+    if (entregas.some(e => e.origenTipo === "cita" && String(e.origenId) === String(ci.id))) return;
+    opciones.push('<option value="' + escapar(clave) + '">Cita · ' + escapar(ci.paciente || "Sin paciente") + ' · ' + escapar(ci.fecha || "Sin fecha") + '</option>');
+  });
+  select.innerHTML = opciones.join("");
+  if (Array.from(select.options).some(o => o.value === valorActual)) select.value = valorActual;
+}
+
+function autocompletarEntregaDesdeRegistro() {
+  const valor = document.getElementById("entregaOrigen").value;
+  if (!valor) return;
+  const [tipoOrigen, idOrigen] = valor.split(":");
+  if (tipoOrigen === "trabajo") {
+    const t = trabajos.find(item => String(item.id) === String(idOrigen));
+    if (!t) return;
+    document.getElementById("entregaFecha").value = t.fechaEntrega || t.fechaLlegada || fechaLocalISO();
+    document.getElementById("entregaPaciente").value = t.paciente || "";
+    document.getElementById("entregaClinica").value = t.clinica || "";
+    document.getElementById("entregaTipo").value = t.tipo || "";
+    document.getElementById("entregaAtencion").value = t.clinica ? "clinica" : "laboratorio";
+    const monto = Number(t.total) > 0 ? Number(t.total) : Number(t.monto) || 0;
+    document.getElementById("entregaMonto").value = monto ? monto.toFixed(2) : "";
+    const notas = [t.doctor ? "Dr./Dra.: " + t.doctor : "", t.observaciones || "", "Importado del trabajo guardado #" + t.id].filter(Boolean);
+    document.getElementById("entregaNotas").value = notas.join(" · ");
+    mostrarMensaje("Datos del trabajo cargados. Confirma la fecha y el precio antes de guardar.");
+  } else if (tipoOrigen === "cita") {
+    const ci = citas.find(item => String(item.id) === String(idOrigen));
+    if (!ci) return;
+    document.getElementById("entregaFecha").value = ci.fecha || fechaLocalISO();
+    document.getElementById("entregaPaciente").value = ci.paciente || "";
+    document.getElementById("entregaClinica").value = "";
+    document.getElementById("entregaTipo").value = ci.consulta || "Atención de cita";
+    document.getElementById("entregaAtencion").value = ci.tipoAtencion === "clinica" ? "clinica" : "laboratorio";
+    document.getElementById("entregaMonto").value = "";
+    document.getElementById("entregaNotas").value = [ci.doctor ? "Dr./Dra.: " + ci.doctor : "", "Importado de la cita guardada #" + ci.id].filter(Boolean).join(" · ");
+    mostrarMensaje("Datos de la cita cargados. Escribe el precio cobrado y confirma la fecha antes de guardar.");
+  }
 }
 
 function mostrarEntregas() {
@@ -1710,6 +1775,7 @@ function mostrarEntregas() {
       <h3>🦷 ${escapar(e.paciente)}</h3>
       <p><strong>Fecha:</strong> ${e.fecha ? formatearFecha(e.fecha) : "-"}</p>
       <p><strong>Prótesis/caso:</strong> ${escapar(e.tipo)}</p>
+      ${e.clinica ? '<p><strong>Clínica:</strong> ' + escapar(e.clinica) + '</p>' : ""}
       <p><strong>Atención:</strong> ${e.atencion === "clinica" ? "Clínica" : "Laboratorio"}</p>
       <p><strong>Costo:</strong> ${(Number(e.monto)||0).toLocaleString("es-PA",{style:"currency",currency:"USD"})}</p>
       ${e.notas ? `<p><strong>Notas:</strong> ${escapar(e.notas)}</p>` : ""}
@@ -2637,6 +2703,8 @@ await obtenerTodos("citas");
 
 entregas =
 await obtenerTodos("entregas");
+
+actualizarSelectorOrigenEntrega();
 
 }
 
