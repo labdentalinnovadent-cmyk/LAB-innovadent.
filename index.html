@@ -2592,6 +2592,9 @@ await abrirBaseDatos();
 
 await cargarDatos();
 
+if (!document.getElementById("entregaFecha").value) document.getElementById("entregaFecha").value = fechaLocalISO();
+if (!document.getElementById("mesEntregas").value) document.getElementById("mesEntregas").value = fechaLocalISO().slice(0,7);
+
 actualizarTodo();
 await cargarDivisionesPanama();
 configurarBorradoresAutomaticos();
