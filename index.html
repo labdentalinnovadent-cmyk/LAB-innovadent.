@@ -1735,7 +1735,7 @@ const NOMBRE_BD =
 "LAB_innovadent_BD";
 
 const VERSION_BD =
-2;
+3;
 
 let db;
 
@@ -1923,6 +1923,9 @@ function(event) {
 db =
 event.target.result;
 
+// Permite que otras pestañas actualicen la base de datos sin bloquear futuras versiones.
+db.onversionchange = function() { db.close(); };
+
 resolve(db);
 
 };
@@ -1931,8 +1934,12 @@ resolve(db);
 solicitud.onerror =
 function() {
 
-reject(solicitud.error);
+reject(solicitud.error || new Error("No se pudo abrir la base de datos."));
 
+};
+
+solicitud.onblocked = function() {
+  reject(new Error("La base de datos está ocupada por otra ventana de LAB innovadent. Cierra las otras ventanas de la aplicación y vuelve a abrirla; los datos no se borran."));
 };
 
 });
