@@ -1399,7 +1399,7 @@ class="seccion"
       <input id="citaPaciente" placeholder="Nombre completo">
     </div>
 
-    <div class="campo">
+    <div class="campo" id="campoTelefonoCita">
       <label for="citaTelefono">Número de WhatsApp</label>
       <input id="citaTelefono" type="tel" placeholder="Ejemplo: 50761234567">
     </div>
@@ -1418,7 +1418,7 @@ class="seccion"
       <small id="citaHoraAyuda" class="cita-ayuda">Si aún no sabe la hora, puedes dejarla pendiente.</small>
     </div>
 
-    <div class="campo">
+    <div class="campo" id="campoConsultaCita">
       <label for="citaConsulta">Motivo de consulta</label>
       <input id="citaConsulta" placeholder="Ej. evaluación, ajuste, reparación...">
     </div>
@@ -1435,7 +1435,7 @@ class="seccion"
       </select>
     </div>
 
-    <div class="campo cita-recordatorio">
+    <div class="campo cita-recordatorio" id="campoRecordatorioCita">
       <label for="citaRecordatorio">¿Necesita recordatorio por WhatsApp?</label>
       <select id="citaRecordatorio">
         <option value="si">Sí, recordar por WhatsApp</option>
@@ -3319,7 +3319,12 @@ function actualizarCampoDoctorCita() {
   const tipo = document.getElementById("citaTipoAtencion");
   const campo = document.getElementById("campoDoctorCita");
   if (!tipo || !campo) return;
-  campo.style.display = tipo.value === "clinica" ? "" : "none";
+  const esClinica = tipo.value === "clinica";
+  campo.style.display = esClinica ? "" : "none";
+  ["campoTelefonoCita", "campoConsultaCita", "campoRecordatorioCita"].forEach(id => {
+    const elemento = document.getElementById(id);
+    if (elemento) elemento.style.display = esClinica ? "none" : "";
+  });
 }
 
 async function marcarDiaPendiente() {
@@ -3357,8 +3362,8 @@ async function guardarCita() {
   const estado = document.getElementById("citaEstado").value || "Por confirmar";
   const recordatorio = document.getElementById("citaRecordatorio").value || "si";
 
-  if (!paciente || !telefono) {
-    alert("Escribe el nombre del paciente y su WhatsApp.");
+  if (!paciente || (tipoAtencion !== "clinica" && !telefono)) {
+    alert(tipoAtencion === "clinica" ? "Escribe el nombre del paciente." : "Escribe el nombre del paciente y su WhatsApp.");
     return;
   }
   const estadoFinal = !fecha ? "Día pendiente" : (!hora && estado !== "Indeciso" ? "Hora pendiente" : estado);
