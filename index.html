@@ -1388,7 +1388,7 @@ class="seccion"
       <small class="cita-ayuda">Elige dónde se atenderá al paciente.</small>
     </div>
 
-    <div class="campo" id="campoDoctorCita" hidden>
+    <div class="campo" id="campoDoctorCita" style="display:none">
       <label for="citaDoctor">Dr. o Dra. de la clínica</label>
       <input id="citaDoctor" placeholder="Nombre del Dr. o Dra.">
       <small class="cita-ayuda">Solo para citas de pacientes atendidos en una clínica.</small>
@@ -3319,7 +3319,7 @@ function actualizarCampoDoctorCita() {
   const tipo = document.getElementById("citaTipoAtencion");
   const campo = document.getElementById("campoDoctorCita");
   if (!tipo || !campo) return;
-  campo.hidden = tipo.value !== "clinica";
+  campo.style.display = tipo.value === "clinica" ? "" : "none";
 }
 
 async function marcarDiaPendiente() {
